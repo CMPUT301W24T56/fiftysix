@@ -35,7 +35,8 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="800dp"
-                    android:layout_gravity="top|center">
+                    android:layout_gravity="top|center"
+                    tools:ignore="UseSwitchCompatOrMaterialXml">
 
                     <TextView
                         android:id="@+id/textViewTitle"
@@ -121,23 +122,35 @@
                         tools:text="Event Details"
                         android:text="Event Details"/>
 
-                    <EditText
-                        android:id="@+id/eventAttendeeLimitEditText"
+                    <Switch
+                        android:id="@+id/switchAttendeeLimit"
                         android:layout_width="289dp"
                         android:layout_height="58dp"
                         android:layout_marginTop="40dp"
-                        android:layout_marginBottom="120dp"
+                        android:layout_marginBottom="200dp"
                         android:background="@drawable/dark_round_button"
-                        android:inputType="number"
                         android:paddingLeft="15dp"
                         android:textColor="@color/colorPrimaryLight"
+                        android:text="Set Attendee Limit"
+                        android:padding="16dp"
+                        app:layout_constraintTop_toBottomOf="@id/eventDetailsEditText"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/eventDetailsEditText"
-                        app:layout_constraintVertical_bias="0.155"
-                        tools:text="Attendee Limit"
-                        android:text="Attendee Limit"/>
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <EditText
+                        android:id="@+id/editTextNumberAttendeeLimit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:ems="10"
+                        android:visibility="gone"
+                        android:hint="Enter limit number"
+                        android:padding="16dp"
+                        app:layout_constraintTop_toBottomOf="@id/switchAttendeeLimit"
+                        app:layout_constraintStart_toStartOf="@+id/switchAttendeeLimit"
+                        app:layout_constraintEnd_toEndOf="@+id/switchAttendeeLimit" />
+
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/generatePromoQR"
@@ -151,7 +164,7 @@
                         app:layout_constraintBottom_toTopOf="@+id/reuseCheckinQR"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/eventAttendeeLimitEditText" />
+                        app:layout_constraintTop_toBottomOf="@+id/switchAttendeeLimit" />
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/reuseCheckinQR"
@@ -167,7 +180,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.495"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/eventAttendeeLimitEditText"
+                        app:layout_constraintTop_toBottomOf="@+id/switchAttendeeLimit"
                         app:layout_constraintVertical_bias="0.968" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -176,12 +189,7 @@
 
         </ScrollView>
 
-
-
-
     </LinearLayout>
-
-
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonCreateEvent"
