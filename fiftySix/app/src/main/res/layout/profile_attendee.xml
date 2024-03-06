@@ -1,83 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-
     android:background="@color/colorPrimaryDark">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="12dp">
+
+    <EditText
+        android:id="@+id/Phoneno"
+        android:layout_width="331dp"
+        android:layout_height="54dp"
+        android:layout_marginBottom="124dp"
+        android:background="#DF859E"
+        android:hint="Phone No: "
+        android:inputType="number"
+        android:textColorHint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/date_of_birth"
+        android:layout_width="331dp"
+        android:layout_height="54dp"
+        android:layout_marginBottom="208dp"
+        android:background="#DF859E"
+        android:hint="D.O.B: "
+        android:inputType="date"
+        android:textColorHint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="331dp"
+        android:layout_height="54dp"
+        android:layout_marginBottom="284dp"
+        android:background="#DF859E"
+        android:hint="Email: "
+        android:textColorHint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="16dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/profile" />
 
 
+    <TextView
+        android:id="@+id/UserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="User Name"
+        android:textColor="@color/white"
+        android:textSize="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageButton" />
 
-        <!-- Menu Item: Profile -->
+    <EditText
+        android:id="@+id/Name"
+        android:layout_width="331dp"
+        android:layout_height="54dp"
+        android:background="#DF859E"
+        android:hint=" Name: "
+        android:textColorHint="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/editText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/UserName"
+        app:layout_constraintVertical_bias="0.68" />
 
-        <!-- Repeating structure for other menu items (About, manage events, etc.) -->
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="331dp"
+        android:layout_height="54dp"
+        android:layout_marginBottom="364dp"
+        android:background="#DF859E"
+        android:hint="Email: "
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <!-- Contact Section -->
+    <!--    <TextView-->
+<!--        android:id="@+id/userName"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="User Name"-->
+<!--        android:textAppearance="?android:attr/textAppearanceMedium"-->
+<!--        android:textColor="#FFFFFF"-->
+<!--        android:textStyle="italic"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/imageButton"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.5"-->
+<!--        app:layout_constraintVertical_bias="0.5" />-->
 
-        <TextView
-            android:id="@+id/userName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="User Name"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#FFFFFF"
-            android:textStyle="italic" />
+<!--    <Spinner-->
+<!--        android:id="@+id/profile"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="80dp"-->
+<!--        android:background="@android:drawable/btn_dropdown"-->
+<!--        android:spinnerMode="dropdown"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/userName"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.5"-->
+<!--        android:layout_marginTop="20dp"/>-->
 
-        <Spinner
-            android:id="@+id/profile"
-            android:clickable="true"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_marginTop="80dp"
-            android:background="@android:drawable/btn_dropdown"
-            android:spinnerMode="dropdown"
-            android:focusable="true"/>
-        <Spinner
-            android:id="@+id/Contact"
-            android:clickable="true"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_marginTop="20dp"
-            android:background="@android:drawable/btn_dropdown"
-            android:spinnerMode="dropdown"
-            android:focusable="true"/>
+<!--    <Spinner-->
+<!--        android:id="@+id/Contact"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="80dp"-->
+<!--        android:background="@android:drawable/btn_dropdown"-->
+<!--        android:spinnerMode="dropdown"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/profile"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        android:layout_marginTop="20dp"/>-->
 
-        <Spinner
-            android:id="@+id/upcoming_events"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_marginTop="20dp"
-            android:background="@android:drawable/btn_dropdown"
-            android:clickable="true"
-            android:focusable="true"
-            android:spinnerMode="dropdown" />
+<!--    <Spinner-->
+<!--        android:id="@+id/upcoming_events"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="80dp"-->
+<!--        android:background="@android:drawable/btn_dropdown"-->
+<!--        android:spinnerMode="dropdown"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/Contact"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        android:layout_marginTop="20dp"/>-->
 
-        <Spinner
-            android:id="@+id/about"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_marginTop="20dp"
-            android:background="@android:drawable/btn_dropdown"
-            android:clickable="true"
-            android:focusable="true"
-            android:spinnerMode="dropdown" />
+<!--    <Spinner-->
+<!--        android:id="@+id/about"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="80dp"-->
+<!--        android:background="@android:drawable/btn_dropdown"-->
+<!--        android:spinnerMode="dropdown"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/upcoming_events"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        android:layout_marginTop="20dp"/>-->
 
-        <ImageButton
-            android:id="@+id/imageButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/profile" />
+    <!-- More menu item -->
 
-
-        <!-- More menu item -->
-
-    </LinearLayout>
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

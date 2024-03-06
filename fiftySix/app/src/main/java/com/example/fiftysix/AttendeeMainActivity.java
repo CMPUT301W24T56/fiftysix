@@ -45,7 +45,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
                  Intent intent = new Intent(AttendeeMainActivity.this, PromotionQRCode.class);
                  startActivity(intent);
             }
-        });
+        }); 
 
         notification_button.setOnClickListener(new View.OnClickListener() {
             @Override
