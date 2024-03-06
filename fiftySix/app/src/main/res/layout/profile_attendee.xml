@@ -13,6 +13,7 @@
         android:padding="12dp">
 
 
+
         <!-- Menu Item: Profile -->
 
         <!-- Repeating structure for other menu items (About, manage events, etc.) -->
@@ -67,6 +68,12 @@
             android:clickable="true"
             android:focusable="true"
             android:spinnerMode="dropdown" />
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/profile" />
 
 
         <!-- More menu item -->

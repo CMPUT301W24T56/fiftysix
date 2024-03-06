@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // TODO: Open attendee page.
-                Log.d("TAG", "onClick:   not working ");
+
                 Intent intent = new Intent(MainActivity.this, AttendeeMainActivity.class);
                 startActivity(intent);
             }
