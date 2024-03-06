@@ -25,6 +25,9 @@
             android:name=".OrganizerMainActivity"
             android:exported="false" />
         <activity
+            android:name=".profile_attendee_edit"
+            android:exported="true" />
+        <activity
             android:name=".OrganizerCreateEventActivity"
             android:exported="false" />
         <activity
