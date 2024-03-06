@@ -9,10 +9,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Switch;
 import android.widget.ViewFlipper;
 
 import com.journeyapps.barcodescanner.ScanContract;
@@ -148,8 +146,8 @@ public class OrganizerMainActivity extends AppCompatActivity {
         // Home page buttons
          addEventButton = (ImageButton) findViewById(R.id.buttonAddEvent);
          orgProfileButton = (ImageButton) findViewById(R.id.buttonOrganizerProfile);
-         orgNotificationButton = (ImageButton) findViewById(R.id.buttonOrganizerNotificationBell);
-         orgHomeButton = (ImageButton) findViewById(R.id.buttonOrganizerHome);
+         orgNotificationButton = (ImageButton) findViewById(R.id.notification_button);
+         orgHomeButton = (ImageButton) findViewById(R.id.button_attendee_home);
         // Create event page buttons
         reuseCheckInQR = (Button) findViewById(R.id.reuseCheckinQR);
         createEvent = (Button) findViewById(R.id.buttonCreateEvent);

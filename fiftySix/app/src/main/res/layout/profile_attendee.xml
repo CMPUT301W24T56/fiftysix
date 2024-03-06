@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:background="@color/colorPrimaryDark">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+
+        <!-- Menu Item: Profile -->
+
+        <!-- Repeating structure for other menu items (About, manage events, etc.) -->
+
+        <!-- Contact Section -->
+
+        <TextView
+            android:id="@+id/userName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="User Name"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textStyle="italic" />
+
+        <Spinner
+            android:id="@+id/profile"
+            android:clickable="true"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="80dp"
+            android:background="@android:drawable/btn_dropdown"
+            android:spinnerMode="dropdown"
+            android:focusable="true"/>
+        <Spinner
+            android:id="@+id/Contact"
+            android:clickable="true"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="20dp"
+            android:background="@android:drawable/btn_dropdown"
+            android:spinnerMode="dropdown"
+            android:focusable="true"/>
+
+        <Spinner
+            android:id="@+id/upcoming_events"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="20dp"
+            android:background="@android:drawable/btn_dropdown"
+            android:clickable="true"
+            android:focusable="true"
+            android:spinnerMode="dropdown" />
+
+        <Spinner
+            android:id="@+id/about"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="20dp"
+            android:background="@android:drawable/btn_dropdown"
+            android:clickable="true"
+            android:focusable="true"
+            android:spinnerMode="dropdown" />
+
+
+        <!-- More menu item -->
+
+    </LinearLayout>
+
+</RelativeLayout>
