@@ -39,7 +39,7 @@ dependencies {
 
     // zxing-android-embedded QR code scanning & generation
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
-
+    implementation("com.google.zxing:core:3.4.1")
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:32.7.3"))
     // TODO: Add the dependencies for Firebase products you want to use

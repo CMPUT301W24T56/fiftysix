@@ -9,13 +9,14 @@
 
     <EditText
         android:id="@+id/Phoneno"
+        android:paddingLeft="10dp"
         android:layout_width="331dp"
         android:layout_height="54dp"
         android:layout_marginBottom="124dp"
-        android:background="#DF859E"
+        android:background="#FFFFFF"
         android:hint="Phone No: "
         android:inputType="number"
-        android:textColorHint="@color/white"
+        android:textColorHint="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.4"
@@ -25,35 +26,38 @@
         android:id="@+id/date_of_birth"
         android:layout_width="331dp"
         android:layout_height="54dp"
+        android:paddingLeft="10dp"
         android:layout_marginBottom="208dp"
-        android:background="#DF859E"
+        android:background="#FFFFFF"
         android:hint="D.O.B: "
         android:inputType="date"
-        android:textColorHint="@color/white"
+        android:textColorHint="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/email"
+        android:paddingLeft="10dp"
         android:layout_width="331dp"
         android:layout_height="54dp"
         android:layout_marginBottom="284dp"
-        android:background="#DF859E"
+        android:background="#FFFFFF"
         android:hint="Email: "
-        android:textColorHint="@color/white"
+        android:textColorHint="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/profile_image"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_marginTop="16dp"
         android:scaleType="centerCrop"
+        android:paddingLeft="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -63,6 +67,7 @@
 
     <TextView
         android:id="@+id/UserName"
+        android:paddingLeft="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -76,11 +81,12 @@
 
     <EditText
         android:id="@+id/Name"
+        android:paddingLeft="10dp"
         android:layout_width="331dp"
         android:layout_height="54dp"
-        android:background="#DF859E"
+        android:background="#FFFFFF"
         android:hint=" Name: "
-        android:textColorHint="@color/white"
+        android:textColorHint="@color/black"
         app:layout_constraintBottom_toTopOf="@+id/editText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.4"
@@ -90,17 +96,29 @@
 
     <EditText
         android:id="@+id/editText"
+        android:paddingLeft="10dp"
         android:layout_width="331dp"
         android:layout_height="54dp"
         android:layout_marginBottom="364dp"
-        android:background="#DF859E"
+        android:background="#FFFFFF"
         android:hint="Email: "
         android:textColor="@color/white"
-        android:textColorHint="@color/white"
+        android:textColorHint="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Switch
+        android:id="@+id/switch1"
+        android:paddingLeft="10dp"
+        android:layout_width="153dp"
+        android:layout_height="37dp"
+        android:background="@color/white"
+        android:text="geolocation"
+        android:textColor="@color/black"
+        tools:layout_editor_absoluteX="32dp"
+        tools:layout_editor_absoluteY="636dp" />
 
     <!--    <TextView-->
 <!--        android:id="@+id/userName"-->
