@@ -1,13 +1,21 @@
 package com.example.fiftysix;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -28,6 +36,9 @@ public class OrganizerMainActivity extends AppCompatActivity {
     private ViewFlipper viewFlipper;
     private Organizer organizer;
     private int attendeeLimit = Integer.MAX_VALUE;
+    private ActivityResultLauncher<Intent> activityResultLauncher;
+    private Poster posterHandler;
+    private Uri selectedImageUri = null;
 
     // Buttons on home pages
     private ImageButton addEventButton;
@@ -44,7 +55,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
     private EditText eventAddressEditText;
     private EditText eventDetailsEditText;
     private Switch switchAttendeeLimit;
-    private EditText editTextAttendeeLimit;
+    // private Button buttonUploadPoster;
     // Buttons on Upload QR page
     private Button uploadQRFromScan;
 
@@ -62,9 +73,20 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
         viewFlipper = findViewById(R.id.myViewFlipper);
 
+        // Creates Poster Object
+        posterHandler = new Poster();
 
         // Creates Organizer Object
         organizer = new Organizer(context);
+
+        activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == AppCompatActivity.RESULT_OK && result.getData() != null) {
+                        selectedImageUri = result.getData().getData();
+                    }
+                }
+        );
 
 
         addEventButton.setOnClickListener(new View.OnClickListener() {
@@ -87,6 +109,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
 
                 organizer.createEventNewQRCode(eventDetails, eventAddress, attendeeLimit, eventTitle);
+                posterHandler.uploadImageAndStoreReference(selectedImageUri, eventTitle, "Event");
                 previousView(v);
             }
 
@@ -121,8 +144,39 @@ public class OrganizerMainActivity extends AppCompatActivity {
             }
         });
 
+        Button buttonUploadPoster = findViewById(R.id.buttonUploadPoster);
+        buttonUploadPoster.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showImageSourceDialog();
+            }
+        });
 
+    }
 
+    private void showImageSourceDialog() {
+        CharSequence[] items = {"Upload from Gallery", "Upload from Camera"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Upload Poster");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0: // Upload from Gallery
+                        openGallery();
+                        break;
+                    case 1: // Upload from Camera
+                        // TODO: Implement camera capture functionality
+                        break;
+                }
+            }
+        });
+        builder.show();
+    }
+
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        activityResultLauncher.launch(intent);
     }
 
     public void previousView(View v){
@@ -147,6 +201,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
         uploadQRFromScan = (Button) findViewById(R.id.uploadQRFromScan);
         switchAttendeeLimit = findViewById(R.id.switchAttendeeLimit);
 
+
     }
 
     public void setEditText(){
@@ -154,7 +209,6 @@ public class OrganizerMainActivity extends AppCompatActivity {
         eventDateEditText = (EditText) findViewById(R.id.eventDateEditText);
         eventAddressEditText = (EditText) findViewById(R.id.eventAddressEditText);
         eventDetailsEditText = (EditText) findViewById(R.id.eventDetailsEditText);
-        editTextAttendeeLimit = (EditText) findViewById(R.id.editTextNumberAttendeeLimit);
     }
 
     private void setupAttendeeLimitSwitch() {
