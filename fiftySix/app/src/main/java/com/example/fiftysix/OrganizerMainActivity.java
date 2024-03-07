@@ -301,14 +301,8 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
     //________________________________________Methods________________________________________
 
-    private void openGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        activityResultLauncher.launch(intent);
-    }
 
-        public void previousView(View v){
-            viewFlipper.showPrevious();
-        }
+
     private void requestCameraPermission() {
         ActivityCompat.requestPermissions(OrganizerMainActivity.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
     }
@@ -365,9 +359,9 @@ public class OrganizerMainActivity extends AppCompatActivity {
         viewFlipper.showPrevious();
     }
 
-        private void nextView(View v){
-            viewFlipper.showNext();
-        }
+    private void nextView(View v){
+        viewFlipper.showNext();
+    }
 
         private void setButtons() {
             // Home page buttons
@@ -392,6 +386,8 @@ public class OrganizerMainActivity extends AppCompatActivity {
             eventAddressEditText = (EditText) findViewById(R.id.eventAddressEditText);
             eventDetailsEditText = (EditText) findViewById(R.id.eventDetailsEditText);
         }
+
+
 
         private void setupAttendeeLimitSwitch() {
             switchAttendeeLimit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
