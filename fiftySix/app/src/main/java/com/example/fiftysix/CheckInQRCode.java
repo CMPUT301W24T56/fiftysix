@@ -1,13 +1,21 @@
 package com.example.fiftysix;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import androidx.annotation.NonNull;
+
+import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.ImageUtils;
+import com.blankj.utilcode.util.UriUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -19,6 +27,8 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +36,7 @@ import java.util.Map;
 // Requires a (String) eventID to instantiate this class.
 // QRCode is uploaded to Firebase.
 
-public class CheckInQRCode {
+public class CheckInQRCode{
 
     // MIGHT need to add an organizer ID
 
@@ -42,6 +52,9 @@ public class CheckInQRCode {
     private StorageReference storageRef;
     private String imagePath;
     private Context mContext;
+    private Uri uriToBitMap;
+
+
 
 
     // Constructor: requires eventID to instantiate.
@@ -51,15 +64,18 @@ public class CheckInQRCode {
 
 
         // Used as the Primary Key in firebase.
-        this.qrCodeID = eventID + "CheckInQR";
+        this.qrCodeID = FirebaseDatabase.getInstance().getReference("CheckInQRCode").push().getKey();
         this.db = FirebaseFirestore.getInstance();
         this.qrRef = db.collection("CheckInQRCode");
         this.storage = FirebaseStorage.getInstance();
         this.storageRef = storage.getReference();
         this.imagePath = "images/checkInQRCode/" + qrCodeID;
         this.mContext = contextIN;
+        this.eventID = eventID;
+        this.uriToBitMap = null;
 
         this.generateQR();
+
     }
 
 
@@ -83,7 +99,7 @@ public class CheckInQRCode {
         try {
 
             // Generates QRCode Image.
-            BitMatrix matrix = writer.encode(eventID, BarcodeFormat.QR_CODE, qrWidth, qrHeight);
+            BitMatrix matrix = writer.encode(qrCodeID, BarcodeFormat.QR_CODE, qrWidth, qrHeight);
             BarcodeEncoder encoder = new BarcodeEncoder();
             this.qrCode = encoder.createBitmap(matrix);
 
@@ -104,19 +120,22 @@ public class CheckInQRCode {
             // Uploads Bitmap Image to cloud Storage.
             uploadData();
 
+            // NOT NEEDED: Uploads qr image to cloud
+
             // Converts Bitmap to Uri
             Context context = this.mContext;
-            Uri uriBitMap = getImageUri(this.mContext, this.qrCode);
-
+            uriToBitMap = getImageUri(context, this.qrCode);
             // Uploads Uri of Bitmap to firbase cloud.
-            uploadImage(uriBitMap);
-
+            uploadImage(uriToBitMap);
 
             // Sets view image to QR code, Uncomment and update view ID to display
             //qrViewID.setImageBitmap(bitmap);
+
         } catch (WriterException e) {
             throw new RuntimeException(e);
         }
+
+
     }
 
     // Adds QR code data to firebase. Helper function for generateQR().
@@ -162,10 +181,13 @@ public class CheckInQRCode {
     // TA said this was okay to copy, given it was a small function.
     // FOUND THIS ONLINE: https://stackoverflow.com/questions/8295773/how-can-i-transform-a-bitmap-into-a-uri
     // Original Source: https://colinyeoh.wordpress.com/2012/05/18/android-getting-image-uri-from-bitmap/
-    private Uri getImageUri(Context inContext, Bitmap inImage) {
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        inImage.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage,"IMG_" + Calendar.getInstance().getTime() , null);
         return Uri.parse(path);
+
     }
+
+
 }

@@ -17,6 +17,9 @@
         </intent>
     </queries>
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -37,12 +40,6 @@
             android:exported="false" />
         <activity
             android:name=".OrganizerMainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".OrganizerCreateEventActivity"
-            android:exported="false" />
-        <activity
-            android:name=".OrganizerHomeActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

@@ -1,5 +1,10 @@
 package com.example.fiftysix;
 
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import static android.content.ContentValues.TAG;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -35,6 +40,16 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+import android.util.Log;
+import androidx.recyclerview.widget.RecyclerView;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import java.util.ArrayList;
 
 import com.google.firebase.encoders.json.BuildConfig;
 import com.journeyapps.barcodescanner.ScanContract;
@@ -48,8 +63,17 @@ import java.util.Locale;
 
 public class OrganizerMainActivity extends AppCompatActivity {
 
+    private FirebaseFirestore db;
+    private CollectionReference orgEventRef;
+    private CollectionReference eventRef;
+    private RecyclerView recyclerView;
+
+
+    // Views
     private ViewFlipper viewFlipper;
     private Organizer organizer;
+    private String reUseQRID;
+
     private int attendeeLimit = Integer.MAX_VALUE;
     private ActivityResultLauncher<Intent> galleryLauncher;
     private ActivityResultLauncher<Uri> cameraLauncher;
@@ -77,24 +101,80 @@ public class OrganizerMainActivity extends AppCompatActivity {
     // private Button buttonUploadPoster;
     // Buttons on Upload QR page
     private Button uploadQRFromScan;
+    private ArrayList<Event> eventDataList;
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.organizer_flipper);
+        viewFlipper = findViewById(R.id.organizerFlipper);
         Context context = getApplicationContext();
+        recyclerView = findViewById(R.id.orgHomeRecyclerView);
+
+        // Creates Organizer Object
+        organizer = new Organizer(context);
+
+        // Firebase
+        db = FirebaseFirestore.getInstance();
+        orgEventRef = db.collection("Users").document(organizer.getOrganizerID()).collection("EventsByOrganizer");
+        eventRef = db.collection("Events");
+
 
         setButtons();
         setEditText();
         setupAttendeeLimitSwitch();
 
-        viewFlipper = findViewById(R.id.myViewFlipper);
+
+        eventDataList = new ArrayList<>();
+        //eventDataList.add(new Event("Event Name", "Event Location", "Event Date"));
+
+        // Sets home page recyler view event data
+        EventAdapter eventAdapter = new EventAdapter(eventDataList);
+        recyclerView.setAdapter(eventAdapter);
+        recyclerView.setHasFixedSize(false);
 
         // Creates Poster Object
         posterHandler = new Poster();
 
+        // Adds events from database to the organizers home screen. Will only show events created by the organizer
+        orgEventRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot querySnapshots,
+                                @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.e("Firestore", error.toString());
+                    return;
+                }
+                if (querySnapshots != null) {
+                    eventDataList.clear();
+                    for (QueryDocumentSnapshot doc : querySnapshots) {
+                        String eventID = doc.getId();
+                        Log.d("EVENTNAME", "hello "+ eventID);
+                        eventRef.document(eventID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                                if (error != null) {
+                                    Log.e("Firestore", error.toString());
+                                    return;
+                                }
+                                if (querySnapshots != null) {
+                                    String eventName = value.getString("eventName");
+                                    //String attendeeLimit = value.getString("attendeeLimit");
+                                    //String location = doc.get("location").toString(); TODO:NEED TO ADD TO DATA BASE
+                                    //String date = doc.get("date").toString(); TODO:NEED TO ADD TO DATA BASE
+                                    eventDataList.add(new Event(eventName, "temp location", "temp Date"));
+                                    eventAdapter.notifyDataSetChanged();
+                                }
+                            }
+                        });
+                        Log.d("Firestore", "hello");
+                    }
+                }
+            }
+        });
         // Creates Organizer Object
         organizer = new Organizer(context);
 
@@ -118,12 +198,14 @@ public class OrganizerMainActivity extends AppCompatActivity {
         );
 
 
+        // Opens page to create event
         addEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 nextView(v);
             }
         });
+
 
 
         // Create event pages
@@ -141,9 +223,10 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 posterHandler.uploadImageAndStoreReference(selectedImageUri, eventTitle, "Event");
                 previousView(v);
             }
-
         });
 
+
+        // Opens viewe to reuse android a qrcode for attendee check in.
         reuseCheckInQR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -151,6 +234,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
             }
         });
 
+        // Switchs layout to previous when user presses back in event details page
         eventDetailsBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,18 +242,18 @@ public class OrganizerMainActivity extends AppCompatActivity {
             }
         });
 
-        reuseCheckInQR.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                nextView(v);
-            }
-        });
-
-
+        // TODO: fix QR reuse method createEventReuseQRCode
         uploadQRFromScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                scanCode();
+                //scanCode();
+                String eventTitle = eventTitleEditText.getText().toString();
+                String eventDate = eventDateEditText.getText().toString();
+                String eventAddress = eventAddressEditText.getText().toString();
+                String eventDetails = eventDetailsEditText.getText().toString();
+                //Integer eventAttendeeLimit = Integer.parseInt(eventAttendeeLimitEditText.getText().toString());
+                //organizer.createEventReuseQRCode(eventDetails, eventAddress, 100, eventTitle, reUseQRID);
+                previousView(v);
             }
         });
 
@@ -180,6 +264,8 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 showImageSourceDialog();
             }
         });
+
+
 
     }
 
@@ -211,6 +297,11 @@ public class OrganizerMainActivity extends AppCompatActivity {
         });
         builder.show();
     }
+
+
+    //________________________________________Methods________________________________________
+
+
 
     private void requestCameraPermission() {
         ActivityCompat.requestPermissions(OrganizerMainActivity.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
@@ -268,118 +359,123 @@ public class OrganizerMainActivity extends AppCompatActivity {
         viewFlipper.showPrevious();
     }
 
-    public void nextView(View v){
+    private void nextView(View v){
         viewFlipper.showNext();
     }
 
-    public void setButtons(){
-        // Home page buttons
-         addEventButton = (ImageButton) findViewById(R.id.buttonAddEvent);
-         orgProfileButton = (ImageButton) findViewById(R.id.buttonOrganizerProfile);
-         orgNotificationButton = (ImageButton) findViewById(R.id.buttonOrganizerNotificationBell);
-         orgHomeButton = (ImageButton) findViewById(R.id.buttonOrganizerHome);
-        // Create event page buttons
-        reuseCheckInQR = (Button) findViewById(R.id.reuseCheckinQR);
-        createEvent = (Button) findViewById(R.id.buttonCreateEvent);
-        eventDetailsBack = (ImageButton) findViewById(R.id.buttonBackCreateEvent);
-        ImageButton eventDetailsBack = (ImageButton) findViewById(R.id.buttonBackUploadQR);
-        uploadQRFromScan = (Button) findViewById(R.id.uploadQRFromScan);
-        switchAttendeeLimit = findViewById(R.id.switchAttendeeLimit);
+        private void setButtons() {
+            // Home page buttons
+            addEventButton = (ImageButton) findViewById(R.id.buttonAddEvent);
+            orgProfileButton = (ImageButton) findViewById(R.id.buttonOrganizerProfile);
+            orgNotificationButton = (ImageButton) findViewById(R.id.buttonOrganizerNotificationBell);
+            orgHomeButton = (ImageButton) findViewById(R.id.buttonOrganizerHome);
+            // Create event page buttons
+            reuseCheckInQR = (Button) findViewById(R.id.reuseCheckinQR);
+            createEvent = (Button) findViewById(R.id.buttonCreateEvent);
+            eventDetailsBack = (ImageButton) findViewById(R.id.buttonBackCreateEvent);
+            ImageButton eventDetailsBack = (ImageButton) findViewById(R.id.buttonBackUploadQR);
+            uploadQRFromScan = (Button) findViewById(R.id.uploadQRFromScan);
+            switchAttendeeLimit = findViewById(R.id.switchAttendeeLimit);
 
 
-    }
+        }
 
-    public void setEditText(){
-        eventTitleEditText = (EditText) findViewById(R.id.eventNameEditText);
-        eventDateEditText = (EditText) findViewById(R.id.eventDateEditText);
-        eventAddressEditText = (EditText) findViewById(R.id.eventAddressEditText);
-        eventDetailsEditText = (EditText) findViewById(R.id.eventDetailsEditText);
-    }
+        private void setEditText() {
+            eventTitleEditText = (EditText) findViewById(R.id.eventNameEditText);
+            eventDateEditText = (EditText) findViewById(R.id.eventDateEditText);
+            eventAddressEditText = (EditText) findViewById(R.id.eventAddressEditText);
+            eventDetailsEditText = (EditText) findViewById(R.id.eventDetailsEditText);
+        }
 
-    private void setupAttendeeLimitSwitch() {
-        switchAttendeeLimit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
-                if (isChecked) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(OrganizerMainActivity.this);
-                    builder.setTitle("Set Attendee Limit");
 
-                    // Set up the input
-                    final EditText input = new EditText(OrganizerMainActivity.this);
-                    input.setInputType(InputType.TYPE_CLASS_NUMBER);
-                    builder.setView(input);
 
-                    // Set up the buttons
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            try {
-                                int limit = Integer.parseInt(input.getText().toString());
-                                if (limit > 0) {
-                                    attendeeLimit = limit;
-                                } else {
-                                    // Invalid input, revert the switch to unchecked
+        private void setupAttendeeLimitSwitch() {
+            switchAttendeeLimit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+                    if (isChecked) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(OrganizerMainActivity.this);
+                        builder.setTitle("Set Attendee Limit");
+
+                        // Set up the input
+                        final EditText input = new EditText(OrganizerMainActivity.this);
+                        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        builder.setView(input);
+
+                        // Set up the buttons
+                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                try {
+                                    int limit = Integer.parseInt(input.getText().toString());
+                                    if (limit > 0) {
+                                        attendeeLimit = limit;
+                                    } else {
+                                        // Invalid input, revert the switch to unchecked
+                                        switchAttendeeLimit.setChecked(false);
+                                        attendeeLimit = Integer.MAX_VALUE;
+                                    }
+                                } catch (NumberFormatException e) {
                                     switchAttendeeLimit.setChecked(false);
                                     attendeeLimit = Integer.MAX_VALUE;
                                 }
-                            } catch (NumberFormatException e) {
-                                switchAttendeeLimit.setChecked(false);
-                                attendeeLimit = Integer.MAX_VALUE;
                             }
-                        }
-                    });
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                            // Revert the switch to unchecked since canceled
-                            switchAttendeeLimit.setChecked(false);
-                        }
-                    });
+                        });
+                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                                // Revert the switch to unchecked since canceled
+                                switchAttendeeLimit.setChecked(false);
+                            }
+                        });
 
-                    builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialogInterface) {
-                            // Handle the case where the user cancels the dialog (e.g., by pressing the back button)
-                            switchAttendeeLimit.setChecked(false);
-                        }
-                    });
+                        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialogInterface) {
+                                // Handle the case where the user cancels the dialog (e.g., by pressing the back button)
+                                switchAttendeeLimit.setChecked(false);
+                            }
+                        });
 
-                    builder.show();
-                } else {
-                    attendeeLimit = Integer.MAX_VALUE;
+                        builder.show();
+                    } else {
+                        attendeeLimit = Integer.MAX_VALUE;
+                    }
                 }
-            }
-        });
-    }
-
-
-
-    // "youtube - Implement Barcode QR Scanner in Android studio barcode reader | Cambo Tutorial" - youtube channel = Cambo Tutorial
-    private void scanCode(){
-        ScanOptions options = new ScanOptions();
-        options.setPrompt("Volume up to turn on flash");
-        options.setBeepEnabled(true);
-        options.setOrientationLocked(true);
-        options.setCaptureActivity(CaptureAct.class);
-        barLauncher.launch(options);
-    }
-    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result->{
-
-        if(result.getContents() != null){
-            AlertDialog.Builder builder = new AlertDialog.Builder(OrganizerMainActivity.this);
-            builder.setTitle("Result");
-            builder.setMessage(result.getContents());
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            }).show();
+            });
         }
 
-    });
+
+        // "youtube - Implement Barcode QR Scanner in Android studio barcode reader | Cambo Tutorial" - youtube channel = Cambo Tutorial
+        private void scanCode () {
+            ScanOptions options = new ScanOptions();
+            options.setPrompt("Volume up to turn on flash");
+            options.setBeepEnabled(true);
+            options.setOrientationLocked(true);
+            options.setCaptureActivity(CaptureAct.class);
+            barLauncher.launch(options);
+        }
+        ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
+
+            if (result.getContents() != null) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(OrganizerMainActivity.this);
+                builder.setTitle("Result");
+                builder.setMessage(result.getContents());
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        reUseQRID = result.getContents().replace(" ", "");
+
+                        dialog.dismiss();
+                    }
+                }).show();
+            }
+
+        });
+
+    }
 
 
-}
+
 
