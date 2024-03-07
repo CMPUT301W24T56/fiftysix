@@ -5,6 +5,7 @@ import static android.content.ContentValues.TAG;
 import android.content.Context;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.inputmethod.InputMethodSession;
 
 import androidx.annotation.NonNull;
 
@@ -18,16 +19,22 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.security.auth.callback.Callback;
+
 public class Organizer {
     private String organizerID;
-    private List<String> eventIDs;
+    private ArrayList<String> eventIDs;
     private Context mContext;
     private String eventID;
+    private ArrayList<String> myEvents;
 
     private String userType = "organizer";
     private FirebaseFirestore db;
@@ -39,6 +46,7 @@ public class Organizer {
         this.organizerID = getDeviceId();
         this.db = FirebaseFirestore.getInstance();
         this.ref = db.collection("Users");
+
 
         // Adds organizer to data base if the organizer doesn't already exist
         organizerExists();
@@ -56,6 +64,10 @@ public class Organizer {
         return id;
     }
 
+    public String getOrganizerID(){
+        return organizerID;
+    }
+
 
     // Method creates new event in database and generates a new check-in QR code
     public void createEventNewQRCode( String details, String location, Integer attendeeLimit, String eventName){
@@ -64,9 +76,55 @@ public class Organizer {
     }
 
     // Method creates new event in database and reuses check-in QR code
-    public void createEventReuseQRCode(){
+    public void createEventReuseQRCode(String details, String location, Integer attendeeLimit, String eventName,Context context, String oldQRID){
+        Event event = new Event(this.organizerID, details, location, attendeeLimit, eventName, context, oldQRID);
+        addEventToOrganizerDataBase(event.getEventID());
+    }
+
+    // https://stackoverflow.com/questions/50035752/how-to-get-list-of-documents-from-a-collection-in-firestore-android
+    // Returns a list of all event data to display on the organizers home page, (event name, date, location)
+    public void getEventIDList() {
+
+        this.myEvents = new ArrayList<>();
+
+        //ArrayList<String> arrayList= new ArrayList<String>();
+
+        db.collection("Users").document(organizerID).collection("EventsByOrganizer")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+
+
+
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                addEventID(document.getId().toString());
+
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
 
     }
+
+    // kind of like a call back used for get event IDs
+    private void addEventID(String eventID){
+        this.myEvents.add(eventID);
+        Log.d("Cunt", "NNNNNNNN => " + this.myEvents);
+    }
+
+
+
+
+
+
+
+
+
 
 
     // Adds organizer to database.
@@ -94,7 +152,7 @@ public class Organizer {
     // Adds event data to database in firestore, this is nested inside the organizer.
     private void addEventToOrganizerDataBase(String eventIDKey){
         Map<String,Object> orgEventsData = new HashMap<>();
-        orgEventsData.put("temp","temp");
+        orgEventsData.put("testing","temp");
         this.ref.document(this.organizerID).collection("EventsByOrganizer").document(eventIDKey).set(orgEventsData);
     }
 
@@ -124,5 +182,9 @@ public class Organizer {
 
             }
         });
+    }
+
+    public String getMyEvents() {
+        return myEvents.get(1);
     }
 }

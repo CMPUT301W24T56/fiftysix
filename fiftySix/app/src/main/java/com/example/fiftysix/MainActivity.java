@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+
         Button attendeeButton = (Button) findViewById(R.id.buttonAttendee);
         Button organizerButton = (Button) findViewById(R.id.buttonOrganizer);
         Button adminButton = (Button) findViewById(R.id.buttonAdmin);

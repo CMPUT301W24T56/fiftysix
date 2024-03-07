@@ -37,8 +37,12 @@ android {
 
 dependencies {
 
+
     // zxing-android-embedded QR code scanning & generation
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+
+    // https://github.com/Blankj/AndroidUtilCode/blob/master/lib/utilcode/README.md
+    implementation("com.blankj:utilcodex:1.31.1")
 
 
 
@@ -51,6 +55,13 @@ dependencies {
     // https://firebase.google.com/docs/android/setup#available-libraries
     implementation(platform("com.google.firebase:firebase-bom:32.7.3"))
     implementation("com.google.firebase:firebase-analytics")
+
+    //Recycler View
+    implementation("androidx.recyclerview:recyclerview-selection:1.1.0")
+    
+    // cardView Library not
+    implementation("androidx.cardview:cardview:1.0.0")
+    //implementation ("io.grpc:grpc-okhttp:1.32.2")
 
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")

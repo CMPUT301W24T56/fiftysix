@@ -1,26 +1,44 @@
 package com.example.fiftysix;
 
+
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Switch;
 import android.widget.ViewFlipper;
-
+import android.util.Log;
+import androidx.recyclerview.widget.RecyclerView;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import java.util.ArrayList;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 public class OrganizerMainActivity extends AppCompatActivity {
 
+    private FirebaseFirestore db;
+    private CollectionReference orgEventRef;
+    private CollectionReference eventRef;
+    private RecyclerView recyclerView;
+
+
+    // Views
     private ViewFlipper viewFlipper;
+    private Organizer organizer;
+    private String reUseQRID;
+
 
     // Buttons on home pages
     private ImageButton addEventButton;
@@ -40,25 +58,79 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
     // Buttons on Upload QR page
     private Button uploadQRFromScan;
+    private ArrayList<Event> eventDataList;
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.organizer_flipper);
+        viewFlipper = findViewById(R.id.organizerFlipper);
         Context context = getApplicationContext();
+        recyclerView = findViewById(R.id.orgHomeRecyclerView);
+
+        // Creates Organizer Object
+        organizer = new Organizer(context);
+
+        // Firebase
+        db = FirebaseFirestore.getInstance();
+        orgEventRef = db.collection("Users").document(organizer.getOrganizerID()).collection("EventsByOrganizer");
+        eventRef = db.collection("Events");
+
 
         setButtons();
         setEditText();
 
-        viewFlipper = findViewById(R.id.myViewFlipper);
+
+        eventDataList = new ArrayList<>();
+        //eventDataList.add(new Event("Event Name", "Event Location", "Event Date"));
+
+        // Sets home page recyler view event data
+        EventAdapter eventAdapter = new EventAdapter(eventDataList);
+        recyclerView.setAdapter(eventAdapter);
+        recyclerView.setHasFixedSize(false);
 
 
-        // Creates Organizer Object
-        Organizer organizer = new Organizer(context);
+        // Adds events from database to the organizers home screen. Will only show events created by the organizer
+        orgEventRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot querySnapshots,
+                                @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.e("Firestore", error.toString());
+                    return;
+                }
+                if (querySnapshots != null) {
+                    eventDataList.clear();
+                    for (QueryDocumentSnapshot doc : querySnapshots) {
+                        String eventID = doc.getId();
+                        Log.d("EVENTNAME", "hello "+ eventID);
+                        eventRef.document(eventID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                                if (error != null) {
+                                    Log.e("Firestore", error.toString());
+                                    return;
+                                }
+                                if (querySnapshots != null) {
+                                    String eventName = value.getString("eventName");
+                                    //String location = doc.get("location").toString(); TODO:NEED TO ADD TO DATA BASE
+                                    //String date = doc.get("date").toString(); TODO:NEED TO ADD TO DATA BASE
+                                    eventDataList.add(new Event(eventName, "temp location", "temp Date"));
+                                    eventAdapter.notifyDataSetChanged();
+                                }
+                            }
+                        });
+                        Log.d("Firestore", "hello");
+                    }
+                }
+            }
+        });
 
 
+        // Opens page to create event
         addEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,12 +139,11 @@ public class OrganizerMainActivity extends AppCompatActivity {
         });
 
 
+
         // Create event pages
         createEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
 
                 String eventTitle = eventTitleEditText.getText().toString();
                 String eventDate = eventDateEditText.getText().toString();
@@ -84,9 +155,10 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 organizer.createEventNewQRCode(eventDetails, eventAddress, 100, eventTitle);
                 previousView(v);
             }
-
         });
 
+
+        // Opens viewe to reuse android a qrcode for attendee check in.
         reuseCheckInQR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,6 +166,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
             }
         });
 
+        // Switchs layout to previous when user presses back in event details page
         eventDetailsBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,50 +174,41 @@ public class OrganizerMainActivity extends AppCompatActivity {
             }
         });
 
-        reuseCheckInQR.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                nextView(v);
-            }
-        });
-
-
+        // TODO: fix QR reuse method createEventReuseQRCode
         uploadQRFromScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                scanCode();
+                //scanCode();
+                String eventTitle = eventTitleEditText.getText().toString();
+                String eventDate = eventDateEditText.getText().toString();
+                String eventAddress = eventAddressEditText.getText().toString();
+                String eventDetails = eventDetailsEditText.getText().toString();
+                //Integer eventAttendeeLimit = Integer.parseInt(eventAttendeeLimitEditText.getText().toString());
+                //organizer.createEventReuseQRCode(eventDetails, eventAddress, 100, eventTitle, reUseQRID);
+                previousView(v);
             }
         });
 
 
 
+
+
     }
 
 
 
+    //________________________________________Methods________________________________________
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-    public void previousView(View v){
+    private void previousView(View v){
         viewFlipper.showPrevious();
     }
 
-    public void nextView(View v){
+    private void nextView(View v){
         viewFlipper.showNext();
     }
 
-    public void setButtons(){
+    private void setButtons(){
         // Home page buttons
          addEventButton = (ImageButton) findViewById(R.id.buttonAddEvent);
          orgProfileButton = (ImageButton) findViewById(R.id.buttonOrganizerProfile);
@@ -158,13 +222,16 @@ public class OrganizerMainActivity extends AppCompatActivity {
         uploadQRFromScan = (Button) findViewById(R.id.uploadQRFromScan);
     }
 
-    public void setEditText(){
+    private void setEditText(){
         eventTitleEditText = (EditText) findViewById(R.id.eventNameEditText);
         eventDateEditText = (EditText) findViewById(R.id.eventDateEditText);
         eventAddressEditText = (EditText) findViewById(R.id.eventAddressEditText);
         eventDetailsEditText = (EditText) findViewById(R.id.eventDetailsEditText);
         eventAttendeeLimitEditText = (EditText) findViewById(R.id.eventAttendeeLimitEditText);
     }
+
+
+
 
     // "youtube - Implement Barcode QR Scanner in Android studio barcode reader | Cambo Tutorial" - youtube channel = Cambo Tutorial
     private void scanCode(){
@@ -184,6 +251,8 @@ public class OrganizerMainActivity extends AppCompatActivity {
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    reUseQRID = result.getContents().replace(" ", "");
+
                     dialog.dismiss();
                 }
             }).show();
@@ -192,5 +261,9 @@ public class OrganizerMainActivity extends AppCompatActivity {
     });
 
 
-}
+
+    }
+
+
+
 

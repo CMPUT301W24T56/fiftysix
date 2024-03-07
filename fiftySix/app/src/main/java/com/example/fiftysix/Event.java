@@ -1,19 +1,23 @@
 package com.example.fiftysix;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Context;
+import android.location.Location;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.Firebase;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +34,9 @@ public class Event {
     private Integer attendeeCount;
     private String eventName;
     private String promoQRCodeID;
+    private String queryReturnString;
+    private String date;
+    private Boolean expandable;
 
     private CheckInQRCode checkInQRCode;
     private FirebaseFirestore db;
@@ -39,11 +46,6 @@ public class Event {
 
 
     // ________________________________CONSTRUCTORS_____________________________________
-
-
-    public String getEventID() {
-        return eventID;
-    }
 
 
     // This constructor is used when the organizer does NOT want to reuse a check-in QR code.
@@ -65,6 +67,17 @@ public class Event {
     }
 
 
+
+
+    // Used to create an event object from given event ID
+    public Event(String eventName, String eventLocation, String eventDate) {
+        this.eventName = eventName;
+        this.location = eventLocation;
+        this.date = eventDate;
+        this.expandable = false;
+    }
+
+
     // This constructor is used when the organizer WANTS to reuse a check-in QR code.
     public Event(String organizerID, String details, String location, Integer attendeeLimit, String eventName, Context mContext, String checkInQRCodeID) {
         this.eventID = FirebaseDatabase.getInstance().getReference("Events").push().getKey();
@@ -76,13 +89,21 @@ public class Event {
         this.mContext = mContext;
         this.checkInQRCodeID = checkInQRCodeID;
         this.db = FirebaseFirestore.getInstance();
-        this.ref = db.collection("Events");
-        addEventToDataBase();
+
+        // TODO: check the the event that we are reusing the qrcode from is still active.
+
+        // Switches data
+        FirebaseFirestore.getInstance().collection("Events").document(this.eventID).update("checkInQRCode", checkInQRCodeID);
+        FirebaseFirestore.getInstance().collection("CheckInQRCode").document(this.checkInQRCodeID).update("event", this.eventID);
 
     }
 
 
     // ________________________________METHODS_____________________________________
+
+    public String getEventID() {
+        return eventID;
+    }
 
     // Adds event data to database in firestore.
     private void addEventToDataBase(){
@@ -123,4 +144,83 @@ public class Event {
                 });
     }
 
+
+
+    // Returns event strring of the event data selected from the database
+    private String queryEventData(String key){
+        //https://firebase.google.com/docs/firestore/query-data/get-data#java_4
+        // Use this to fetch specific document.
+        queryReturnString = "";
+        DocumentReference docRef = db.collection("Events").document(eventID);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        queryReturnString = document.get(key).toString();
+                        Log.d(TAG, "DocumentSnapshot data: " + queryReturnString);
+
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+        return queryReturnString;
+
+    }
+
+
+
+    //_______________________________Getters________________________________________________________
+
+
+    public String getOrganizerID() {
+        return organizerID;
+    }
+
+    public String getPosterID() {
+        return posterID;
+    }
+
+    public String getCheckInQRCodeID() {
+        return checkInQRCodeID;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public Integer getAttendeeLimit() {
+        return attendeeLimit;
+    }
+
+    public Integer getAttendeeCount() {
+        return attendeeCount;
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public String getPromoQRCodeID() {
+        return promoQRCodeID;
+    }
+
+    public String getDate(){ return date;}
+
+    public Boolean getExpandable() {
+        return expandable;
+    }
+
+    public void setExpandable(Boolean expandable) {
+        this.expandable = expandable;
+    }
 }
