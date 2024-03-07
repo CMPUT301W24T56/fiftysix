@@ -9,15 +9,22 @@ import static android.content.ContentValues.TAG;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.Manifest;
 import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Log;
@@ -31,6 +38,7 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 import android.util.Log;
 import androidx.recyclerview.widget.RecyclerView;
@@ -42,8 +50,16 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
+
+import com.google.firebase.encoders.json.BuildConfig;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class OrganizerMainActivity extends AppCompatActivity {
 
@@ -59,9 +75,13 @@ public class OrganizerMainActivity extends AppCompatActivity {
     private String reUseQRID;
 
     private int attendeeLimit = Integer.MAX_VALUE;
-    private ActivityResultLauncher<Intent> activityResultLauncher;
+    private ActivityResultLauncher<Intent> galleryLauncher;
+    private ActivityResultLauncher<Uri> cameraLauncher;
+    private Uri cameraImageUri = null; // To store the camera image URI
     private Poster posterHandler;
     private Uri selectedImageUri = null;
+    private static final int REQUEST_CAMERA_PERMISSION = 201;
+
 
     // Buttons on home pages
     private ImageButton addEventButton;
@@ -158,11 +178,21 @@ public class OrganizerMainActivity extends AppCompatActivity {
         // Creates Organizer Object
         organizer = new Organizer(context);
 
-        activityResultLauncher = registerForActivityResult(
+        galleryLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == AppCompatActivity.RESULT_OK && result.getData() != null) {
                         selectedImageUri = result.getData().getData();
+                    }
+                }
+        );
+
+        cameraLauncher = registerForActivityResult(
+                new ActivityResultContracts.TakePicture(),
+                result -> {
+                    if (result && cameraImageUri != null) {
+                        selectedImageUri = cameraImageUri;
+                        // Now the selectedImageUri contains the URI of the captured image
                     }
                 }
         );
@@ -244,14 +274,23 @@ public class OrganizerMainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Upload Poster");
         builder.setItems(items, new DialogInterface.OnClickListener() {
+            @SuppressLint("QueryPermissionsNeeded")
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case 0: // Upload from Gallery
-                        openGallery();
+                        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        galleryLauncher.launch(intent);
                         break;
                     case 1: // Upload from Camera
-                        // TODO: Implement camera capture functionality
+                        Log.d(TAG, "Attempting to launch camera.");
+                        if (ContextCompat.checkSelfPermission(OrganizerMainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                            Log.d(TAG, "RequestCameraPermissionCalled");
+                            requestCameraPermission();
+                        } else {
+                            Log.d(TAG, "Permission is already granted");
+                            openCamera();
+                        }
                         break;
                 }
             }
@@ -270,6 +309,61 @@ public class OrganizerMainActivity extends AppCompatActivity {
         public void previousView(View v){
             viewFlipper.showPrevious();
         }
+    private void requestCameraPermission() {
+        ActivityCompat.requestPermissions(OrganizerMainActivity.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission was granted, open camera
+                openCamera();
+            } else {
+                // Permission was denied
+                Toast.makeText(this, "Camera permission is required to use the camera", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void openCamera() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                Log.e(TAG, "Error occurred while creating the file", ex);
+                return;
+            }
+            Uri photoURI = FileProvider.getUriForFile(OrganizerMainActivity.this, "com.example.fiftysix.fileProvider", photoFile);
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+            cameraLauncher.launch(photoURI);
+        } else {
+            Log.d(TAG, "No app can handle the camera intent.");
+        }
+    }
+
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+        cameraImageUri = Uri.fromFile(image);
+        return image;
+    }
+
+
+    public void previousView(View v){
+        viewFlipper.showPrevious();
+    }
 
         private void nextView(View v){
             viewFlipper.showNext();
