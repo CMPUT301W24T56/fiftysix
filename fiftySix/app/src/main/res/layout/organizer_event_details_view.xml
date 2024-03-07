@@ -34,8 +34,9 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="800dp"
-                    android:layout_gravity="top|center">
+                    android:layout_height="match_parent"
+                    android:layout_gravity="top|center"
+                    tools:ignore="UseSwitchCompatOrMaterialXml">
 
                     <TextView
                         android:id="@+id/textViewTitle"
@@ -58,14 +59,14 @@
                         android:background="@drawable/dark_round_button"
                         android:inputType="textAutoCorrect"
                         android:paddingLeft="15dp"
+                        android:text="Event Name"
                         android:textColor="@color/colorPrimaryLight"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textViewTitle"
                         app:layout_constraintVertical_bias="0.064"
-                        tools:text="Event Name"
-                        android:text="Event Name"/>
+                        tools:text="Event Name" />
 
                     <EditText
                         android:id="@+id/eventDateEditText"
@@ -76,14 +77,14 @@
                         android:background="@drawable/dark_round_button"
                         android:inputType="textAutoCorrect"
                         android:paddingLeft="15dp"
+                        android:text="Date"
                         android:textColor="@color/colorPrimaryLight"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/eventNameEditText"
                         app:layout_constraintVertical_bias="0.056"
-                        tools:text="Date"
-                        android:text="Date"/>
+                        tools:text="Date" />
 
                     <EditText
                         android:id="@+id/eventAddressEditText"
@@ -94,14 +95,14 @@
                         android:background="@drawable/dark_round_button"
                         android:inputType="textAutoCorrect"
                         android:paddingLeft="15dp"
+                        android:text="Address"
                         android:textColor="@color/colorPrimaryLight"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/eventDateEditText"
                         app:layout_constraintVertical_bias="0.0"
-                        tools:text="Address"
-                        android:text="Address"/>
+                        tools:text="Address" />
 
                     <EditText
                         android:id="@+id/eventDetailsEditText"
@@ -112,63 +113,84 @@
                         android:background="@drawable/dark_round_button"
                         android:inputType="textAutoCorrect"
                         android:paddingLeft="15dp"
+                        android:text="Event Details"
                         android:textColor="@color/colorPrimaryLight"
-                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/eventAddressEditText"
                         app:layout_constraintVertical_bias="0.127"
-                        tools:text="Event Details"
-                        android:text="Event Details"/>
+                        tools:text="Event Details" />
 
-                    <EditText
-                        android:id="@+id/eventAttendeeLimitEditText"
+                    <Switch
+                        android:id="@+id/switchAttendeeLimit"
                         android:layout_width="289dp"
                         android:layout_height="58dp"
                         android:layout_marginTop="40dp"
-                        android:layout_marginBottom="120dp"
+                        android:layout_marginBottom="200dp"
                         android:background="@drawable/dark_round_button"
-                        android:inputType="number"
+                        android:padding="16dp"
                         android:paddingLeft="15dp"
+                        android:text="Set Attendee Limit"
                         android:textColor="@color/colorPrimaryLight"
-                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/buttonUploadPoster"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/eventDetailsEditText"
-                        app:layout_constraintVertical_bias="0.155"
-                        tools:text="Attendee Limit"
-                        android:text="Attendee Limit"/>
+                        app:layout_constraintTop_toBottomOf="@id/eventDetailsEditText" />
+
+                    <EditText
+                        android:id="@+id/editTextNumberAttendeeLimit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="Enter limit number"
+                        android:inputType="number"
+                        android:padding="16dp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="@+id/switchAttendeeLimit"
+                        app:layout_constraintStart_toStartOf="@+id/switchAttendeeLimit"
+                        app:layout_constraintTop_toBottomOf="@id/switchAttendeeLimit" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/buttonUploadPoster"
+                        android:layout_width="289dp"
+                        android:layout_height="58dp"
+                        android:layout_marginTop="40dp"
+                        android:background="@drawable/dark_round_button"
+                        android:text="Upload Poster"
+                        android:textSize="20sp"
+                        android:textColor="@color/colorPrimaryLight"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/switchAttendeeLimit" />
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/generatePromoQR"
-                        android:layout_width="300dp"
-                        android:layout_height="60dp"
+                        android:layout_width="289dp"
+                        android:layout_height="58dp"
+                        android:layout_marginTop="40dp"
                         android:background="@drawable/dark_round_button"
                         android:fontFamily="@font/inter_medium"
                         android:text="Create PROMO QR Code"
                         android:textColor="@color/colorPrimaryLight"
                         android:textSize="20sp"
-                        app:layout_constraintBottom_toTopOf="@+id/reuseCheckinQR"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/eventAttendeeLimitEditText" />
+                        app:layout_constraintTop_toBottomOf="@+id/buttonUploadPoster" />
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/reuseCheckinQR"
-                        android:layout_width="300dp"
-                        android:layout_height="60dp"
+                        android:layout_width="289dp"
+                        android:layout_height="58dp"
+                        android:layout_marginTop="40dp"
                         android:layout_marginBottom="40dp"
                         android:background="@drawable/dark_round_button"
                         android:fontFamily="@font/inter_medium"
                         android:text="Reuse check-in QR Code"
                         android:textColor="@color/colorPrimaryLight"
                         android:textSize="20sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.495"
+                        app:layout_constraintTop_toBottomOf="@+id/generatePromoQR"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/eventAttendeeLimitEditText"
-                        app:layout_constraintVertical_bias="0.968" />
+                        app:layout_constraintEnd_toEndOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -176,12 +198,7 @@
 
         </ScrollView>
 
-
-
-
     </LinearLayout>
-
-
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonCreateEvent"

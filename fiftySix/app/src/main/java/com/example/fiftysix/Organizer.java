@@ -28,7 +28,7 @@ public class Organizer {
     private List<String> eventIDs;
     private Context mContext;
     private String eventID;
-
+    private Integer attendeeLimit;
     private String userType = "organizer";
     private FirebaseFirestore db;
     private CollectionReference ref;
