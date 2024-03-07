@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
@@ -141,6 +142,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                                 }
                                 if (querySnapshots != null) {
                                     String eventName = value.getString("eventName");
+                                    //String attendeeLimit = value.getString("attendeeLimit");
                                     //String location = doc.get("location").toString(); TODO:NEED TO ADD TO DATA BASE
                                     //String date = doc.get("date").toString(); TODO:NEED TO ADD TO DATA BASE
                                     eventDataList.add(new Event(eventName, "temp location", "temp Date"));
@@ -260,132 +262,127 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
     //________________________________________Methods________________________________________
 
-
-    private void previousView(View v){
     private void openGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         activityResultLauncher.launch(intent);
     }
 
-    public void previousView(View v){
-        viewFlipper.showPrevious();
-    }
+        public void previousView(View v){
+            viewFlipper.showPrevious();
+        }
 
-    private void nextView(View v){
-        viewFlipper.showNext();
-    }
+        private void nextView(View v){
+            viewFlipper.showNext();
+        }
 
-    private void setButtons(){
-        // Home page buttons
-         addEventButton = (ImageButton) findViewById(R.id.buttonAddEvent);
-         orgProfileButton = (ImageButton) findViewById(R.id.buttonOrganizerProfile);
-         orgNotificationButton = (ImageButton) findViewById(R.id.buttonOrganizerNotificationBell);
-         orgHomeButton = (ImageButton) findViewById(R.id.buttonOrganizerHome);
-        // Create event page buttons
-        reuseCheckInQR = (Button) findViewById(R.id.reuseCheckinQR);
-        createEvent = (Button) findViewById(R.id.buttonCreateEvent);
-        eventDetailsBack = (ImageButton) findViewById(R.id.buttonBackCreateEvent);
-        ImageButton eventDetailsBack = (ImageButton) findViewById(R.id.buttonBackUploadQR);
-        uploadQRFromScan = (Button) findViewById(R.id.uploadQRFromScan);
-        switchAttendeeLimit = findViewById(R.id.switchAttendeeLimit);
+        private void setButtons() {
+            // Home page buttons
+            addEventButton = (ImageButton) findViewById(R.id.buttonAddEvent);
+            orgProfileButton = (ImageButton) findViewById(R.id.buttonOrganizerProfile);
+            orgNotificationButton = (ImageButton) findViewById(R.id.buttonOrganizerNotificationBell);
+            orgHomeButton = (ImageButton) findViewById(R.id.buttonOrganizerHome);
+            // Create event page buttons
+            reuseCheckInQR = (Button) findViewById(R.id.reuseCheckinQR);
+            createEvent = (Button) findViewById(R.id.buttonCreateEvent);
+            eventDetailsBack = (ImageButton) findViewById(R.id.buttonBackCreateEvent);
+            ImageButton eventDetailsBack = (ImageButton) findViewById(R.id.buttonBackUploadQR);
+            uploadQRFromScan = (Button) findViewById(R.id.uploadQRFromScan);
+            switchAttendeeLimit = findViewById(R.id.switchAttendeeLimit);
 
 
-    }
+        }
 
-    private void setEditText(){
-        eventTitleEditText = (EditText) findViewById(R.id.eventNameEditText);
-        eventDateEditText = (EditText) findViewById(R.id.eventDateEditText);
-        eventAddressEditText = (EditText) findViewById(R.id.eventAddressEditText);
-        eventDetailsEditText = (EditText) findViewById(R.id.eventDetailsEditText);
-    }
+        private void setEditText() {
+            eventTitleEditText = (EditText) findViewById(R.id.eventNameEditText);
+            eventDateEditText = (EditText) findViewById(R.id.eventDateEditText);
+            eventAddressEditText = (EditText) findViewById(R.id.eventAddressEditText);
+            eventDetailsEditText = (EditText) findViewById(R.id.eventDetailsEditText);
+        }
 
-    private void setupAttendeeLimitSwitch() {
-        switchAttendeeLimit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
-                if (isChecked) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(OrganizerMainActivity.this);
-                    builder.setTitle("Set Attendee Limit");
+        private void setupAttendeeLimitSwitch() {
+            switchAttendeeLimit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+                    if (isChecked) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(OrganizerMainActivity.this);
+                        builder.setTitle("Set Attendee Limit");
 
-                    // Set up the input
-                    final EditText input = new EditText(OrganizerMainActivity.this);
-                    input.setInputType(InputType.TYPE_CLASS_NUMBER);
-                    builder.setView(input);
+                        // Set up the input
+                        final EditText input = new EditText(OrganizerMainActivity.this);
+                        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        builder.setView(input);
 
-                    // Set up the buttons
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            try {
-                                int limit = Integer.parseInt(input.getText().toString());
-                                if (limit > 0) {
-                                    attendeeLimit = limit;
-                                } else {
-                                    // Invalid input, revert the switch to unchecked
+                        // Set up the buttons
+                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                try {
+                                    int limit = Integer.parseInt(input.getText().toString());
+                                    if (limit > 0) {
+                                        attendeeLimit = limit;
+                                    } else {
+                                        // Invalid input, revert the switch to unchecked
+                                        switchAttendeeLimit.setChecked(false);
+                                        attendeeLimit = Integer.MAX_VALUE;
+                                    }
+                                } catch (NumberFormatException e) {
                                     switchAttendeeLimit.setChecked(false);
                                     attendeeLimit = Integer.MAX_VALUE;
                                 }
-                            } catch (NumberFormatException e) {
-                                switchAttendeeLimit.setChecked(false);
-                                attendeeLimit = Integer.MAX_VALUE;
                             }
-                        }
-                    });
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                            // Revert the switch to unchecked since canceled
-                            switchAttendeeLimit.setChecked(false);
-                        }
-                    });
+                        });
+                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                                // Revert the switch to unchecked since canceled
+                                switchAttendeeLimit.setChecked(false);
+                            }
+                        });
 
-                    builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialogInterface) {
-                            // Handle the case where the user cancels the dialog (e.g., by pressing the back button)
-                            switchAttendeeLimit.setChecked(false);
-                        }
-                    });
+                        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialogInterface) {
+                                // Handle the case where the user cancels the dialog (e.g., by pressing the back button)
+                                switchAttendeeLimit.setChecked(false);
+                            }
+                        });
 
-                    builder.show();
-                } else {
-                    attendeeLimit = Integer.MAX_VALUE;
+                        builder.show();
+                    } else {
+                        attendeeLimit = Integer.MAX_VALUE;
+                    }
                 }
-            }
-        });
-    }
-
-
-
-    // "youtube - Implement Barcode QR Scanner in Android studio barcode reader | Cambo Tutorial" - youtube channel = Cambo Tutorial
-    private void scanCode(){
-        ScanOptions options = new ScanOptions();
-        options.setPrompt("Volume up to turn on flash");
-        options.setBeepEnabled(true);
-        options.setOrientationLocked(true);
-        options.setCaptureActivity(CaptureAct.class);
-        barLauncher.launch(options);
-    }
-    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result->{
-
-        if(result.getContents() != null){
-            AlertDialog.Builder builder = new AlertDialog.Builder(OrganizerMainActivity.this);
-            builder.setTitle("Result");
-            builder.setMessage(result.getContents());
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    reUseQRID = result.getContents().replace(" ", "");
-
-                    dialog.dismiss();
-                }
-            }).show();
+            });
         }
 
-    });
 
+        // "youtube - Implement Barcode QR Scanner in Android studio barcode reader | Cambo Tutorial" - youtube channel = Cambo Tutorial
+        private void scanCode () {
+            ScanOptions options = new ScanOptions();
+            options.setPrompt("Volume up to turn on flash");
+            options.setBeepEnabled(true);
+            options.setOrientationLocked(true);
+            options.setCaptureActivity(CaptureAct.class);
+            barLauncher.launch(options);
+        }
+        ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
 
+            if (result.getContents() != null) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(OrganizerMainActivity.this);
+                builder.setTitle("Result");
+                builder.setMessage(result.getContents());
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        reUseQRID = result.getContents().replace(" ", "");
+
+                        dialog.dismiss();
+                    }
+                }).show();
+            }
+
+        });
 
     }
 

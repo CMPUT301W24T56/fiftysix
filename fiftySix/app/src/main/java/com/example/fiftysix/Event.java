@@ -74,6 +74,7 @@ public class Event {
         this.eventName = eventName;
         this.location = eventLocation;
         this.date = eventDate;
+        this.details = details;
         this.expandable = false;
     }
 
