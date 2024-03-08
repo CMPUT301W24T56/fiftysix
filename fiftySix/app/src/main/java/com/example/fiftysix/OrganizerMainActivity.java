@@ -35,6 +35,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -66,6 +67,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private CollectionReference orgEventRef;
     private CollectionReference eventRef;
+    private CollectionReference imageRef;
     private RecyclerView recyclerView;
 
 
@@ -98,6 +100,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
     private EditText eventAddressEditText;
     private EditText eventDetailsEditText;
     private Switch switchAttendeeLimit;
+    private ImageView eventPosterImage;
     // private Button buttonUploadPoster;
     // Buttons on Upload QR page
     private Button uploadQRFromScan;
@@ -121,6 +124,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         orgEventRef = db.collection("Users").document(organizer.getOrganizerID()).collection("EventsByOrganizer");
         eventRef = db.collection("Events");
+        imageRef = db.collection("Images");
 
 
         setButtons();
@@ -160,17 +164,18 @@ public class OrganizerMainActivity extends AppCompatActivity {
                                     Log.e("Firestore", error.toString());
                                     return;
                                 }
-                                if (querySnapshots != null) {
+                                if (value != null && value.exists()) {
                                     String eventName = value.getString("eventName");
                                     //String attendeeLimit = value.getString("attendeeLimit");
                                     //String location = doc.get("location").toString(); TODO:NEED TO ADD TO DATA BASE
                                     //String date = doc.get("date").toString(); TODO:NEED TO ADD TO DATA BASE
-                                    eventDataList.add(new Event(eventName, "temp location", "temp Date"));
+                                    String imageUrl = value.getString("posterURL");
+
+                                    eventDataList.add(new Event(eventName, "temp location", "temp Date", imageUrl));
                                     eventAdapter.notifyDataSetChanged();
                                 }
                             }
                         });
-                        Log.d("Firestore", "hello");
                     }
                 }
             }
@@ -219,8 +224,19 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 String eventDetails = eventDetailsEditText.getText().toString();
 
 
-                organizer.createEventNewQRCode(eventDetails, eventAddress, attendeeLimit, eventTitle);
-                posterHandler.uploadImageAndStoreReference(selectedImageUri, eventTitle, "Event");
+                String eventID = organizer.createEventNewQRCode(eventDetails, eventAddress, attendeeLimit, eventTitle);
+                posterHandler.uploadImageAndStoreReference(selectedImageUri, eventTitle, "Event", new Poster.PosterUploadCallback() {
+                    @Override
+                    public void onUploadSuccess(String imageUrl) {
+                        posterHandler.storeImageinEVENT(imageUrl, eventID);
+                    }
+
+                    @Override
+                    public void onUploadFailure(Exception e) {
+                        Log.e(TAG, "Failed to upload image for event: " + eventID, e);
+                        // Handle failure, e.g., show a toast or alert dialog
+                    }
+                });
                 previousView(v);
             }
         });
@@ -345,11 +361,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
+        File image = File.createTempFile(imageFileName,".jpg",storageDir);
         cameraImageUri = Uri.fromFile(image);
         return image;
     }
@@ -376,8 +388,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
             ImageButton eventDetailsBack = (ImageButton) findViewById(R.id.buttonBackUploadQR);
             uploadQRFromScan = (Button) findViewById(R.id.uploadQRFromScan);
             switchAttendeeLimit = findViewById(R.id.switchAttendeeLimit);
-
-
+            eventPosterImage = findViewById(R.id.event_poster_image);
         }
 
         private void setEditText() {
