@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
+    id("de.mannodermaus.android-junit5")
 }
 
 android {
@@ -37,6 +38,12 @@ android {
 }
 
 dependencies {
+
+    // Aggregator dependency on JUnit api, engine, and params
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
+    // (Optional) If you also have JUnit 4-based tests
+    testImplementation("junit:junit:4.13.2")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.9.1")
 
 
     // zxing-android-embedded QR code scanning & generation
@@ -79,7 +86,11 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test:runner:1.1.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.2")
+
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("de.mannodermaus.junit5:android-test-core:1.3.0")
     implementation("com.google.firebase:firebase-messaging:20.2.4")
     implementation("com.google.android.play:core:1.10.3")
 }

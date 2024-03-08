@@ -3,6 +3,7 @@ package com.example.fiftysix;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
 
         // User selects Attendee, attendee main activity launches.
         attendeeButton.setOnClickListener(v -> {
-            // TODO: Open attendee page.
             startActivity(new Intent(MainActivity.this, AttendeeMainActivity.class));
         });
 

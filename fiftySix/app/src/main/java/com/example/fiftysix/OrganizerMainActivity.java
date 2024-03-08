@@ -226,6 +226,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                     @Override
                     public void onUploadSuccess(String imageUrl) {
                         posterHandler.storeImageinEVENT(imageUrl, eventID);
+                        organizerEventAdapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -234,6 +235,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                         // Handle failure, e.g., show a toast or alert dialog
                     }
                 });
+                organizerEventAdapter.notifyDataSetChanged();
                 previousView(v);
             }
         });
@@ -274,6 +276,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showImageSourceDialog();
+                organizerEventAdapter.notifyDataSetChanged();
             }
         });
 
