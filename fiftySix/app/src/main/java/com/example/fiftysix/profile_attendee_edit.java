@@ -1,9 +1,11 @@
 package com.example.fiftysix;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -12,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class profile_attendee_edit extends AppCompatActivity {
     private ImageButton profile_button_change,go_back_attendee;
     private EditText mail, phoneno, name, home;
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,10 +71,13 @@ public class profile_attendee_edit extends AppCompatActivity {
 
     }
 
+    // Gets android ID to be used as organizer ID
+    // Got from https://stackoverflow.com/questions/60503568/best-possible-way-to-get-device-id-in-android
+
     public void set_profile(){
         // setting the profile from the database to the app
         //  we need to get the id first of the user to identify it.
-
+        
     }
 
     @Override
