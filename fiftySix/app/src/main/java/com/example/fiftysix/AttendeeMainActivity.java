@@ -1,9 +1,6 @@
 package com.example.fiftysix;
 
-import static android.content.ContentValues.TAG;
-
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,12 +12,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ViewFlipper;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -42,8 +36,10 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private ViewFlipper viewFlipper;
     private Attendee attendee;
     private String eventCheckinID;
-    private RecyclerView recyclerView;
-    private ArrayList<Event> eventDataList;
+    private RecyclerView recyclerViewMyEvents;
+    private RecyclerView recyclerViewAllEvents;
+    private ArrayList<Event> myEventDataList;
+    private ArrayList<Event> allEventDataList;
 
     // Buttons on home pages
     private ImageButton attendeeAddEventButton;
@@ -81,23 +77,34 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
         //}
 
-        eventDataList = new ArrayList<>();
-        //eventDataList.add(new Event("temp location", "temp location", "temp Date", "temp details", 11, 100));
+        myEventDataList = new ArrayList<>();
+        allEventDataList = new ArrayList<>();
+        //myEventDataList.add(new Event("temp location", "temp location", "temp Date", "temp details", 11, 100));
 
-        recyclerView = findViewById(R.id.attendeeHomeRecyclerView);
+        recyclerViewMyEvents = findViewById(R.id.attendeeHomeRecyclerView);
+        recyclerViewAllEvents = findViewById(R.id.attendeeHomeRecyclerViewAllEvents);
         //setRecyclerView();
 
         db = FirebaseFirestore.getInstance();
         attEventRef = db.collection("Users").document(attendee.getDeviceId()).collection("UpcomingEvents");
         eventRef = db.collection("Events");
 
-        EventAdapter eventAdapter = new EventAdapter(eventDataList);
-        recyclerView.setAdapter(eventAdapter);
-        recyclerView.setHasFixedSize(false);
+        AttendeeMyEventAdapter attendeeMyEventAdapter = new AttendeeMyEventAdapter(myEventDataList);
+        recyclerViewMyEvents.setAdapter(attendeeMyEventAdapter);
+        recyclerViewMyEvents.setHasFixedSize(false);
+
+
+        AttendeeMyEventAdapter attendeeAllEventAdapter = new AttendeeMyEventAdapter(allEventDataList);
+        recyclerViewAllEvents.setAdapter(attendeeAllEventAdapter);
+        recyclerViewAllEvents.setHasFixedSize(false);
+
 
 
 
         //________________________________________UpdatesHomePageData________________________________________
+
+
+
 
         // Adds events from database to the attendee home screen. Will only show events the attendee has signed up for.
         attEventRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -109,7 +116,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
                     return;
                 }
                 if (querySnapshots != null) {
-                    eventDataList.clear();
+                    myEventDataList.clear();
 
                     for (QueryDocumentSnapshot doc : querySnapshots) {
 
@@ -131,8 +138,11 @@ public class AttendeeMainActivity extends AppCompatActivity {
                                     String location = value.getString("location");
                                     String details = value.getString("details");
 
-                                    eventDataList.add(new Event(eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit));
-                                    eventAdapter.notifyDataSetChanged();
+                                    //if ((String.valueOf(inAttendeeCount) == null) || (String.valueOf(inAttendeeLimit) == null)){
+                                    myEventDataList.add(new Event(eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit));
+                                    //}
+
+                                    attendeeMyEventAdapter.notifyDataSetChanged();
                                 }
                             }
                         });
@@ -143,6 +153,31 @@ public class AttendeeMainActivity extends AppCompatActivity {
         });
 
 
+
+
+
+
+
+        eventRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                for (QueryDocumentSnapshot doc : value) {
+
+                    allEventDataList.clear();
+
+                    String eventID = doc.getId();
+                    String eventName = doc.getString("eventName");
+                    Integer inAttendeeLimit = doc.getLong("attendeeLimit").intValue();
+                    Integer inAttendeeCount = doc.getLong("attendeeCount").intValue();
+                    String inDate = doc.getString("date");
+                    String location = doc.getString("location");
+                    String details = doc.getString("details");
+
+                    allEventDataList.add(new Event(eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit));
+
+                    attendeeAllEventAdapter.notifyDataSetChanged();
+                }
+            }
+        });
 
 
 
@@ -266,11 +301,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
     }
 
-    private void setRecyclerView() {
-        EventAdapter eventAdapter = new EventAdapter(eventDataList);
-        recyclerView.setAdapter(eventAdapter);
-        recyclerView.setHasFixedSize(false);
-    }
 
 
     // "youtube - Implement Barcode QR Scanner in Android studio barcode reader | Cambo Tutorial" - youtube channel = Cambo Tutorial

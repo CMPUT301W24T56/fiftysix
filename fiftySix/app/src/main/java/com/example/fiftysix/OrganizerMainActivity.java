@@ -7,11 +7,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import static android.content.ContentValues.TAG;
 
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -29,19 +26,15 @@ import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
-import android.util.Log;
+
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -52,7 +45,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 
-import com.google.firebase.encoders.json.BuildConfig;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -136,8 +128,8 @@ public class OrganizerMainActivity extends AppCompatActivity {
         //eventDataList.add(new Event("Event Name", "Event Location", "Event Date"));
 
         // Sets home page recyler view event data
-        EventAdapter eventAdapter = new EventAdapter(eventDataList);
-        recyclerView.setAdapter(eventAdapter);
+        OrganizerEventAdapter organizerEventAdapter = new OrganizerEventAdapter(eventDataList);
+        recyclerView.setAdapter(organizerEventAdapter);
         recyclerView.setHasFixedSize(false);
 
         // Creates Poster Object
@@ -172,7 +164,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                                     String location = value.getString("location");
                                     String details = value.getString("details");
                                     eventDataList.add(new Event(eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit));
-                                    eventAdapter.notifyDataSetChanged();
+                                    organizerEventAdapter.notifyDataSetChanged();
 
                                 }
                             }
@@ -213,7 +205,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
         });
 
 
-        /*
+
         // Create event pages
         createEvent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -225,9 +217,8 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 String eventDetails = eventDetailsEditText.getText().toString();
 
 
-                organizer.createEventNewQRCode(eventDetails, eventAddress, attendeeLimit, eventTitle, eventDate);
-                posterHandler.uploadImageAndStoreReference(selectedImageUri, eventTitle, "Event");
-                String eventID = organizer.createEventNewQRCode(eventDetails, eventAddress, attendeeLimit, eventTitle);
+
+                String eventID = organizer.createEventNewQRCode(eventDetails, eventAddress, attendeeLimit, eventTitle, eventDate);
                 posterHandler.uploadImageAndStoreReference(selectedImageUri, eventTitle, "Event", new Poster.PosterUploadCallback() {
                     @Override
                     public void onUploadSuccess(String imageUrl) {
@@ -243,8 +234,10 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 previousView(v);
             }
         });
-        
-         */
+
+
+
+
 
 
         // Opens viewe to reuse android a qrcode for attendee check in.
@@ -272,6 +265,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 String eventDate = eventDateEditText.getText().toString();
                 String eventAddress = eventAddressEditText.getText().toString();
                 String eventDetails = eventDetailsEditText.getText().toString();
+
                 //Integer eventAttendeeLimit = Integer.parseInt(eventAttendeeLimitEditText.getText().toString());
                 //organizer.createEventReuseQRCode(eventDetails, eventAddress, 100, eventTitle, reUseQRID);
                 previousView(v);
@@ -398,6 +392,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
             uploadQRFromScan = (Button) findViewById(R.id.uploadQRFromScan);
             switchAttendeeLimit = findViewById(R.id.switchAttendeeLimit);
             eventPosterImage = findViewById(R.id.event_poster_image);
+
         }
 
         private void setEditText() {

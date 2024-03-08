@@ -74,7 +74,7 @@
                 android:textSize="18sp" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/uploadQRFromScan"
+                android:id="@+id/signUpToEvent"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_below="@+id/attendeeCount"
@@ -82,7 +82,7 @@
                 android:layout_marginBottom="252dp"
                 android:background="@drawable/dark_round_button"
                 android:fontFamily="@font/inter_medium"
-                android:text="Delete Event"
+                android:text="Sign-up"
                 android:textColor="@color/colorPrimaryLight"
                 android:textSize="20sp" />
 
