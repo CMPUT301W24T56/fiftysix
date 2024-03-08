@@ -61,7 +61,7 @@ public class Attendee {
     private String attendeeID;
     private FirebaseFirestore db;
     private CollectionReference ref;
-    private String userType = "attendee";
+    private String userType = "attendee BRADY";
     private String eventID;
 
     private Profile profile; // TODO: create and store attendee profile
@@ -111,7 +111,7 @@ public class Attendee {
                         // TODO: increment this data every time the same attendee checks into the same event.
                         db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).set(attendeeCheckedInCount);
 
-                        db.collection("Events").document(eventID).update("attendeeCount",ServerValue.increment(1));
+                        db.collection("Events").document(eventID).update("attendeeCount",FieldValue.increment(1));
                         Log.d(TAG, "DocumentSnapshot data: " + eventID);
                     } else {
                         Log.d(TAG, "No such document");
@@ -189,6 +189,8 @@ public class Attendee {
             }
         });
     }
+
+
 
 
     public String getUserType() {

@@ -35,12 +35,12 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(MainActivity.this, AttendeeMainActivity.class));
         });
 
-        /*
+
         // User selects Organizer
         organizerButton.setOnClickListener(v -> {
            startActivity(new Intent(MainActivity.this, OrganizerMainActivity.class));
         });
-        //*/
+
 
         // Not for part 3
         adminButton.setOnClickListener(v -> {

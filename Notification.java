@@ -1,4 +1,4 @@
 package com.example.fiftysix;
 
-public class Profile {
+public class Notification {
 }

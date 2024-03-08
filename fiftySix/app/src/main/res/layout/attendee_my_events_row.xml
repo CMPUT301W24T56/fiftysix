@@ -65,7 +65,6 @@
                 android:layout_below="@+id/description"
                 android:padding="16dp"
                 android:text="Attendees at Event:"
-
                 android:textSize="18sp" />
 
             <TextView
@@ -76,6 +75,7 @@
                 android:layout_below="@+id/currentAttendees"
                 android:padding="16dp"
                 android:text="Event Capacity:"
+
                 android:textSize="18sp" />
 
             <ImageView
@@ -83,7 +83,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:padding="5dp"
-                android:layout_above="@id/uploadQRFromScan"
+                android:layout_above="@id/browseAllEvents"
                 android:layout_below="@id/attendeeCapacity"
                 android:adjustViewBounds="true"
                 android:layout_marginTop="15dp"
@@ -93,7 +93,7 @@
 
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/uploadQRFromScan"
+                android:id="@+id/browseAllEvents"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_alignParentStart="true"
@@ -102,7 +102,7 @@
                 android:layout_marginBottom="6dp"
                 android:background="@drawable/dark_round_button"
                 android:fontFamily="@font/inter_medium"
-                android:text="Edit Event"
+                android:text="Browse Events"
                 android:textColor="@color/colorPrimaryLight"
                 android:textSize="20sp" />
 
