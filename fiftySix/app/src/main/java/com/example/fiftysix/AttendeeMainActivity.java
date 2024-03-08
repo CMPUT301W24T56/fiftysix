@@ -2,18 +2,16 @@ package com.example.fiftysix;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ViewFlipper;
+import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -29,6 +27,10 @@ import java.util.ArrayList;
 
 public class AttendeeMainActivity extends AppCompatActivity {
 
+    private ImageButton profile_button;
+    private ImageButton notification_button;
+    private ImageButton qrcode_button;
+    private ImageButton home_button;
 
     private FirebaseFirestore db;
     private CollectionReference attEventRef;
@@ -58,10 +60,13 @@ public class AttendeeMainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.attendee_flipper);
-        viewFlipper = findViewById(R.id.attendeeFlipper);
+        Log.d("TAG", "onClick:   not working ");
+        setContentView(R.layout.activity_attendee_main);
 
-        Context context = getApplicationContext();
+        profile_button = findViewById(R.id.attendee_profile);
+        qrcode_button = findViewById(R.id.qr_code_button);
+        notification_button = findViewById(R.id.notification_button);
+        home_button = findViewById(R.id.button_attendee_home);
 
         setButtons();
         attendee = new Attendee(context);
@@ -215,59 +220,9 @@ public class AttendeeMainActivity extends AppCompatActivity {
             }
         });
 
-        attendeeProfileButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO: Open profile of attendee
-            }
+        notification_button.setOnClickListener(v -> {
+            startActivity(new Intent(AttendeeMainActivity.this, Notification.class));
         });
-
-        attendeeNotificationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO: Open notifications
-            }
-        });
-
-        attendeeHomeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO: not sure what the home button should do
-            }
-        });
-
-
-        //________________________________________AddEventPage________________________________________
-
-        addEventScanCheckinButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO: ScanQRCode to check in to event
-                scanCode();
-
-
-            }
-        });
-
-        browseEventsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO: Browse all events to sign up for
-            }
-        });
-
-        addEventBackImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                previousView(v); // Returns to attendee home pages
-            }
-        });
-
-
-
-
-
-
     }
 
 
@@ -330,6 +285,5 @@ public class AttendeeMainActivity extends AppCompatActivity {
                 }
             }).show();
         }
-
-    });
+    }
 }

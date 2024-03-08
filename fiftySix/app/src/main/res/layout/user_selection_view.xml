@@ -90,7 +90,6 @@
                 android:layout_marginBottom="420dp"
                 android:fontFamily="@font/inter"
                 android:text="browse events around you"
-                android:textColor="@color/material_dynamic_neutral70"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

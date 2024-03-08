@@ -33,7 +33,7 @@
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/buttonOrganizerHome"
+        android:id="@+id/button_attendee_home"
         android:layout_width="73dp"
         android:layout_height="81dp"
         android:layout_marginStart="15dp"
@@ -63,13 +63,13 @@
         android:layout_height="81dp"
         android:background="@drawable/transparent_background_button"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/buttonOrganizerNotificationBell"
-        app:layout_constraintStart_toEndOf="@+id/buttonOrganizerHome"
+        app:layout_constraintEnd_toStartOf="@+id/notification_button"
+        app:layout_constraintStart_toEndOf="@+id/button_attendee_home"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         app:srcCompat="@mipmap/add_ic_launcher_foreground" />
 
     <ImageButton
-        android:id="@+id/buttonOrganizerNotificationBell"
+        android:id="@+id/notification_button"
         android:layout_width="77dp"
         android:layout_height="63dp"
         android:layout_marginStart="320dp"

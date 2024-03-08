@@ -11,6 +11,18 @@ package com.example.fiftysix;
 // Can enable/disable geolocation tracking. (NOT FOR PART 3)
 
 
+
+import static android.hardware.usb.UsbDevice.getDeviceId;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.provider.Settings;
+
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.List;
+
 import static android.content.ContentValues.TAG;
 
 import android.content.Context;
