@@ -61,7 +61,7 @@ public class Attendee {
     private String attendeeID;
     private FirebaseFirestore db;
     private CollectionReference ref;
-    private String userType = "attendee";
+    private String userType = "attendee BRADY";
     private String eventID;
 
     private Profile profile; // TODO: create and store attendee profile
@@ -189,6 +189,8 @@ public class Attendee {
             }
         });
     }
+
+
 
 
     public String getUserType() {

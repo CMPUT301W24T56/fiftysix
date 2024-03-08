@@ -379,8 +379,8 @@ public class OrganizerMainActivity extends AppCompatActivity {
             // Home page buttons
             addEventButton = (ImageButton) findViewById(R.id.buttonAddEvent);
             orgProfileButton = (ImageButton) findViewById(R.id.buttonOrganizerProfile);
-            orgNotificationButton = (ImageButton) findViewById(R.id.buttonOrganizerNotificationBell);
-            orgHomeButton = (ImageButton) findViewById(R.id.buttonOrganizerHome);
+            orgNotificationButton = (ImageButton) findViewById(R.id.notification_button);
+            orgHomeButton = (ImageButton) findViewById(R.id.button_organizer_home);
             // Create event page buttons
             reuseCheckInQR = (Button) findViewById(R.id.reuseCheckinQR);
             createEvent = (Button) findViewById(R.id.buttonCreateEvent);

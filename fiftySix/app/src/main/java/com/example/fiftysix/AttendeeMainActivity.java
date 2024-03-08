@@ -3,8 +3,13 @@ package com.example.fiftysix;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -23,7 +29,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AttendeeMainActivity extends AppCompatActivity {
 
@@ -42,6 +51,9 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private RecyclerView recyclerViewAllEvents;
     private ArrayList<Event> myEventDataList;
     private ArrayList<Event> allEventDataList;
+    private ViewFlipper viewflipper;
+    private RecyclerView recyclerView;
+    private CollectionReference imageRef;
 
     // Buttons on home pages
     private ImageButton attendeeAddEventButton;
@@ -61,12 +73,15 @@ public class AttendeeMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("TAG", "onClick:   not working ");
-        setContentView(R.layout.activity_attendee_main);
+        setContentView(R.layout.attendee_flipper);
 
-        profile_button = findViewById(R.id.attendee_profile);
-        qrcode_button = findViewById(R.id.qr_code_button);
-        notification_button = findViewById(R.id.notification_button);
-        home_button = findViewById(R.id.button_attendee_home);
+
+
+        viewFlipper = findViewById(R.id.attendeeFlipper);
+        Context context = getApplicationContext();
+        db = FirebaseFirestore.getInstance();
+
+
 
         setButtons();
         attendee = new Attendee(context);
@@ -90,9 +105,17 @@ public class AttendeeMainActivity extends AppCompatActivity {
         recyclerViewAllEvents = findViewById(R.id.attendeeHomeRecyclerViewAllEvents);
         //setRecyclerView();
 
+
+        //db.collection('users').doc()
+
+
+
+        Map<String,Object> emptyHash = new HashMap<>();
+        emptyHash.put("test", "test");
         db = FirebaseFirestore.getInstance();
-        attEventRef = db.collection("Users").document(attendee.getDeviceId()).collection("UpcomingEvents");
+        attEventRef = db.collection("Users").document(attendee.getDeviceId()).collection("upcomingEvents");
         eventRef = db.collection("Events");
+        imageRef = db.collection("Images");
 
         AttendeeMyEventAdapter attendeeMyEventAdapter = new AttendeeMyEventAdapter(myEventDataList);
         recyclerViewMyEvents.setAdapter(attendeeMyEventAdapter);
@@ -136,6 +159,10 @@ public class AttendeeMainActivity extends AppCompatActivity {
                                     return;
                                 }
                                 if (querySnapshots != null) {
+
+
+
+
                                     String eventName = value.getString("eventName");
                                     Integer inAttendeeLimit = value.getLong("attendeeLimit").intValue();
                                     Integer inAttendeeCount = value.getLong("attendeeCount").intValue();
@@ -157,7 +184,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
                 }
             }
         });
-
 
 
 
@@ -191,7 +217,17 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
 
 
-        //________________________________________HomePage________________________________________
+        //________________________________________HomePage_______________________________________
+
+        attendeeProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AttendeeMainActivity.this, profile_attendee_edit.class);
+                startActivity(intent);
+            }
+        });
+
+
 
         browseAllEventsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -216,13 +252,18 @@ public class AttendeeMainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 nextView(v); // Opens add event page
-                //setContentView(R.layout.attendee_sign_up_event_view);
+                setContentView(R.layout.attendee_sign_up_event_view);
             }
         });
 
-        notification_button.setOnClickListener(v -> {
+
+
+        attendeeNotificationButton.setOnClickListener(v -> {
             startActivity(new Intent(AttendeeMainActivity.this, Notification.class));
         });
+
+
+
     }
 
 
@@ -237,6 +278,8 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private void nextView(View v){
         viewFlipper.showNext();
     }
+
+
 
     private void setButtons(){
         // Home page buttons
@@ -285,5 +328,5 @@ public class AttendeeMainActivity extends AppCompatActivity {
                 }
             }).show();
         }
-    }
+    });
 }
