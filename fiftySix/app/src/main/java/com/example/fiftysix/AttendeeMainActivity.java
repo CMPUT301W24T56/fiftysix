@@ -192,22 +192,24 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
         eventRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                for (QueryDocumentSnapshot doc : value) {
+                if (value != null){
+                    for (QueryDocumentSnapshot doc : value) {
 
-                    allEventDataList.clear();
+                        allEventDataList.clear();
 
-                    String eventID = doc.getId();
-                    String eventName = doc.getString("eventName");
-                    Integer inAttendeeLimit = doc.getLong("attendeeLimit").intValue();
-                    Integer inAttendeeCount = doc.getLong("attendeeCount").intValue();
-                    String inDate = doc.getString("date");
-                    String location = doc.getString("location");
-                    String details = doc.getString("details");
-                    String imageUrl = doc.getString("posterURL");
+                        String eventID = doc.getId();
+                        String eventName = doc.getString("eventName");
+                        Integer inAttendeeLimit = doc.getLong("attendeeLimit").intValue();
+                        Integer inAttendeeCount = doc.getLong("attendeeCount").intValue();
+                        String inDate = doc.getString("date");
+                        String location = doc.getString("location");
+                        String details = doc.getString("details");
+                        String imageUrl = doc.getString("posterURL");
 
-                    allEventDataList.add(new Event(eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit, imageUrl));
+                        allEventDataList.add(new Event(eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit, imageUrl));
 
-                    attendeeAllEventAdapter.notifyDataSetChanged();
+                     attendeeAllEventAdapter.notifyDataSetChanged();
+                    }
                 }
             }
         });
