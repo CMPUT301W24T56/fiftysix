@@ -36,6 +36,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventVH> {
         holder.versionTxt.setText(event.getLocation());
         holder.apiLevelTxt.setText(event.getDate());
         holder.descriptionTxt.setText(event.getDetails());
+        holder.descriptionEvent.setText(event.getAttendeeLimit().toString());
+        holder.attendeeCount.setText(event.getAttendeeCount().toString());
+
 
         boolean isExpandable = eventList.get(position).getExpandable();
         holder.expandableLayout.setVisibility(isExpandable ? View.VISIBLE : View.GONE);
@@ -49,7 +52,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventVH> {
 
     public class EventVH extends RecyclerView.ViewHolder {
 
-        TextView codeName, versionTxt, apiLevelTxt, descriptionTxt;
+        TextView codeName, versionTxt, apiLevelTxt, descriptionTxt, attendeeCount, descriptionEvent;
         LinearLayout linearLayout;
         RelativeLayout expandableLayout;
 
@@ -60,9 +63,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventVH> {
             versionTxt = itemView.findViewById(R.id.version);
             apiLevelTxt = itemView.findViewById(R.id.apiLevel);
             descriptionTxt = itemView.findViewById(R.id.description);
+            attendeeCount = itemView.findViewById(R.id.attendeeCount);
+            descriptionEvent = itemView.findViewById(R.id.descriptionEvent);
 
             linearLayout = itemView.findViewById(R.id.linear_layout);
             expandableLayout = itemView.findViewById(R.id.expandable_layout);
+
 
 
             linearLayout.setOnClickListener(new View.OnClickListener() {

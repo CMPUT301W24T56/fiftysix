@@ -162,11 +162,14 @@ public class OrganizerMainActivity extends AppCompatActivity {
                                 }
                                 if (querySnapshots != null) {
                                     String eventName = value.getString("eventName");
-                                    //String attendeeLimit = value.getString("attendeeLimit");
-                                    //String location = doc.get("location").toString(); TODO:NEED TO ADD TO DATA BASE
-                                    //String date = doc.get("date").toString(); TODO:NEED TO ADD TO DATA BASE
-                                    eventDataList.add(new Event(eventName, "temp location", "temp Date"));
+                                    Integer inAttendeeLimit = value.getLong("attendeeLimit").intValue();
+                                    Integer inAttendeeCount = value.getLong("attendeeCount").intValue();
+                                    String inDate = value.getString("date");
+                                    String location = value.getString("location");
+                                    String details = value.getString("details");
+                                    eventDataList.add(new Event(eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit));
                                     eventAdapter.notifyDataSetChanged();
+
                                 }
                             }
                         });
@@ -219,7 +222,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 String eventDetails = eventDetailsEditText.getText().toString();
 
 
-                organizer.createEventNewQRCode(eventDetails, eventAddress, attendeeLimit, eventTitle);
+                organizer.createEventNewQRCode(eventDetails, eventAddress, attendeeLimit, eventTitle, eventDate);
                 posterHandler.uploadImageAndStoreReference(selectedImageUri, eventTitle, "Event");
                 previousView(v);
             }
@@ -356,10 +359,14 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
 
     public void previousView(View v){
+        //viewFlipper.setInAnimation(this, android.R.anim.slide_in_left);
+        //viewFlipper.setOutAnimation(this, android.R.anim.slide_out_right);
         viewFlipper.showPrevious();
     }
 
     private void nextView(View v){
+        //viewFlipper.setInAnimation(this, R.anim.slide_in_right);
+        //viewFlipper.setOutAnimation(this, R.anim.slide_out_left);
         viewFlipper.showNext();
     }
 

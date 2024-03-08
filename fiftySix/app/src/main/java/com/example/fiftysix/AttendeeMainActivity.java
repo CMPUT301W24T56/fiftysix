@@ -50,6 +50,8 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private ImageButton attendeeProfileButton;
     private ImageButton attendeeNotificationButton;
     private ImageButton attendeeHomeButton;
+    private Button browseAllEventsButton;
+    private Button browseMyEvents;
 
     // Buttons on Add event page
     private Button addEventScanCheckinButton;
@@ -68,6 +70,10 @@ public class AttendeeMainActivity extends AppCompatActivity {
         setButtons();
         attendee = new Attendee(context);
 
+
+
+
+
         // The user is stored as an organizer and should be returned to main page
        // if (attendee.getUserType()=="organizer"){
             //TODO: doesn't work but shows general idea, need to query the data to check user type from firebase
@@ -76,12 +82,13 @@ public class AttendeeMainActivity extends AppCompatActivity {
         //}
 
         eventDataList = new ArrayList<>();
+        //eventDataList.add(new Event("temp location", "temp location", "temp Date", "temp details", 11, 100));
 
         recyclerView = findViewById(R.id.attendeeHomeRecyclerView);
-        setRecyclerView();
+        //setRecyclerView();
 
         db = FirebaseFirestore.getInstance();
-        attEventRef = db.collection("Users").document(attendee.getDeviceId()).collection("EventsByOrganizer");
+        attEventRef = db.collection("Users").document(attendee.getDeviceId()).collection("UpcomingEvents");
         eventRef = db.collection("Events");
 
         EventAdapter eventAdapter = new EventAdapter(eventDataList);
@@ -109,23 +116,23 @@ public class AttendeeMainActivity extends AppCompatActivity {
                         String eventID = doc.getId();
                         Log.d("EVENTNAME", "hello "+ eventID);
 
-                        eventRef.document(eventID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        eventRef.document(eventID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                             @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    DocumentSnapshot document = task.getResult();
-                                    if (document.exists()) {
+                            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                                if (error != null) {
+                                    Log.e("Firestore", error.toString());
+                                    return;
+                                }
+                                if (querySnapshots != null) {
+                                    String eventName = value.getString("eventName");
+                                    Integer inAttendeeLimit = value.getLong("attendeeLimit").intValue();
+                                    Integer inAttendeeCount = value.getLong("attendeeCount").intValue();
+                                    String inDate = value.getString("date");
+                                    String location = value.getString("location");
+                                    String details = value.getString("details");
 
-                                        String eventName = document.get("eventName").toString();
-                                        //String location = doc.get("location").toString(); TODO:NEED TO ADD TO DATA BASE
-                                        //String date = doc.get("date").toString(); TODO:NEED TO ADD TO DATA BASE
-                                        eventDataList.add(new Event(eventName, "temp location", "temp Date"));
-                                        eventAdapter.notifyDataSetChanged();
-                                    } else {
-                                        Log.d(TAG, "No such document");
-                                    }
-                                } else {
-                                    Log.d(TAG, "get failed with ", task.getException());
+                                    eventDataList.add(new Event(eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit));
+                                    eventAdapter.notifyDataSetChanged();
                                 }
                             }
                         });
@@ -143,6 +150,25 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
 
         //________________________________________HomePage________________________________________
+
+        browseAllEventsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: For Botsian
+                viewFlipper.setDisplayedChild(2);
+            }
+        });
+
+        browseMyEvents.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: For Botsian
+                nextView(v);
+            }
+        });
+
+
+
 
         attendeeAddEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -226,11 +252,17 @@ public class AttendeeMainActivity extends AppCompatActivity {
         attendeeProfileButton = (ImageButton) findViewById(R.id.buttonAttendeeProfile);
         attendeeNotificationButton = (ImageButton) findViewById(R.id.buttonAttendeeNotificationBell);
         attendeeHomeButton = (ImageButton) findViewById(R.id.buttonAttendeeHome);
+        browseAllEventsButton = (Button) findViewById(R.id.browseAllEvents);
+        browseMyEvents = (Button) findViewById(R.id.browseMyEvents);
 
         // Add event page buttons
         addEventScanCheckinButton = (Button) findViewById(R.id.buttonAttendeeCheckinWithQR);
         browseEventsButton = (Button) findViewById(R.id.buttonAttendeeBrowseEvent);
         addEventBackImageButton = (ImageButton) findViewById(R.id.buttonAttendeeBackSignUp);
+
+
+
+
 
     }
 

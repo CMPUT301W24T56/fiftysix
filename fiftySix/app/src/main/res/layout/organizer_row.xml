@@ -25,7 +25,7 @@
         <RelativeLayout
             android:id="@+id/expandable_layout"
             android:layout_width="match_parent"
-            android:layout_height="299dp">
+            android:layout_height="1000dp">
 
 
             <TextView
@@ -78,8 +78,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_below="@+id/attendeeCount"
-                android:layout_marginTop="7dp"
-                android:layout_marginBottom="252dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="692dp"
+                android:layout_marginBottom="20dp"
                 android:background="@drawable/dark_round_button"
                 android:fontFamily="@font/inter_medium"
                 android:text="Edit Event"
