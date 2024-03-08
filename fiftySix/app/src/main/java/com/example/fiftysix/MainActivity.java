@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Layout;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -27,12 +28,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_selection_view);
         context = getApplicationContext();
-
-
-
-
-
-
         Button attendeeButton = (Button) findViewById(R.id.buttonAttendee);
         Button organizerButton = (Button) findViewById(R.id.buttonOrganizer);
         Button adminButton = (Button) findViewById(R.id.buttonAdmin);
@@ -43,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // TODO: Open attendee page.
+
                 Intent intent = new Intent(MainActivity.this, AttendeeMainActivity.class);
                 startActivity(intent);
             }

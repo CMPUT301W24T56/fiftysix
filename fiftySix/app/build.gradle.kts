@@ -41,6 +41,7 @@ dependencies {
 
     // zxing-android-embedded QR code scanning & generation
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation("com.google.zxing:core:3.4.1")
 
     // https://github.com/Blankj/AndroidUtilCode/blob/master/lib/utilcode/README.md
     implementation("com.blankj:utilcodex:1.31.1")
