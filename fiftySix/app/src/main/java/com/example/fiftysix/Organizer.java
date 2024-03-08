@@ -78,8 +78,8 @@ public class Organizer {
     }
 
     // Method creates new event in database and reuses check-in QR code
-    public void createEventReuseQRCode(String details, String location, Integer attendeeLimit, String eventName,Context context, String oldQRID){
-        Event event = new Event(this.organizerID, details, location, attendeeLimit, eventName, context, oldQRID);
+    public void createEventReuseQRCode(String details, String location, Integer attendeeLimit, String eventName, String oldQRID){
+        Event event = new Event(this.organizerID, details, location, attendeeLimit, eventName, mContext, oldQRID);
         addEventToOrganizerDataBase(event.getEventID());
     }
 

@@ -134,12 +134,13 @@ public class AttendeeMainActivity extends AppCompatActivity {
                                     String eventName = value.getString("eventName");
                                     Integer inAttendeeLimit = value.getLong("attendeeLimit").intValue();
                                     Integer inAttendeeCount = value.getLong("attendeeCount").intValue();
+                                    String imageUrl = value.getString("posterURL");
                                     String inDate = value.getString("date");
                                     String location = value.getString("location");
                                     String details = value.getString("details");
 
                                     //if ((String.valueOf(inAttendeeCount) == null) || (String.valueOf(inAttendeeLimit) == null)){
-                                    myEventDataList.add(new Event(eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit));
+                                    myEventDataList.add(new Event(eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit, imageUrl));
                                     //}
 
                                     attendeeMyEventAdapter.notifyDataSetChanged();
@@ -171,8 +172,9 @@ public class AttendeeMainActivity extends AppCompatActivity {
                     String inDate = doc.getString("date");
                     String location = doc.getString("location");
                     String details = doc.getString("details");
+                    String imageUrl = doc.getString("posterURL");
 
-                    allEventDataList.add(new Event(eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit));
+                    allEventDataList.add(new Event(eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit, imageUrl));
 
                     attendeeAllEventAdapter.notifyDataSetChanged();
                 }

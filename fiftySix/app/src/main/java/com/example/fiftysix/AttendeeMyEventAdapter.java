@@ -39,8 +39,15 @@ public class AttendeeMyEventAdapter extends RecyclerView.Adapter<AttendeeMyEvent
         holder.versionTxt.setText(event.getLocation());
         holder.apiLevelTxt.setText(event.getDate());
         holder.descriptionTxt.setText(event.getDetails());
-        holder.descriptionEvent.setText(event.getAttendeeLimit().toString());
-        holder.attendeeCount.setText(event.getAttendeeCount().toString());
+
+        if(event.getAttendeeLimit() == 2147483647){
+            holder.descriptionEvent.setText("Capacity: Unlimited");
+        }
+        else{
+            holder.descriptionEvent.setText("Capacity: " + event.getAttendeeLimit().toString());
+        }
+
+        holder.attendeeCount.setText("Current Attendees: " + event.getAttendeeCount().toString());
 
 
         String imageUrl = event.getPosterURL();
@@ -76,8 +83,8 @@ public class AttendeeMyEventAdapter extends RecyclerView.Adapter<AttendeeMyEvent
             versionTxt = itemView.findViewById(R.id.version);
             apiLevelTxt = itemView.findViewById(R.id.apiLevel);
             descriptionTxt = itemView.findViewById(R.id.description);
-            attendeeCount = itemView.findViewById(R.id.attendeeCount);
-            descriptionEvent = itemView.findViewById(R.id.descriptionEvent);
+            attendeeCount = itemView.findViewById(R.id.attendeeCapacity);
+            descriptionEvent = itemView.findViewById(R.id.currentAttendees);
 
             linearLayout = itemView.findViewById(R.id.linear_layout);
             expandableLayout = itemView.findViewById(R.id.expandable_layout);

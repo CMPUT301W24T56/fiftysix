@@ -6,7 +6,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import static android.content.ContentValues.TAG;
-
+import android.widget.ImageView;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -148,6 +148,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                     eventDataList.clear();
                     for (QueryDocumentSnapshot doc : querySnapshots) {
                         String eventID = doc.getId();
+
                         Log.d("EVENTNAME", "hello "+ eventID);
                         eventRef.document(eventID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                             @Override
@@ -158,12 +159,14 @@ public class OrganizerMainActivity extends AppCompatActivity {
                                 }
                                 if (value != null && value.exists()) {
                                     String eventName = value.getString("eventName");
+                                    String imageUrl = value.getString("posterURL");
                                     Integer inAttendeeLimit = value.getLong("attendeeLimit").intValue();
                                     Integer inAttendeeCount = value.getLong("attendeeCount").intValue();
                                     String inDate = value.getString("date");
                                     String location = value.getString("location");
                                     String details = value.getString("details");
-                                    eventDataList.add(new Event(eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit));
+
+                                    eventDataList.add(new Event(eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit, imageUrl));
                                     organizerEventAdapter.notifyDataSetChanged();
 
                                 }
@@ -260,14 +263,8 @@ public class OrganizerMainActivity extends AppCompatActivity {
         uploadQRFromScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //scanCode();
-                String eventTitle = eventTitleEditText.getText().toString();
-                String eventDate = eventDateEditText.getText().toString();
-                String eventAddress = eventAddressEditText.getText().toString();
-                String eventDetails = eventDetailsEditText.getText().toString();
+                scanCode();
 
-                //Integer eventAttendeeLimit = Integer.parseInt(eventAttendeeLimitEditText.getText().toString());
-                //organizer.createEventReuseQRCode(eventDetails, eventAddress, 100, eventTitle, reUseQRID);
                 previousView(v);
             }
         });
@@ -480,7 +477,14 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        reUseQRID = result.getContents().replace(" ", "");
+                        reUseQRID = result.getContents().toString();
+                        String eventTitle = eventTitleEditText.getText().toString();
+                        String eventDate = eventDateEditText.getText().toString();
+                        String eventAddress = eventAddressEditText.getText().toString();
+                        String eventDetails = eventDetailsEditText.getText().toString();
+
+                        //Integer eventAttendeeLimit = Integer.parseInt(eventAttendeeLimitEditText.getText().toString());
+                        organizer.createEventReuseQRCode(eventDetails, eventAddress, 100, eventTitle, reUseQRID);
 
                         dialog.dismiss();
                     }

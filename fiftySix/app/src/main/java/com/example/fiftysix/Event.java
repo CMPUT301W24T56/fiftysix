@@ -72,13 +72,14 @@ public class Event {
 
 
     // Used to create an event object from given event ID
-    public Event(String eventName, String eventLocation, String eventDate, String details, Integer attendeeCount, Integer attendeeLimit ) {
+    public Event(String eventName, String eventLocation, String eventDate, String details, Integer attendeeCount, Integer attendeeLimit,  String posterURL) {
         this.eventName = eventName;
         this.location = eventLocation;
         this.date = eventDate;
         this.details = details;
         this.attendeeCount = attendeeCount;
         this.attendeeLimit = attendeeLimit;
+        this.posterURL = posterURL;
         this.expandable = false;
     }
 
