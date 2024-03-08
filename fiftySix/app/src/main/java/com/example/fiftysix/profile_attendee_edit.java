@@ -1,96 +1,134 @@
 package com.example.fiftysix;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.io.ByteArrayOutputStream;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+
 public class profile_attendee_edit extends AppCompatActivity {
-    private ImageButton profile_button_change,go_back_attendee;
-    private EditText mail, phoneno, name, home;
-    private Context mContext;
+    private ImageButton btnImage;
+    private Button btnBack, btnSave;
+    private EditText edEmail, edPhone, edName, edHome;
+    private DocumentReference dr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile_attendee);
 
-        set_profile();
-        profile_button_change = findViewById(R.id.profile_image);
-        mail = findViewById(R.id.email);
-        phoneno = findViewById(R.id.phone_no);
-        name = findViewById(R.id.Name);
-        String email,person_name;
-        profile_button_change.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent open_camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(open_camera, 100);
-            }
-        });
+        btnImage = findViewById(R.id.profile_image);
+        btnBack  = findViewById(R.id.profile_back);
+        btnSave  = findViewById(R.id.profile_save);
+        edName   = findViewById(R.id.profile_name);
+        edEmail  = findViewById(R.id.profile_email);
+        edPhone  = findViewById(R.id.profile_phone);
+        edHome   = findViewById(R.id.profile_home);
 
-        mail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String text = mail.getText().toString();
-                mail.setText(text);
-            }
-        });
+        String id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        dr = FirebaseFirestore.getInstance().collection("Users").document(id);
+        load();
 
-        name.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String text = name.getText().toString();
-                name.setText(text);
-            }
-        });
-        phoneno.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String text = name.getText().toString();
-                int number = Integer.parseInt(text);
-                name.setText(text);
-            }
-        });
-
-
-        go_back_attendee = findViewById(R.id.go_back_main_attendee);
-        go_back_attendee.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                finish();
-            }
-        });
-
+        btnImage.setOnClickListener(v ->
+                startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE), 100));
+        btnBack.setOnClickListener(v -> finish());
+        btnSave.setOnClickListener(v -> save());
     }
 
-    // Gets android ID to be used as organizer ID
-    // Got from https://stackoverflow.com/questions/60503568/best-possible-way-to-get-device-id-in-android
+    private void load() {
+        dr.get().addOnCompleteListener(task -> {
+            String name, email, phone, home;
 
-    public void set_profile(){
-        // setting the profile from the database to the app
-        //  we need to get the id first of the user to identify it.
-        
+            if (!task.isSuccessful()) {
+                Log.d(TAG, "Failed with: ", task.getException());
+                return;
+            }
+
+            Map m = task.getResult().getData();
+            if (m == null) {
+                // user has nothing saved
+                return;
+            }
+
+            if ((name  = (String) m.get("name")) != null)
+                edName.setText(name);
+            if ((email = (String) m.get("email")) != null)
+                edEmail.setText(email);
+            if ((phone = (String) m.get("phone")) != null)
+                edPhone.setText(phone);
+            if ((home  = (String) m.get("home")) != null)
+                edHome.setText(home);
+        });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Bundle extras;
+        Bitmap photo;
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 100 && resultCode == RESULT_OK && data != null) {
-            Bundle extras = data.getExtras();
-            if (extras != null) {
-                Bitmap photo = (Bitmap) extras.get("data");
-                if (photo != null) {
-                    profile_button_change.setImageBitmap(photo);
-                }
-            }
+        if (requestCode != 100 || resultCode != RESULT_OK || data == null)
+            return;
+        if ((extras = data.getExtras()) == null)
+            return;
+        if ((photo = (Bitmap) extras.get("data")) == null)
+            return;
+        btnImage.setImageBitmap(photo);
+    }
+
+    private void save() {
+        String name, email, phone, home;
+        name  = edName.getText().toString();
+        email = edEmail.getText().toString();
+        phone = edPhone.getText().toString();
+        home  = edHome.getText().toString();
+        Map<String, Object> m = Map.of(
+                "name",  name,
+                "email", email,
+                "phone", phone,
+                "home",  home
+        );
+        dr.set(m)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("Firestore", "Firestore update successful for profile");
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Firestore update failed for poster");
+                });
+    }
+
+    // Miserably rescued from CheckInQRCode.java; TODO put back
+    private Uri img2uri(Bitmap img) {
+        if (img == null)
+            return null;
+        img.compress(Bitmap.CompressFormat.JPEG, 90, new ByteArrayOutputStream());
+        return Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(),
+                img, "tmporalis", null));
+    }
+
+    private Bitmap uri2img(Uri uri) {
+        try {
+            return MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+        } catch (Exception ignore) {
+            return null;
         }
     }
 }
