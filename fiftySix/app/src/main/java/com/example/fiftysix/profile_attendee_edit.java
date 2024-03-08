@@ -5,19 +5,25 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class profile_attendee_edit extends AppCompatActivity {
-    private ImageButton profile_button_change;
+    private ImageButton profile_button_change,go_back_attendee;
+    private EditText mail, phoneno, name, home;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile_attendee);
 
+        set_profile();
         profile_button_change = findViewById(R.id.profile_image);
-
+        mail = findViewById(R.id.email);
+        phoneno = findViewById(R.id.phone_no);
+        name = findViewById(R.id.Name);
+        String email,person_name;
         profile_button_change.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -25,6 +31,47 @@ public class profile_attendee_edit extends AppCompatActivity {
                 startActivityForResult(open_camera, 100);
             }
         });
+
+        mail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String text = mail.getText().toString();
+                mail.setText(text);
+            }
+        });
+
+        name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String text = name.getText().toString();
+                name.setText(text);
+            }
+        });
+        phoneno.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String text = name.getText().toString();
+                int number = Integer.parseInt(text);
+                name.setText(text);
+            }
+        });
+
+
+        go_back_attendee = findViewById(R.id.go_back_main_attendee);
+        go_back_attendee.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                finish();
+            }
+        });
+
+    }
+
+    public void set_profile(){
+        // setting the profile from the database to the app
+        //  we need to get the id first of the user to identify it.
+
     }
 
     @Override

@@ -8,49 +8,49 @@
 
 
     <EditText
-        android:id="@+id/Phoneno"
+        android:id="@+id/email"
+        android:layout_width="331dp"
+        android:layout_height="54dp"
+        android:layout_marginBottom="316dp"
+        android:background="#EF5D86"
+        android:hint="Email: "
+        android:inputType="textEmailAddress"
         android:paddingLeft="10dp"
+        android:textColorHint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/phone_no"
         android:layout_width="331dp"
         android:layout_height="54dp"
         android:layout_marginBottom="124dp"
-        android:background="#FFFFFF"
+        android:background="#EF5D86"
         android:hint="Phone No: "
-        android:inputType="number"
-        android:textColorHint="@color/black"
+        android:inputType="phone"
+        android:paddingLeft="10dp"
+        android:textColorHint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="parent" />
+
 
     <EditText
-        android:id="@+id/date_of_birth"
+        android:id="@+id/home"
         android:layout_width="331dp"
         android:layout_height="54dp"
+        android:layout_marginBottom="228dp"
+        android:background="#EF5D86"
+        android:hint="Home: "
         android:paddingLeft="10dp"
-        android:layout_marginBottom="208dp"
-        android:background="#FFFFFF"
-        android:hint="D.O.B: "
-        android:inputType="date"
-        android:textColorHint="@color/black"
+        android:textColorHint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <EditText
-        android:id="@+id/email"
-        android:paddingLeft="10dp"
-        android:layout_width="331dp"
-        android:layout_height="54dp"
-        android:layout_marginBottom="284dp"
-        android:background="#FFFFFF"
-        android:hint="Email: "
-        android:textColorHint="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.4"
-        app:layout_constraintStart_toStartOf="parent" />
-
 
     <ImageButton
         android:id="@+id/profile_image"
@@ -59,6 +59,7 @@
         android:layout_marginTop="40dp"
         android:paddingLeft="10dp"
         android:scaleType="centerCrop"
+        app:circularflow_defaultRadius="4sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.457"
         app:layout_constraintStart_toStartOf="parent"
@@ -69,43 +70,28 @@
         android:id="@+id/Name"
         android:layout_width="331dp"
         android:layout_height="54dp"
-        android:background="#FFFFFF"
+        android:background="#EF5D86"
         android:hint=" Name: "
         android:paddingLeft="10dp"
-        android:textColorHint="@color/black"
-        app:layout_constraintBottom_toTopOf="@+id/editText"
+        android:textColorHint="@color/white"
+        app:circularflow_defaultRadius="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/email"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.4"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <EditText
-        android:id="@+id/editText"
-        android:paddingLeft="10dp"
-        android:layout_width="331dp"
-        android:layout_height="54dp"
-        android:layout_marginBottom="364dp"
-        android:background="#FFFFFF"
-        android:hint="Email: "
-        android:textColor="@color/white"
-        android:textColorHint="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.4"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/switch1"
-        android:layout_width="153dp"
-        android:layout_height="37dp"
-        android:background="@color/white"
-        android:paddingLeft="10dp"
-        android:text="geolocation"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.124"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Phoneno" />
+        app:layout_constraintTop_toBottomOf="@+id/profile_image" />
+
+    <ImageButton
+        android:id="@+id/go_back_main_attendee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:background="@color/colorPrimaryDark"
+        app:layout_constraintBottom_toTopOf="@+id/profile_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/cancel1" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
