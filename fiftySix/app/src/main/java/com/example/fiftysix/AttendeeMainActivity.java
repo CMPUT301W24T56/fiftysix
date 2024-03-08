@@ -115,11 +115,11 @@ public class AttendeeMainActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     DocumentSnapshot document = task.getResult();
                                     if (document.exists()) {
-
                                         String eventName = document.get("eventName").toString();
+                                        String imageUrl = document.getString("posterURL");
                                         //String location = doc.get("location").toString(); TODO:NEED TO ADD TO DATA BASE
                                         //String date = doc.get("date").toString(); TODO:NEED TO ADD TO DATA BASE
-                                        eventDataList.add(new Event(eventName, "temp location", "temp Date"));
+                                        eventDataList.add(new Event(eventName, "temp location", "temp Date", imageUrl));
                                         eventAdapter.notifyDataSetChanged();
                                     } else {
                                         Log.d(TAG, "No such document");
