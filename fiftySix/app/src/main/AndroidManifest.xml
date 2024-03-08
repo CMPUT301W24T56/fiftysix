@@ -1,8 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+<<<<<<< HEAD
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-feature android:name ="android.hardware.camera"/>
+=======
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.camera" android:required="true"/>
+
+    <queries>
+        <!-- Specific query for camera capture intent -->
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+    </queries>
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+
+>>>>>>> origin
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -25,6 +47,7 @@
             android:name=".OrganizerMainActivity"
             android:exported="false" />
         <activity
+<<<<<<< HEAD
             android:name=".profile_attendee_edit"
             android:exported="true" />
         <activity
@@ -34,6 +57,8 @@
             android:name=".OrganizerHomeActivity"
             android:exported="false" />
         <activity
+=======
+>>>>>>> origin
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -51,6 +76,16 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.fiftysix.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
+
 
 </manifest>

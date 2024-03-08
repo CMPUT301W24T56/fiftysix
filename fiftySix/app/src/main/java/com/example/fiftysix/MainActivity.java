@@ -29,6 +29,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.user_selection_view);
         context = getApplicationContext();
 
+<<<<<<< HEAD
+=======
+
+
+
+
+
+>>>>>>> origin
         Button attendeeButton = (Button) findViewById(R.id.buttonAttendee);
         Button organizerButton = (Button) findViewById(R.id.buttonOrganizer);
         Button adminButton = (Button) findViewById(R.id.buttonAdmin);
