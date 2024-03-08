@@ -45,7 +45,8 @@ dependencies {
     // https://github.com/Blankj/AndroidUtilCode/blob/master/lib/utilcode/README.md
     implementation("com.blankj:utilcodex:1.31.1")
 
-
+    // https://www.geeksforgeeks.org/how-to-retrieve-image-from-firebase-in-realtime-in-android/
+    implementation("com.squareup.picasso:picasso:2.71828")
 
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:32.7.3"))

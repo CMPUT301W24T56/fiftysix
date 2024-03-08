@@ -24,7 +24,7 @@ import java.util.Map;
 public class Event {
     private String eventID;
     private String organizerID;
-    private String posterID;
+    private String posterURL;
     private Attendee[] attendeeList;
     private Attendee[] rsvpAttendeeList;
     private String checkInQRCodeID; // Check if should be auto generated upon creating event
@@ -191,8 +191,8 @@ public class Event {
         return organizerID;
     }
 
-    public String getPosterID() {
-        return posterID;
+    public String getPosterURL() {
+        return posterURL;
     }
 
     public String getCheckInQRCodeID() {

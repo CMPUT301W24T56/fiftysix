@@ -6,6 +6,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ImageView;
+import com.squareup.picasso.Picasso;
+
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,6 +43,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventVH> {
         holder.attendeeCount.setText(event.getAttendeeCount().toString());
 
 
+        String imageUrl = event.getPosterURL();
+
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            Picasso.get()
+                    .load(imageUrl)
+                    .fit()
+                    .into(holder.eventImage); // Your ImageView
+        }
+
         boolean isExpandable = eventList.get(position).getExpandable();
         holder.expandableLayout.setVisibility(isExpandable ? View.VISIBLE : View.GONE);
 
@@ -55,6 +67,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventVH> {
         TextView codeName, versionTxt, apiLevelTxt, descriptionTxt, attendeeCount, descriptionEvent;
         LinearLayout linearLayout;
         RelativeLayout expandableLayout;
+        ImageView eventImage;
 
         public EventVH(@NonNull View itemView) {
             super(itemView);
@@ -69,6 +82,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventVH> {
             linearLayout = itemView.findViewById(R.id.linear_layout);
             expandableLayout = itemView.findViewById(R.id.expandable_layout);
 
+            eventImage = itemView.findViewById(R.id.event_poster_image);
 
 
             linearLayout.setOnClickListener(new View.OnClickListener() {
