@@ -71,7 +71,7 @@ public class Organizer {
 
 
     // Method creates new event in database and generates a new check-in QR code
-    public void createEventNewQRCode( String details, String location, Integer attendeeLimit, String eventName, String date){
+    public String createEventNewQRCode( String details, String location, Integer attendeeLimit, String eventName, String date){
         Event event = new Event(this.organizerID, details, location, attendeeLimit, eventName, date, mContext);
         addEventToOrganizerDataBase(event.getEventID());
         return event.getEventID();

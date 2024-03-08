@@ -91,10 +91,9 @@
                 android:layout_below="@+id/attendeeCount"
                 android:layout_alignParentBottom="true"
                 android:layout_marginTop="692dp"
-                android:layout_marginBottom="20dp"
+
                 android:layout_alignParentStart="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="0dp"
+
                 android:layout_marginBottom="6dp"
                 android:background="@drawable/dark_round_button"
                 android:fontFamily="@font/inter_medium"
