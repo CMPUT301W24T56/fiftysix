@@ -20,8 +20,11 @@ import android.widget.ViewFlipper;
 public class MainActivity extends AppCompatActivity {
     private Context context;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_selection_view);
         context = getApplicationContext();
@@ -29,22 +32,36 @@ public class MainActivity extends AppCompatActivity {
         Button organizerButton = (Button) findViewById(R.id.buttonOrganizer);
         Button adminButton = (Button) findViewById(R.id.buttonAdmin);
 
+
         // User selects Attendee, attendee main activity launches.
-        attendeeButton.setOnClickListener(v -> {
-            // TODO: Open attendee page.
-            startActivity(new Intent(MainActivity.this, AttendeeMainActivity.class));
+        attendeeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: Open attendee page.
+
+                Intent intent = new Intent(MainActivity.this, AttendeeMainActivity.class);
+                startActivity(intent);
+            }
         });
 
-        /*
+
         // User selects Organizer
-        organizerButton.setOnClickListener(v -> {
-           startActivity(new Intent(MainActivity.this, OrganizerMainActivity.class));
+        organizerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               Intent intent = new Intent(MainActivity.this, OrganizerMainActivity.class);
+               startActivity(intent);
+            }
         });
-        //*/
+
 
         // Not for part 3
-        adminButton.setOnClickListener(v -> {
-            startActivity(new Intent(MainActivity.this, AdminMainActivity.class));
+        adminButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AdminMainActivity.class);
+                startActivity(intent);
+            }
         });
     }
 }
