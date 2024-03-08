@@ -66,6 +66,8 @@ dependencies {
     implementation("androidx.cardview:cardview:1.0.0")
     //implementation ("io.grpc:grpc-okhttp:1.32.2")
 
+    implementation("com.squareup.picasso:picasso:2.71828")
+
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")

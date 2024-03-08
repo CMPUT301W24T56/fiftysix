@@ -49,8 +49,9 @@ public class Event {
 
 
     // This constructor is used when the organizer does NOT want to reuse a check-in QR code.
-    public Event(String organizerID, String details, String location, Integer attendeeLimit, String eventName, Context mContext) {
+    public Event(String organizerID, String details, String location, Integer attendeeLimit, String eventName, String date, Context mContext) {
         this.organizerID = organizerID;
+
         this.details = details;
         this.location = location;
         this.attendeeLimit = attendeeLimit;
@@ -59,6 +60,7 @@ public class Event {
         this.db = FirebaseFirestore.getInstance();
         this.ref = db.collection("Events");
         this.eventID = FirebaseDatabase.getInstance().getReference("Events").push().getKey();
+        this.date = date;
 
         // Generates New check-in QR code and stores the qrcode ID.
         this.checkInQRCode = new CheckInQRCode(eventID, mContext);
@@ -70,11 +72,13 @@ public class Event {
 
 
     // Used to create an event object from given event ID
-    public Event(String eventName, String eventLocation, String eventDate, String posterURL) {
+    public Event(String eventName, String eventLocation, String eventDate, String details, Integer attendeeCount, Integer attendeeLimit,  String posterURL) {
         this.eventName = eventName;
         this.location = eventLocation;
         this.date = eventDate;
         this.details = details;
+        this.attendeeCount = attendeeCount;
+        this.attendeeLimit = attendeeLimit;
         this.posterURL = posterURL;
         this.expandable = false;
     }
@@ -122,6 +126,10 @@ public class Event {
         eventData.put("eventName",this.eventName);
         eventData.put("organizer",this.organizerID);
         eventData.put("checkInQRCode",this.checkInQRCodeID);
+        eventData.put("date",this.date);
+        eventData.put("location",this.location);
+        eventData.put("attendee",this.attendeeCount);
+
 
         // These are optional so we need to check if they are null
 
