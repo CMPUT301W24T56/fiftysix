@@ -23,45 +23,56 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
     private SearchView searchView;
     TextView textView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("TAG", "onClick:   not working ");
         setContentView(R.layout.activity_attendee_main);
 
+
         profile_button = findViewById(R.id.attendee_profile);
         qrcode_button = findViewById(R.id.qr_code_button);
         notification_button = findViewById(R.id.notification_button);
         home_button = findViewById(R.id.button_attendee_home);
-
-        profile_button.setOnClickListener(v -> {
-            // Uncomment and replace profile_attendee_edit with the correct activity class+
-            startActivity(new Intent(AttendeeMainActivity.this, profile_attendee_edit.class));
+        profile_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Uncomment and replace profile_attendee_edit with the correct activity class
+                 Intent intent = new Intent(AttendeeMainActivity.this, profile_attendee_edit.class);
+                 startActivity(intent);
+            }
         });
 
-        qrcode_button.setOnClickListener(v -> {
-            // Uncomment and replace PromotionQRCode with the correct activity class
-            IntentIntegrator intentIntegrator = new IntentIntegrator(AttendeeMainActivity.this);
-            intentIntegrator.setOrientationLocked(true);
-            intentIntegrator.setPrompt("Scan a QR Code");
-            intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
-            intentIntegrator.initiateScan();
+        qrcode_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Uncomment and replace PromotionQRCode with the correct activity class
+                IntentIntegrator intentIntegrator = new IntentIntegrator(AttendeeMainActivity.this);
+                intentIntegrator.setOrientationLocked(true);
+                intentIntegrator.setPrompt("Scan a QR Code");
+                intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
+                intentIntegrator.initiateScan();
+            }
         });
 
-        notification_button.setOnClickListener(v -> {
-            startActivity(new Intent(AttendeeMainActivity.this, Notification.class));
+        notification_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AttendeeMainActivity.this, Notification.class);
+                startActivity(intent);
+            }
         });
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
         IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
-        if (intentResult != null) {
+        if(intentResult != null){
             String contents = intentResult.getContents();
-            if (contents != null)
-                textView.setText(contents);
-        } else {
+            if(contents != null){
+                textView.setText(intentResult.getContents());
+            }
+        }else{
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
