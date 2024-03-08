@@ -213,7 +213,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
         });
 
 
-
+        /*
         // Create event pages
         createEvent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -223,7 +223,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 String eventDate = eventDateEditText.getText().toString();
                 String eventAddress = eventAddressEditText.getText().toString();
                 String eventDetails = eventDetailsEditText.getText().toString();
-                
+
 
                 organizer.createEventNewQRCode(eventDetails, eventAddress, attendeeLimit, eventTitle, eventDate);
                 posterHandler.uploadImageAndStoreReference(selectedImageUri, eventTitle, "Event");
@@ -243,6 +243,8 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 previousView(v);
             }
         });
+        
+         */
 
 
         // Opens viewe to reuse android a qrcode for attendee check in.
