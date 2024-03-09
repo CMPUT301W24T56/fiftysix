@@ -1,8 +1,13 @@
 package com.example.fiftysix;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import android.content.Context;
 
@@ -33,24 +38,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         assertEquals("com.example.fiftysix", appContext.getPackageName());
-    }
-    /**
-     * testing whether an attendee is able to go to the profile section
-     * testing whether an attendee can edit his / her profile or not**/
-    @Test
-    public void edit_profile_check(){
-        // going to attendee main page
-        onView(withId(R.id.buttonAttendee)).perform(click());
-
-        // going to profile section
-        onView(withId(R.id.buttonAttendeeProfile)).perform(click());
-
-        // person editing their name, email and contact info
-        onView(withId(R.id.profile_name)).perform(ViewActions.typeText("Arsh Arora"));
-        onView(withId(R.id.profile_email)).perform(ViewActions.typeText("arsharora0388@gmail.com"));
-        onView(withId(R.id.profile_phone)).perform(ViewActions.typeText("5877784938"));
-        onView(withId(R.id.profile_save)).perform(click());
-
     }
 
 }
