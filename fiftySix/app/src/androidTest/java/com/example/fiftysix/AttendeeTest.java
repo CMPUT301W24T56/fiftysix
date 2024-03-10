@@ -14,6 +14,8 @@ import android.content.Intent;
 import android.provider.MediaStore;
 import android.provider.Settings;
 
+import androidx.test.espresso.ViewAssertion;
+import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.platform.app.InstrumentationRegistry;
 
@@ -37,16 +39,15 @@ public class AttendeeTest {
 
         // person editing their name, email, and contact info
         // Clear the already written text in all those fields
-        onView(withId(R.id.profile_name)).perform(clearText()).perform(typeText("Arsh Arora"));
-        onView(withId(R.id.profile_email)).perform(clearText()).perform(typeText("arsharora0388@gmail.com"));
-        onView(withId(R.id.profile_phone)).perform(clearText()).perform(typeText("5877784938"));
+        onView(withId(R.id.profile_name)).perform(click(), clearText()).perform(typeText("Arsh Arora"));
+        onView(withId(R.id.profile_email)).perform(click(), clearText()).perform(typeText("arsharora0388@gmail.com"));
+        onView(withId(R.id.profile_phone)).perform(click(), clearText()).perform((typeText("5877784938")));
 
-        // Click the save button
+
+        // Click the save button and it goes back
         onView(withId(R.id.profile_save)).perform(click());
 
-        
     }
-
 
 
 }
