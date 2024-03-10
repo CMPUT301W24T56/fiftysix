@@ -76,4 +76,5 @@ public class OrganizerUiTest {
         onView(withId(R.id.switchAttendeeLimit)).perform(click());
 
     }
+
 }
