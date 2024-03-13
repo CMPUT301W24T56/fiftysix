@@ -75,6 +75,7 @@ public class profile_attendee_edit extends AppCompatActivity {
 
             if ((data = task.getResult().getData()) == null) {
                 // user has nothing saved
+                data = new HashMap();
                 return;
             }
 
