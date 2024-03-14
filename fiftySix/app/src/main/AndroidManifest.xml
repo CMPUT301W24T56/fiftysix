@@ -41,6 +41,8 @@
         <activity
             android:name=".OrganizerMainActivity"
             android:exported="false" />
+        <activity android:name=".AdminBrowseEvents" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

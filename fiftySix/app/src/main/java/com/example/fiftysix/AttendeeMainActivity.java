@@ -84,7 +84,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
         attEventRef = db.collection("Users").document(attendee.getDeviceId()).collection("EventsByOrganizer");
         eventRef = db.collection("Events");
 
-        EventAdapter eventAdapter = new EventAdapter(eventDataList);
+        EventAdapter eventAdapter = new EventAdapter(eventDataList, true);
         recyclerView.setAdapter(eventAdapter);
         recyclerView.setHasFixedSize(false);
 
@@ -235,7 +235,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
     }
 
     private void setRecyclerView() {
-        EventAdapter eventAdapter = new EventAdapter(eventDataList);
+        EventAdapter eventAdapter = new EventAdapter(eventDataList, true);
         recyclerView.setAdapter(eventAdapter);
         recyclerView.setHasFixedSize(false);
     }

@@ -136,7 +136,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
         //eventDataList.add(new Event("Event Name", "Event Location", "Event Date"));
 
         // Sets home page recyler view event data
-        EventAdapter eventAdapter = new EventAdapter(eventDataList);
+        EventAdapter eventAdapter = new EventAdapter(eventDataList, true);
         recyclerView.setAdapter(eventAdapter);
         recyclerView.setHasFixedSize(false);
 
@@ -234,7 +234,6 @@ public class OrganizerMainActivity extends AppCompatActivity {
                     @Override
                     public void onUploadFailure(Exception e) {
                         Log.e(TAG, "Failed to upload image for event: " + eventID, e);
-                        // Handle failure, e.g., show a toast or alert dialog
                     }
                 });
                 previousView(v);

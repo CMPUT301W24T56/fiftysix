@@ -148,7 +148,7 @@ public class Event {
 
 
 
-    // Returns event strring of the event data selected from the database
+    // Returns event string of the event data selected from the database
     private String queryEventData(String key){
         //https://firebase.google.com/docs/firestore/query-data/get-data#java_4
         // Use this to fetch specific document.
@@ -216,7 +216,9 @@ public class Event {
         return promoQRCodeID;
     }
 
-    public String getDate(){ return date;}
+    public String getDate(){
+        return date;
+    }
 
     public Boolean getExpandable() {
         return expandable;
