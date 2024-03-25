@@ -1,0 +1,90 @@
+[
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-mergeDebugResources-56:\\layout\\organizer_reuse_or_scan_qrcode_view.xml",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\organizer_reuse_or_scan_qrcode_view.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-mergeDebugResources-56:\\layout\\profile_attendee.xml",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\profile_attendee.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-mergeDebugResources-56:\\layout\\organizer_home_page_custom_list_view.xml",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\organizer_home_page_custom_list_view.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-mergeDebugResources-56:\\layout\\activity_admin_main.xml",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\activity_admin_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-mergeDebugResources-56:\\layout\\organizer_flipper.xml",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\organizer_flipper.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-mergeDebugResources-56:\\layout\\attendee_my_events_row.xml",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\attendee_my_events_row.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-mergeDebugResources-56:\\layout\\activity_main.xml",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\activity_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-mergeDebugResources-56:\\layout\\fragment_add_profile.xml",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\fragment_add_profile.xml"
+    },
+    {
+        "merged": "com.example.fiftysix.app-mergeDebugResources-56:/layout/profile_attendee.xml",
+        "source": "com.example.fiftysix.app-main-59:/layout/profile_attendee.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-mergeDebugResources-56:\\layout\\user_selection_view.xml",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\user_selection_view.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-mergeDebugResources-56:\\layout\\organizer_event_details_view.xml",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\organizer_event_details_view.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-mergeDebugResources-56:\\layout\\activity_attendee_main.xml",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\activity_attendee_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-mergeDebugResources-56:\\layout\\attendee_home_page_view.xml",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\attendee_home_page_view.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-mergeDebugResources-56:\\layout\\attendee_row.xml",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\attendee_row.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-mergeDebugResources-56:\\layout\\organizer_event_details_list.xml",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\organizer_event_details_list.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-mergeDebugResources-56:\\layout\\organizer_row.xml",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\organizer_row.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-mergeDebugResources-56:\\layout\\attendee_flipper.xml",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\attendee_flipper.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-mergeDebugResources-56:\\layout\\attendee_home_page_all_events_view.xml",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\attendee_home_page_all_events_view.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-mergeDebugResources-56:\\layout\\organizer_home_page_view.xml",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\organizer_home_page_view.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-mergeDebugResources-56:\\layout\\attendee_all_events_row.xml",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\attendee_all_events_row.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-mergeDebugResources-56:\\layout\\attendee_sign_up_event_view.xml",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\attendee_sign_up_event_view.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-mergeDebugResources-56:\\layout\\organizer_event_name_list.xml",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\organizer_event_name_list.xml"
+    }
+]
