@@ -2,7 +2,6 @@ plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
     id("de.mannodermaus.android-junit5")
-
 }
 
 android {
@@ -39,6 +38,11 @@ android {
 }
 
 dependencies {
+    //implementation("http://dl.bintray.com/amulyakhare/maven")
+    //implementation("com.amulyakhare:com.amulyakhare.textdrawable:1.0.1")
+
+    implementation("jp.wasabeef:picasso-transformations:2.4.0")
+
 
     // Aggregator dependency on JUnit api, engine, and params
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
@@ -92,6 +96,6 @@ dependencies {
 
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("de.mannodermaus.junit5:android-test-core:1.3.0")
-    implementation("com.google.firebase:firebase-messaging:20.2.4")
+
     implementation("com.google.android.play:core:1.10.3")
 }
