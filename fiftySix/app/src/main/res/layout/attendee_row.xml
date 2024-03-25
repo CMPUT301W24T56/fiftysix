@@ -74,7 +74,7 @@
                 android:textSize="18sp" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/uploadQRFromScan"
+                android:id="@+id/EditEvent"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_below="@+id/attendeeCount"

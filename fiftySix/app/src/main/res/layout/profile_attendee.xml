@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingHorizontal="40dp"
     android:background="@color/colorPrimaryDark"
-    android:gravity="center"
-    >
+    android:gravity="center">
+
 
     <ImageButton
         android:id="@+id/profile_image"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
         android:layout_gravity="center"
         android:layout_marginVertical="45dp"
+        android:background="@color/zxing_transparent"
         android:scaleType="centerCrop"
         app:srcCompat="@drawable/profile"
-        />
+        tools:src="@tools:sample/avatars"/>
 
     <EditText
         android:id="@+id/profile_name"
@@ -84,6 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Back"
+            android:background="@drawable/light_round_button"
             />
         <Space
             android:layout_width="15dp"
@@ -95,18 +97,16 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Save"
+            android:background="@drawable/light_round_button"
             />
-        <Space
-            android:layout_width="15dp"
-            android:layout_height="0dp"
-            />
+
         <Button
-            android:id="@+id/profile_noimg"
+            android:id="@+id/profile_remove_pic"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Remove PFP"
-            />
+            android:background="@drawable/light_round_button"
+            android:text="Remove Pic" />
     </LinearLayout>
 
 </LinearLayout>

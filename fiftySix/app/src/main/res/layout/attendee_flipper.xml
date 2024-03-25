@@ -16,14 +16,29 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <include layout="@layout/attendee_sign_up_event_view" />
+        <include layout="@layout/attendee_home_page_all_events_view" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <include layout="@layout/attendee_home_page_all_events_view" />
+        <include layout="@layout/attendee_sign_up_event_view" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <include layout="@layout/profile_attendee" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <include layout="@layout/attendee_home_signups_view" />
     </LinearLayout>
 
 

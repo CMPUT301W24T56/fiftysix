@@ -16,63 +16,63 @@
         >
 
         <TextView
-            android:id="@+id/code_name"
+            android:id="@+id/event_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="Code Name"
+            android:text="Event Name"
             android:textSize="22sp" />
 
         <RelativeLayout
             android:id="@+id/expandable_layout"
             android:layout_width="match_parent"
-            android:layout_height="500dp">
+            android:layout_height="675dp">
 
 
             <TextView
-                android:id="@+id/version"
+                android:id="@+id/event_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:text="date"
+                android:text="Date"
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/apiLevel"
+                android:id="@+id/event_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:padding="16dp"
-                android:text="api Level"
+                android:text="Loaction"
                 android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/version"
+                android:layout_below="@+id/event_date"
                 android:padding="16dp"
                 android:text="Description: "
                 android:textAlignment="textStart"
                 android:textSize="18sp" />
 
             <TextView
-                android:gravity="left|center"
                 android:id="@+id/currentAttendees"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/description"
+                android:gravity="left|center"
                 android:padding="16dp"
                 android:text="Attendees at Event:"
                 android:textSize="18sp" />
 
             <TextView
-                android:gravity="left|center"
                 android:id="@+id/attendeeCapacity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/currentAttendees"
+                android:gravity="left|center"
                 android:padding="16dp"
                 android:text="Event Capacity:"
 
@@ -82,18 +82,18 @@
                 android:id="@+id/event_poster_image"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
-                android:padding="5dp"
-                android:layout_above="@id/browseAllEvents"
+                android:layout_above="@id/leave_event"
                 android:layout_below="@id/attendeeCapacity"
-                android:adjustViewBounds="true"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
+                android:adjustViewBounds="true"
+                android:padding="5dp"
                 android:scaleType="centerCrop"
                 tools:src="@tools:sample/avatars" />
 
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/browseAllEvents"
+                android:id="@+id/leave_event"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_alignParentStart="true"
@@ -102,7 +102,7 @@
                 android:layout_marginBottom="6dp"
                 android:background="@drawable/dark_round_button"
                 android:fontFamily="@font/inter_medium"
-                android:text="Browse Events"
+                android:text="Leave Event"
                 android:textColor="@color/colorPrimaryLight"
                 android:textSize="20sp" />
 
