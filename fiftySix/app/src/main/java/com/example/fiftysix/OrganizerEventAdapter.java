@@ -1,8 +1,14 @@
 package com.example.fiftysix;
 
+import static androidx.databinding.DataBindingUtil.setContentView;
+
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -19,10 +25,13 @@ import java.util.List;
 public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAdapter.EventVH> {
 
     List<Event> eventList;
+    private Context context;
 
-    public OrganizerEventAdapter(ArrayList<Event> eventList) {
+    public OrganizerEventAdapter(ArrayList<Event> eventList, Context context) {
         this.eventList = eventList;
+        this.context = context;
     }
+
 
     @NonNull
     @Override
@@ -77,6 +86,9 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         LinearLayout linearLayout;
         RelativeLayout expandableLayout;
         ImageView eventImage;
+        Button send_notification, edit_event, attendees;
+        Event event;
+        String eventID;
 
         public EventVH(@NonNull View itemView) {
             super(itemView);
@@ -92,17 +104,53 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             expandableLayout = itemView.findViewById(R.id.expandable_layout);
 
             eventImage = itemView.findViewById(R.id.event_poster_image);
+            send_notification = itemView.findViewById(R.id.notify);
+            attendees = itemView.findViewById(R.id.attendeeDetails);
+            edit_event = itemView.findViewById(R.id.EditEvent);
 
 
             linearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    Event event = eventList.get(getAdapterPosition());
+                    event = eventList.get(getAdapterPosition());
+                    eventID = event.getEventID();
                     event.setExpandable(!event.getExpandable());
                     notifyItemChanged(getAdapterPosition());
+                    Log.d("OrgEventAdapt", "EventID =  "+ event.getEventID());
+
                 }
             });
+
+            send_notification.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, send_notification.class); // Assuming SendNotificationActivity is your activity name
+                    Log.d("TAG", "onClick: working now ");
+                    context.startActivity(intent);
+                }
+            });
+
+            edit_event.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO: Let organizer edit event Details
+                }
+            });
+
+            attendees.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO: Let organizer edit event Details
+                    event = eventList.get(getAdapterPosition());
+                    eventID = event.getEventID();
+                    Log.d("attendees", "EventID =  "+ eventID);
+                    Intent intent2 = new Intent(context, OrganizerAttendeeDataActivity.class);
+                    intent2.putExtra("eventID", eventID);
+                    context.startActivity(intent2);
+                }
+            });
+
+
 
 
         }
