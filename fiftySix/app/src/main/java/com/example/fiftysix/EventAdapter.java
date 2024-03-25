@@ -18,17 +18,19 @@ import java.util.List;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventVH> {
 
-    List<Event> eventList;
+    private List<Event> eventList;
+    private boolean isExpandableOnClick;
 
-    public EventAdapter(ArrayList<Event> eventList) {
+    public EventAdapter(ArrayList<Event> eventList, boolean isExpandableOnClick) {
         this.eventList = eventList;
+        this.isExpandableOnClick = isExpandableOnClick;
     }
 
     @NonNull
     @Override
     public EventVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.organizer_row, parent, false);
-        return new EventVH(view);
+        return new EventVH(view, isExpandableOnClick);
     }
 
     @Override
@@ -46,12 +48,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventVH> {
             Picasso.get()
                     .load(imageUrl)
                     .fit()
-                    .into(holder.eventImage); // Your ImageView
+                    .into(holder.eventImage);
         }
 
-        boolean isExpandable = eventList.get(position).getExpandable();
-        holder.expandableLayout.setVisibility(isExpandable ? View.VISIBLE : View.GONE);
-
+        if (!isExpandableOnClick) {
+            holder.expandableLayout.setVisibility(View.GONE);
+        } else {
+            boolean isExpandable = eventList.get(position).getExpandable();
+            holder.expandableLayout.setVisibility(isExpandable ? View.VISIBLE : View.GONE);
+        }
     }
 
     @Override
@@ -66,7 +71,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventVH> {
         RelativeLayout expandableLayout;
         ImageView eventImage;
 
-        public EventVH(@NonNull View itemView) {
+        public EventVH(@NonNull View itemView, boolean isExpandableOnClick) {
             super(itemView);
 
             codeName = itemView.findViewById(R.id.code_name);
@@ -79,18 +84,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventVH> {
 
             eventImage = itemView.findViewById(R.id.event_poster_image);
 
-            linearLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
+            if (isExpandableOnClick) {
+                linearLayout.setOnClickListener(v -> {
                     Event event = eventList.get(getAdapterPosition());
                     event.setExpandable(!event.getExpandable());
                     notifyItemChanged(getAdapterPosition());
-                }
-            });
-
-
+                });
+            }
         }
     }
-
 }
