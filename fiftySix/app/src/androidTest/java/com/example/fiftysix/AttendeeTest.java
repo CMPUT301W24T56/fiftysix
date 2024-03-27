@@ -75,13 +75,14 @@ public class AttendeeTest {
         // Find the RecyclerView
         // Check if any item in the RecyclerView with the name "Arsh1" is displayed
         sleep(1000);
+        // below test i  am facing error . you might need to  do import stuff and gradle dependency.
 //        onView(withId(R.id.attendeeHomeRecyclerView))
 //                .perform(RecyclerViewActions.actionOnItem(
 //                        hasDescendant(withText("Event Name")),
 //                        click()));
     }
     @Test
-    public void check_sign_up_events(){
+    public void check_sign_up_events() throws InterruptedException {
         // going to attendee main page
         onView(withId(R.id.buttonAttendee)).perform(click());
 
@@ -89,6 +90,8 @@ public class AttendeeTest {
         onView(withId(R.id.menuButtonMyEvents)).perform(click());
 
         onData(allOf(is(instanceOf(String.class)), is("Event Sign-ups"))).perform(click());
+//        Thread.sleep(5000);
+//        onData(allOf(is(instanceOf(String.class)),is("Event Name"))).perform(click());
 
     }
 

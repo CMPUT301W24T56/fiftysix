@@ -2,8 +2,12 @@ package com.example.fiftysix;
 
 import static androidx.databinding.DataBindingUtil.setContentView;
 
+import static com.blankj.utilcode.util.ActivityUtils.startActivity;
+
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +17,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import com.squareup.picasso.Picasso;
 
 
@@ -86,7 +96,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         LinearLayout linearLayout;
         RelativeLayout expandableLayout;
         ImageView eventImage;
-        Button send_notification, edit_event, attendees;
+        Button send_notification, edit_event, attendees,share_qr_code;
         Event event;
         String eventID;
 
@@ -107,6 +117,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             send_notification = itemView.findViewById(R.id.notify);
             attendees = itemView.findViewById(R.id.attendeeDetails);
             edit_event = itemView.findViewById(R.id.EditEvent);
+            share_qr_code = itemView.findViewById(R.id.share_qr_code);
 
 
             linearLayout.setOnClickListener(new View.OnClickListener() {
@@ -150,9 +161,57 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                 }
             });
 
+            share_qr_code.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // sending qrcode
+                    event = eventList.get(getAdapterPosition());
+                    eventID = event.getEventID();
+                    // need to  fetch the qrcode details
+                    String qr_code =  event.getCheckInQRCodeID();
+                    // now we have the qr_code . now we need to save this
+                    //
+                    int qrCodeWidth = 500;
+                    int qrCodeHeight = 500;
 
+                    // Generate QR code
+                    Bitmap bitmap = generateQRCode(qr_code, qrCodeWidth, qrCodeHeight);
+                    // now we need to share the bitmap
+                    // https://developer.android.com/training/sharing/send?_gl=1*1iar2kj*_up*MQ..*_ga*MTczODQ1Mzk4MC4xNzExNTI2MDU1*_ga_6HH9YJMN9M*MTcxMTUyNjA1NC4xLjAuMTcxMTUyNjA1NC4wLjAuMA..
 
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
+                    sendIntent.setType("text/plain");
 
+                    Intent shareIntent = Intent.createChooser(sendIntent, null);
+                    startActivity(shareIntent);
+
+                }
+            });
+
+        }
+        // author: openai
+        // promptts how to share qrocde / data via different apps
+        // taking reference from the chatgpt on using lilbrary to conver string to qrcode
+        // https://chat.openai.com/c/8caccfbf-6f10-4986-8961-3537b0fe6701
+        private Bitmap generateQRCode(String qrCodeData, int width, int height) {
+            QRCodeWriter qrCodeWriter = new QRCodeWriter();
+            try {
+                BitMatrix bitMatrix = qrCodeWriter.encode(qrCodeData, BarcodeFormat.QR_CODE, width, height);
+                Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+
+                for (int x = 0; x < width; x++) {
+                    for (int y = 0; y < height; y++) {
+                        bitmap.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
+                    }
+                }
+                return bitmap;
+            } catch (WriterException e) {
+                e.printStackTrace();
+//                Toast.makeText(this, "Failed to generate QR code", Toast.LENGTH_SHORT).show();
+                return null;
+            }
         }
     }
 
