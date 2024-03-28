@@ -93,7 +93,7 @@ public class AttendeeTest {
 
         onData(allOf(is(instanceOf(String.class)), is("Event Sign-ups"))).perform(click());
         // enter the event name. below.
-
+        onView(withText("Event Name Poster")).perform(scrollTo(),click());
 
 
     }

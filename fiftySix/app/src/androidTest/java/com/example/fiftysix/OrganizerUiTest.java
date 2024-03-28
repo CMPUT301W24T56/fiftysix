@@ -99,15 +99,15 @@ public class OrganizerUiTest {
     @Test
     public void send_notification() throws InterruptedException {
         // going to organizer home
-//        onView(withId(R.id.buttonOrganizer)).perform(click());
-//        // clicking on one of the events
-//        sleep(3000);
-//        onData(withText("Arsh_Arora")).check(matches(isDisplayed()));
-//        onData(withText("Arsh_Arora")).perform(click());
-//        onView(withId(R.id.notify)).perform(scrollTo(),click());
-//        onView(withId(R.id.message)).perform(clearText(),
-//        typeText("This is just a test notification"));
-//        onView(withId(R.id.send_button)).perform(click());
+        onView(withId(R.id.buttonOrganizer)).perform(click());
+        // clicking on one of the events
+        sleep(3000);
+        onView(withText("Arsh_Arora")).check(matches(isDisplayed()));
+        onView(withText("Arsh_Arora")).perform(scrollTo(),click());
+        onView(withId(R.id.notify)).perform(scrollTo(),click());
+        onView(withId(R.id.message)).perform(clearText(),
+        typeText("This is just a test notification"));
+        onView(withId(R.id.send_button)).perform(click());
 
 
     }
