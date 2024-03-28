@@ -281,6 +281,21 @@
                 android:text="Signup Map"
                 android:textColor="@color/colorPrimaryLight"
                 android:textSize="20sp" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/Download_qr_code"
+                android:layout_width="384dp"
+                android:layout_height="64dp"
+                android:layout_above="@+id/notify"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/dark_round_button"
+                android:fontFamily="@font/inter_medium"
+                android:text="Download QR Code"
+                android:textColor="@color/colorPrimaryLight"
+                android:textSize="20sp" />
 
 
         </RelativeLayout>

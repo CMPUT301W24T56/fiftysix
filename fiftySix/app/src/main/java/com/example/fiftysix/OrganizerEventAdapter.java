@@ -1,8 +1,12 @@
 package com.example.fiftysix;
 
+import static com.blankj.utilcode.util.ActivityUtils.startActivity;
+
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,11 +17,22 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ImageView;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.squareup.picasso.Picasso;
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import org.eazegraph.lib.charts.PieChart;
 import org.eazegraph.lib.models.PieModel;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,7 +126,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         LinearLayout linearLayout;
         RelativeLayout expandableLayout;
         ImageView eventImage;
-        Button send_notification, edit_event;
+        Button send_notification, edit_event,Download_qr_code;
         ImageButton attendees, signUps;
         Event event;
         String eventID;
@@ -139,7 +154,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
 
             signUpPieChart = itemView.findViewById(R.id.piechartSignUp);
             checkinPieChart = itemView.findViewById(R.id.piechartCheckIn);
-
+            Download_qr_code = itemView.findViewById(R.id.Download_qr_code);
             linearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -193,6 +208,67 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
 
                 }
             });
+            // converting the string of qrcode to bitmap . so that person can either download or share the qr_code image
+            // https://easyonecoder.com/android/basic/GenerateQRCode
+            // author- Easy One Coder
+            Download_qr_code.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                     event = eventList.get(getAdapterPosition());
+                     eventID = event.getEventID();
+
+                    //  now we need to get the event qrcode
+                    //  we don't have to promotional qrcode for now so I am using check in qr code to test for now.
+                    // facing error in the function getCheckInQrCodeID();
+                    String qr_code = "-Nt4abMIseYLp_n31B3S"; //event.getPromoQRCodeID();
+                    Log.d("qr_code","qrcode string: " + qr_code);
+                    // now we need to convert this qr code into  bit map image
+                    MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+                    // reference of data transfer to other apps.
+                    // https://www.youtube.com/watch?v=qbtlrGHOVjg
+
+                    try {
+                        BitMatrix bitMatrix = multiFormatWriter.encode(qr_code, BarcodeFormat.QR_CODE,300,300);
+
+                        BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                        Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+                        Log.d("qr_code", "converting string to bitmap is working ");
+
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.ACTION_SEND);
+                        File qrCodeFile = saveBitmapToFile(bitmap);
+                        Log.d("file","converted  image bitmap to file");
+                        // Get content URI using FileProvider
+
+                        Uri contentUri =FileProvider.getUriForFile(context, "com.example.fiftysix.provider", qrCodeFile);
+
+
+                        Log.d("file_share","converted  file to uri  for sharing purpose");
+
+                        intent.putExtra(Intent.EXTRA_STREAM, contentUri);
+                        intent.setType("image/png");
+
+                        if (intent.resolveActivity(context.getPackageManager())!= null ){
+                            startActivity(intent);
+                        }
+                    }catch (WriterException e){
+                        throw  new RuntimeException(e);
+                    }
+                }
+            });
+
+        }
+
+        // storing the bitmap image in a file to share it to different apps
+        public File saveBitmapToFile(Bitmap bitmap){
+            File filesDir = context.getApplicationContext().getFilesDir();
+            File qrCodeFile = new File(filesDir, "qr_code.png");
+            try (FileOutputStream out = new FileOutputStream(qrCodeFile)) {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return qrCodeFile;
         }
     }
 
