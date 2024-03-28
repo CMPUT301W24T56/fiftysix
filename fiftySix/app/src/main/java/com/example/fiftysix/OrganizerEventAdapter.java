@@ -154,7 +154,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
 
             signUpPieChart = itemView.findViewById(R.id.piechartSignUp);
             checkinPieChart = itemView.findViewById(R.id.piechartCheckIn);
-            Download_qr_code = itemView.findViewById(R.id.Download_qr_code);
+            Download_qr_code = itemView.findViewById(R.id.share_qr_code);
             linearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -240,7 +240,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                         Log.d("file","converted  image bitmap to file");
                         // Get content URI using FileProvider
 
-                        Uri contentUri =FileProvider.getUriForFile(context, "com.example.fiftysix.provider", qrCodeFile);
+                        Uri contentUri = FileProvider.getUriForFile(context, "com.example.fiftysix.provider", qrCodeFile);
 
 
                         Log.d("file_share","converted  file to uri  for sharing purpose");
