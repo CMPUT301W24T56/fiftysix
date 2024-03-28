@@ -2,6 +2,9 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="Organizer_page_navigation()">
+        <State />
+      </entry>
       <entry key="app">
         <State />
       </entry>
@@ -12,6 +15,9 @@
         <State />
       </entry>
       <entry key="check_admin_navigation_buttons()">
+        <State />
+      </entry>
+      <entry key="check_set_limit()">
         <State />
       </entry>
     </value>

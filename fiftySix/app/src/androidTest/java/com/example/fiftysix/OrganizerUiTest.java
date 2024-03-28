@@ -6,14 +6,18 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withInputType;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import android.content.Context;
 import android.content.Intent;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.text.InputType;
+import android.widget.EditText;
 
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -33,8 +37,8 @@ public class OrganizerUiTest {
         // going to organizer home
         onView(withId(R.id.buttonOrganizer)).perform(click());
         // going to create event page and coming back without creating an event
-        onView(withId(R.id.buttonAddEvent));
-        onView(withId(R.id.buttonBackCreateEvent));
+        onView(withId(R.id.buttonAddEvent)).perform(click());
+        onView(withId(R.id.buttonBackCreateEvent)).perform(click());
 
     }
     /**  Testing whether the add event page i is working fine or not**/
@@ -74,6 +78,15 @@ public class OrganizerUiTest {
 
         // click on the set attendee limit button and
         onView(withId(R.id.switchAttendeeLimit)).perform(click());
+        // popping up adapter view to set the limit .
+        onView(ViewMatchers.withInputType(InputType.TYPE_CLASS_NUMBER))
+                .inRoot(isDialog()) // Specify that we're looking inside a dialog
+                .perform(ViewActions.typeText("100"), ViewActions.closeSoftKeyboard());
+
+        // Click OK button in the AlertDialog
+        onView(ViewMatchers.withText("OK"))
+                .inRoot(isDialog()) // Specify that we're looking inside a dialog
+                .perform(ViewActions.click());
 
     }
 
