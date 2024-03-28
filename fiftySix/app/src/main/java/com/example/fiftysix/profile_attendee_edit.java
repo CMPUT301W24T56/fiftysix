@@ -23,9 +23,12 @@ public class profile_attendee_edit extends AppCompatActivity {
 
         set_profile();
         profile_button_change = findViewById(R.id.profile_image);
-        mail = findViewById(R.id.email);
-        phoneno = findViewById(R.id.phone_no);
-        name = findViewById(R.id.Name);
+
+
+
+        mail = findViewById(R.id.profile_email);
+        phoneno = findViewById(R.id.profile_phone);
+        name = findViewById(R.id.profile_name);
         String email,person_name;
         profile_button_change.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -34,6 +37,8 @@ public class profile_attendee_edit extends AppCompatActivity {
                 startActivityForResult(open_camera, 100);
             }
         });
+
+
 
         mail.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +65,7 @@ public class profile_attendee_edit extends AppCompatActivity {
         });
 
 
-        go_back_attendee = findViewById(R.id.go_back_main_attendee);
+        //go_back_attendee = findViewById(R.id.go_back_main_attendee);
         go_back_attendee.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,6 +73,8 @@ public class profile_attendee_edit extends AppCompatActivity {
                 finish();
             }
         });
+
+
 
     }
 

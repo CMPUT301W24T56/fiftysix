@@ -14,13 +14,16 @@ package com.example.fiftysix;
 
 import static android.hardware.usb.UsbDevice.getDeviceId;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.provider.Settings;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Calendar;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -30,7 +33,6 @@ import android.provider.Settings;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-
 
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -61,23 +63,28 @@ public class Attendee {
     private String attendeeID;
     private FirebaseFirestore db;
     private CollectionReference ref;
-    private String userType = "attendee BRADY";
+    private String userType = "attendee";
     private String eventID;
-
-    private Profile profile; // TODO: create and store attendee profile
 
 
     // ________________________________CONSTRUCTORS_____________________________________
 
-
+    /**
+     *  Creates attendee object, if the device ID is not currently in the database linked to an attendee it will be added.
+     * @param mContext: Context current app context
+     */
     public Attendee(Context mContext) {
         this.mContext = mContext;
         this.attendeeID = getDeviceId();
         this.db = FirebaseFirestore.getInstance();
         this.ref = db.collection("Users");
+        attendeeExists(); // Adds organizer to data base if the organizer doesn't already exist
+    }
 
-        // Adds organizer to data base if the organizer doesn't already exist
-        attendeeExists();
+
+
+    public interface AttendeeCallBack{
+        void checkInSuccess(Boolean checkinSuccess, String eventName);
     }
 
 
@@ -85,15 +92,24 @@ public class Attendee {
 
     // ________________________________METHODS_____________________________________
 
-    // Adds check in data to the database
-    public void checkInToEvent(String qRCodeID){
+
+
+
+    /**
+     * Allows the attendee to check into an event. Takes in the QRCode ID, with that ID it fetches what event that qrcode is currently linked to in the database.
+     * It then adds the event ID to a collection inside the user document to keep track of events the user has check into.
+     * It also increments the attendee count in the event document in the database and stores the attendees id in a sub-collection inside the event.
+     * These are used so the organizer can view attendees and track realtime attendance.
+     * @param qRCodeID: String of the QRcode ID that was scanned.
+     */
+    public void checkInToEvent(String qRCodeID, AttendeeCallBack attendeeCallBack){
 
         Map<String,Object> attendeeCheckedInEventsData = new HashMap<>();
         attendeeCheckedInEventsData.put("eventDate","tempDate");
         //this.ref.document(this.attendeeID).collection("CheckedIntoEvents").document(eventID).set(attendeeCheckedInEventsData);
 
         Map<String,Object> attendeeCheckedInCount = new HashMap<>();
-        attendeeCheckedInCount.put("timesCheckedIn",0);
+        attendeeCheckedInCount.put("timesCheckedIn",1);
 
         //https://firebase.google.com/docs/firestore/query-data/get-data#java_4
         // Use this to fetch specific document.
@@ -104,28 +120,143 @@ public class Attendee {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-
                         eventID = document.get("event").toString();
-                        ref.document(attendeeID).collection("UpcomingEvents").document(eventID).set(attendeeCheckedInEventsData);
+                        checkInToEventID(eventID, attendeeCallBack);
 
-                        // TODO: increment this data every time the same attendee checks into the same event.
-                        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).set(attendeeCheckedInCount);
-
-                        db.collection("Events").document(eventID).update("attendeeCount",FieldValue.increment(1));
-                        Log.d(TAG, "DocumentSnapshot data: " + eventID);
                     } else {
                         Log.d(TAG, "No such document");
-
                     }
                 } else {
                     Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });
+    }
+
+
+    public void leaveEvent(String eventID){
+        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("currentlyAtEvent", "no");
+        db.collection("Users").document(attendeeID).collection("UpcomingEvents").document(eventID).delete();
+        db.collection("Events").document(eventID).update("attendeeCount", FieldValue.increment(-1));
+    }
+
+    public void signUpForEvent(String eventID){
+        db.collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot != null) {
+                    Integer attendeeSignUpCount = documentSnapshot.getLong("attendeeSignUpCount").intValue();
+                    Integer attendeeSignUpLimit = documentSnapshot.getLong("attendeeSignUpLimit").intValue();
+                    String eventName = documentSnapshot.getString("eventName");
+
+
+                    // Attendee can check in, event isn't full
+                    if (attendeeSignUpCount < attendeeSignUpLimit) {
+                        ref.document(attendeeID).collection("SignedUpEvents").document(eventID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    String signUpInTime = Calendar.getInstance().getTime().toString();
+
+                                    // Document exists, attendee has previously checked into the event (Checking into an event again)
+                                    if (document.exists()) {
+
+                                    }
+                                    // Attendee has never checked into the event before
+                                    else {
+                                        Map<String, Object> attendeeCheckedInEventsData = new HashMap<>();
+                                        attendeeCheckedInEventsData.put("signUpTime", signUpInTime);
+
+                                        Map<String, Object> attendeeCheckedInCount = new HashMap<>();
+                                        //attendeeCheckedInCount.put("timesCheckedIn", 1);
+                                        attendeeCheckedInCount.put("signUpTime", signUpInTime);
+                                        //attendeeCheckedInCount.put("currentlyAtEvent", "yes");
+
+                                        ref.document(attendeeID).collection("SignedUpEvents").document(eventID).set(attendeeCheckedInEventsData);
+                                        db.collection("Events").document(eventID).collection("attendeeSignUps").document(attendeeID).set(attendeeCheckedInCount);
+                                        db.collection("Events").document(eventID).update("attendeeSignUpCount", FieldValue.increment(1));
+                                    }
+                                } else {
+                                    Log.d(TAG, "Failed with: ", task.getException());
+                                }
+                            }
+                        });
+                    } else {
+
+
+                    }
+                }
+            }
+        });
 
     }
 
-    // Adds event to users upcoming events colletion in firebase.
+
+    public void checkInToEventID(String eventID, AttendeeCallBack attendeeCallBack) {
+
+        db.collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot != null) {
+                    Integer attendeeCount = documentSnapshot.getLong("attendeeCount").intValue();
+                    Integer attendeeLimit = documentSnapshot.getLong("attendeeLimit").intValue();
+                    String eventName = documentSnapshot.getString("eventName");
+
+
+                    // Attendee can check in, event isn't full
+                    if (attendeeCount < attendeeLimit) {
+                        ref.document(attendeeID).collection("UpcomingEvents").document(eventID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    String checkInTime = Calendar.getInstance().getTime().toString();
+
+                                    // Document exists, attendee has previously checked into the event (Checking into an event again)
+                                    if (document.exists()) {
+                                        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("timesCheckedIn", FieldValue.increment(1));
+                                        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("currentlyAtEvent", "yes");
+                                        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("checkInTime", checkInTime);
+                                        db.collection("Events").document(eventID).update("attendeeCount", FieldValue.increment(1));
+                                        attendeeCallBack.checkInSuccess(true, eventName);
+                                    }
+
+                                    // Attendee has never checked into the event before
+                                    else {
+                                        Map<String, Object> attendeeCheckedInEventsData = new HashMap<>();
+                                        attendeeCheckedInEventsData.put("checkInTime", checkInTime);
+
+                                        Map<String, Object> attendeeCheckedInCount = new HashMap<>();
+                                        attendeeCheckedInCount.put("timesCheckedIn", 1);
+                                        attendeeCheckedInCount.put("checkInTime", checkInTime);
+                                        attendeeCheckedInCount.put("currentlyAtEvent", "yes");
+
+                                        ref.document(attendeeID).collection("UpcomingEvents").document(eventID).set(attendeeCheckedInEventsData);
+                                        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).set(attendeeCheckedInCount);
+                                        db.collection("Events").document(eventID).update("attendeeCount", FieldValue.increment(1));
+                                        attendeeCallBack.checkInSuccess(true, eventName);
+                                    }
+                                } else {
+                                    Log.d(TAG, "Failed with: ", task.getException());
+                                    attendeeCallBack.checkInSuccess(false, eventName);
+                                }
+                            }
+                        });
+
+
+                    } else {
+
+                        attendeeCallBack.checkInSuccess(false, eventName);
+                    }
+                }
+            }
+        });
+
+
+    }
+
+
     private void addUpcomingEventToAttendeeDataBase(String eventIDKey){
         Map<String,Object> attendeeUpcomingEventsData = new HashMap<>();
         attendeeUpcomingEventsData.put("eventDate","temp");
@@ -143,8 +274,19 @@ public class Attendee {
 
     // Adds attendee to database if they are not already in it.
     private void addAttendeeToDatabase(){
+        Map<String,Object> attendeeUpcomingEventsData = new HashMap<>();
+        attendeeUpcomingEventsData.put("eventDate","temp");
+
         Map<String,Object> attendeeData = new HashMap<>();
         attendeeData.put("type",this.userType);
+        attendeeData.put("name","unknown");
+        attendeeData.put("phone","unknown");
+        attendeeData.put("email","unknown");
+        attendeeData.put("bio","unknown");
+        attendeeData.put("profileImageURL","unknown");
+        attendeeData.put("profileID", "unknown");
+
+        new Profile(attendeeID);
 
         this.ref
                 .document(this.attendeeID)
@@ -160,6 +302,8 @@ public class Attendee {
                         Log.d("Firestore", "ERROR: Attendee Data failed to upload.");
                     }
                 });
+
+        //this.ref.document(this.attendeeID).collection("UpcomingEvents").document("temp").set(attendeeUpcomingEventsData);
     }
 
     // Checks if the organizer is already in the database, If not in the database the organizer is added to it.
@@ -167,19 +311,26 @@ public class Attendee {
     // https://stackoverflow.com/questions/53332471/checking-if-a-document-exists-in-a-firestore-collection
     private void attendeeExists(){
         FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
-        DocumentReference docIdRef = rootRef.collection("Users").document(this.attendeeID);
+        DocumentReference docIdRef = rootRef.collection("Users").document(attendeeID);
         docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
+                        rootRef.collection("Users").document(attendeeID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                if (documentSnapshot != null){
+                                    //profileID = documentSnapshot.getString("profileID");
+                                }
+                            }
+                        });
                         Log.d(TAG, "Attendee already exists!");
-                        //organizerID = "thisOrganizerAlreadyExists";
-                        //addOrganizerToDatabase();
 
                     } else {
                         Log.d(TAG, "Attendee does not already exist!");
+                        //profileID = FirebaseDatabase.getInstance().getReference("Profiles").push().getKey();
                         addAttendeeToDatabase();
                     }
                 } else {
@@ -193,7 +344,5 @@ public class Attendee {
 
 
 
-    public String getUserType() {
-        return userType;
-    }
+
 }
