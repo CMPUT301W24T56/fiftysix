@@ -29,6 +29,7 @@ import android.provider.Settings;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.espresso.ViewAssertion;
 import androidx.test.espresso.action.ViewActions;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.platform.app.InstrumentationRegistry;
 
@@ -65,6 +66,9 @@ public class AttendeeTest {
     }
 
     // working till now
+    /* todo
+        constraint this test is only working for the names which have unique names since recycler view actions is not supported til now.
+        */
     @Test
     public void browse_event() throws InterruptedException {
         // going to attendee main page
@@ -74,16 +78,11 @@ public class AttendeeTest {
         onView(withId(R.id.menuButtonMyEvents)).perform(click());
 
         onData(allOf(is(instanceOf(String.class)), is("Browse All Events"))).perform(click());
-
-        // Find the RecyclerView
-        // Check if any item in the RecyclerView with the name "Arsh1" is displayed
-        sleep(1000);
-//        onView(withId(R.id.attendeeHomeRecyclerView))
-//                .perform(RecyclerViewActions.actionOnItem(
-//                        hasDescendant(withText("Event Name")),
-//                        click()));
+        // checking event details.
+        onView(withText("Event Name Poster")).perform(scrollTo(),click());
     }
-
+    /* todo
+    *   constraints - events should gave unique name . test cant pass if multiple events have same name. */
     @Test
     public void check_sign_up_events() {
         // going to attendee main page
@@ -93,17 +92,21 @@ public class AttendeeTest {
         onView(withId(R.id.menuButtonMyEvents)).perform(click());
 
         onData(allOf(is(instanceOf(String.class)), is("Event Sign-ups"))).perform(click());
+        // enter the event name. below.
+
+
 
     }
 
     @Test
-    public void event_check_in() {
+    public void check_event_check_in() {
         onView(withId(R.id.buttonAttendee)).perform(click());
 
         // clicking on the spinner item
         onView(withId(R.id.menuButtonMyEvents)).perform(click());
 
         onData(allOf(is(instanceOf(String.class)), is("Event Check-ins"))).perform(click());
+        // edit the event name according to yourself.
     }
 }
 

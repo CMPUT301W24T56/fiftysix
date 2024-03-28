@@ -14,10 +14,10 @@
       <entry key="browse_events()">
         <State />
       </entry>
-      <entry key="check_admin_navigation_buttons()">
+      <entry key="check_set_limit()">
         <State />
       </entry>
-      <entry key="check_set_limit()">
+      <entry key="check_sign_up_events()">
         <State />
       </entry>
     </value>
