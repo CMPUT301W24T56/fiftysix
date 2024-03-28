@@ -33,6 +33,7 @@ public class Event {
     private String location;
     private Integer attendeeLimit;
     private Integer attendeeCount;
+    private Integer signUpCount;
     private String eventName;
     private String promoQRCodeID;
     private String queryReturnString;
@@ -75,7 +76,7 @@ public class Event {
 
 
     // Used to create an event object from given event ID
-    public Event(String eventID, String eventName, String eventLocation, String eventDate, String details, Integer attendeeCount, Integer attendeeLimit,  String posterURL) {
+    public Event(String eventID, String eventName, String eventLocation, String eventDate, String details, Integer attendeeCount, Integer signUpCount, Integer attendeeLimit,  String posterURL) {
         this.eventID = eventID;
         this.eventName = eventName;
         this.location = eventLocation;
@@ -85,6 +86,7 @@ public class Event {
         this.attendeeLimit = attendeeLimit;
         this.posterURL = posterURL;
         this.expandable = false;
+        this.signUpCount = signUpCount;
         //this.posterID = FirebaseDatabase.getInstance().getReference("images").push().getKey();
     }
 
@@ -220,4 +222,6 @@ public class Event {
     public void setExpandable(Boolean expandable) {
         this.expandable = expandable;
     }
+
+    public Integer getSignUpCount() {return signUpCount;}
 }

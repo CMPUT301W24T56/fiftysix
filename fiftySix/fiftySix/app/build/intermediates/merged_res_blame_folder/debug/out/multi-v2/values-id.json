@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.example.fiftysix.app-mergeDebugResources-55:/values-id/values-id.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\prodb\\.gradle\\caches\\transforms-4\\bfab6e56ebbd788aed9d5b059b4986d4\\transformed\\zxing-android-embedded-4.3.0\\res\\values-id\\values-id.xml",
+                    "from": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,114,161,293",
+                        "endColumns": "58,46,131,108",
+                        "endOffsets": "109,156,288,397"
+                    }
+                }
+            ]
+        }
+    ]
+}

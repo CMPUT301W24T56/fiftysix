@@ -90,6 +90,8 @@ public class OrganizerMainActivity extends AppCompatActivity {
     private ImageButton orgNotificationButton;
     private ImageButton orgHomeButton;
 
+    private ImageButton backOrgNotif;
+
 
     // Buttons on Create event page
     private Button createEvent;
@@ -153,7 +155,59 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
         // Adds events from database to the organizers home screen. Will only show events created by the organizer
 
-        loadOrganizerEvents();
+
+        eventRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.e("Firestore", error.toString());
+                    return;
+                }
+                if (value != null){
+                    eventRef.whereEqualTo("organizer", organizerID).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot querySnapshot) {
+                            if (querySnapshot != null) {
+                                eventDataList.clear();
+                                for (QueryDocumentSnapshot doc : querySnapshot) {
+                                    //Log.e(TAG, "onEvent: organizer " + doc.getString("organizer").toString() + " organizerID = " + organizerID);
+                                    String eventOrganizer = doc.getString("organizer").toString();
+                                    //Log.e(TAG, "Inside if: organizer " + doc.getString("organizer"));
+                                    String eventID = doc.getId();
+                                    String eventName = doc.getString("eventName");
+                                    String posterID = doc.getString("posterID");
+                                    Integer inAttendeeLimit = doc.getLong("attendeeLimit").intValue();
+                                    Integer inAttendeeCount = doc.getLong("attendeeCount").intValue();
+                                    Integer signUpCount = doc.getLong("attendeeSignUpCount").intValue();
+                                    String inDate = doc.getString("date");
+                                    String location = doc.getString("location");
+                                    String details = doc.getString("details");
+
+                                    Log.d("EVENTNAME", "hello " + eventID);
+
+                                    // TODO: Sign Up Milestones
+                                    addAtttendanceMilestoneUpdates(eventID, eventName, signUpCount, inAttendeeLimit);
+
+                                    db.collection("PosterImages").whereEqualTo("poster", posterID).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onSuccess(QuerySnapshot querySnapshotImage) {
+                                            for (QueryDocumentSnapshot doc : querySnapshotImage){
+
+                                                Log.e("Added to list", "onSuccess: Event has been added to eventDataList, OrganizerMain "+eventName);
+                                                String posterURL = doc.getString("image");
+                                                eventDataList.add(new Event(eventID, eventName, location, inDate, details, inAttendeeCount, signUpCount, inAttendeeLimit, posterURL));
+                                                organizerEventAdapter.notifyDataSetChanged();
+                                            }
+
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        });
 
 
         galleryLauncher = registerForActivityResult(
@@ -188,7 +242,22 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
         initializeCreateEvent();
 
+
         // Create event pages
+
+        orgNotificationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                notificationView(v);
+            }
+        });
+
+        backOrgNotif.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                homeView(v);
+            }
+        });
 
 
 
@@ -198,6 +267,8 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
 
     //________________________________________Methods________________________________________
+
+
 
 
 
@@ -281,20 +352,38 @@ public class OrganizerMainActivity extends AppCompatActivity {
         File image = File.createTempFile(imageFileName,".jpg",storageDir);
         cameraImageUri = Uri.fromFile(image);
         return image;
-    }
+        }
+
+
+        public void homeView(View v){
+            viewFlipper.setDisplayedChild(0);;
+        }
+
+        public void createEventView(View v){
+            viewFlipper.setDisplayedChild(1);;
+        }
+
+        public void reuseQRView(View v){
+            viewFlipper.setDisplayedChild(2);;
+        }
+
+        public void notificationView(View v){
+            viewFlipper.setDisplayedChild(3);;
+        }
 
 
         public void previousView(View v){
         //viewFlipper.setInAnimation(this, android.R.anim.slide_in_left);
         //viewFlipper.setOutAnimation(this, android.R.anim.slide_out_right);
         viewFlipper.showPrevious();
-    }
+        }
 
         private void nextView(View v){
         //viewFlipper.setInAnimation(this, R.anim.slide_in_right);
         //viewFlipper.setOutAnimation(this, R.anim.slide_out_left);
         viewFlipper.showNext();
-    }
+        }
+
 
         private void setButtons() {
             // Home page buttons
@@ -310,6 +399,8 @@ public class OrganizerMainActivity extends AppCompatActivity {
             uploadQRFromScan = (Button) findViewById(R.id.EditEvent);
             switchAttendeeLimit = findViewById(R.id.switchAttendeeLimit);
             //eventPosterImage = findViewById(R.id.event_poster_image);
+
+            backOrgNotif = (ImageButton) findViewById(R.id.backOrgNotif);
 
         }
 
@@ -418,10 +509,6 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
         private void loadOrganizerEvents(){
 
-
-
-
-
             eventRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -460,7 +547,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
                                                     Log.e("Added to list", "onSuccess: Event has been added to eventDataList, OrganizerMain");
                                                     String posterURL = doc.getString("image");
-                                                    eventDataList.add(new Event(eventID, eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit, posterURL));
+                                                    eventDataList.add(new Event(eventID, eventName, location, inDate, details, inAttendeeCount, signUpCount, inAttendeeLimit, posterURL));
                                                     organizerEventAdapter.notifyDataSetChanged();
                                                 }
 
@@ -476,23 +563,19 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
         }
 
-        private void addAtttendanceMilestoneUpdates(String eventName, Integer checkIns, Integer attendeeLimit){
-            AlertDialog.Builder builder = new AlertDialog.Builder(OrganizerMainActivity.this);
-            builder.setTitle("New MileStone");
+        private void addAtttendanceMilestoneUpdates(String eventID, String eventName, Integer checkIns, Integer attendeeLimit){
+            //AlertDialog.Builder builder = new AlertDialog.Builder(OrganizerMainActivity.this);
+            //builder.setTitle("New MileStone");
 
+            String message = "Null";
 
-            String message;
-
-
-            // Attendee count Milestones
-            if (checkIns == 1){
-                message = "Everyone has left the event.";
-            }
 
 
             // Attendee count Milestones
             if (checkIns == 1){
                 message = "Congratulations, your first attendee has arrived.";
+                MileStone milestone = new MileStone(organizerID, eventID, eventName, message, checkIns);
+                milestone.addToDatabase();
             }
 
             int [] attendeeCountMilestones = { 25, 50, 100, 250, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 7500, 10000 };
@@ -502,22 +585,28 @@ public class OrganizerMainActivity extends AppCompatActivity {
             for (int i = 0; i < attendeeCountMilestones.length; i++ ){
                 if (checkIns == attendeeCountMilestones[i]){
                     message = "Congratulations," + checkIns.toString() + "  attendees have arrived.";
+                    MileStone milestone = new MileStone(organizerID, eventID, eventName, message, checkIns);
+                    milestone.addToDatabase();
                 }
             }
 
             if (checkIns == attendeeLimit){
                 message = "Congratulations, your event has reached max capacity.";
+                MileStone milestone = new MileStone(organizerID, eventID, eventName, message, checkIns);
+                milestone.addToDatabase();
             }
 
 
-            builder.setTitle("New MileStone");
+
+
+            //builder.setTitle("New MileStone");
         }
 
-    private void addSingUpMilestoneUpdates(Integer attendees, Integer attendeeLimit){
-        AlertDialog.Builder builder = new AlertDialog.Builder(OrganizerMainActivity.this);
+        private void addSingUpMilestoneUpdates(Integer attendees, Integer attendeeLimit){
+            AlertDialog.Builder builder = new AlertDialog.Builder(OrganizerMainActivity.this);
 
-        builder.setTitle("New MileStone");
-    }
+            builder.setTitle("New MileStone");
+        }
 
         
         private void initializeCreateEvent(){

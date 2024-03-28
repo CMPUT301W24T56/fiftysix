@@ -78,6 +78,15 @@ dependencies {
     implementation("androidx.cardview:cardview:1.0.0")
     //implementation ("io.grpc:grpc-okhttp:1.32.2")
 
+    // For Card view
+    implementation("androidx.cardview:cardview:1.0.0")
+
+
+    // https://www.geeksforgeeks.org/how-to-add-a-pie-chart-into-an-android-application/#google_vignette
+    // Chart and graph library
+    implementation("com.github.blackfizz:eazegraph:1.2.5l@aar")
+    implementation("com.nineoldandroids:library:2.4.0")
+
     implementation("com.squareup.picasso:picasso:2.71828")
 
     implementation("androidx.appcompat:appcompat:1.6.1")

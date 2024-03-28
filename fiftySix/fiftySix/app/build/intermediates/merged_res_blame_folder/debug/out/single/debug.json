@@ -1,0 +1,334 @@
+[
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-mdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\layout_organizer_home_page_custom_list_view.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\organizer_home_page_custom_list_view.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\drawable_notif_ic_launcher_background.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\drawable\\notif_ic_launcher_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\drawable_back_ic_launcher_background.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\drawable\\back_ic_launcher_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-hdpi_user_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-hdpi\\user_ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-xxhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\layout_profile_attendee.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\profile_attendee.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-hdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\layout_organizer_event_details_view.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\organizer_event_details_view.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\layout_activity_admin_main.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\activity_admin_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\xml_backup_rules.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\xml\\backup_rules.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-mdpi_user_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-mdpi\\user_ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\layout_organizer_flipper.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\organizer_flipper.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-hdpi_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-hdpi\\ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-xhdpi_add_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-xhdpi\\add_ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-mdpi_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-mdpi\\ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-xxhdpi_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-xxhdpi\\ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\drawable_round_button_shape.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\drawable\\round_button_shape.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\drawable_transparent_background_button.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\drawable\\transparent_background_button.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-hdpi_back_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-hdpi\\back_ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\drawable_light_round_button.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\drawable\\light_round_button.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\layout_attendee_flipper.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\attendee_flipper.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\xml_file_paths.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\xml\\file_paths.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-xxxhdpi_notif_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-xxxhdpi\\notif_ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\navigation_nav_graph.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\navigation\\nav_graph.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\layout_attendee_my_events_row.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\attendee_my_events_row.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-xhdpi_notif_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-xhdpi\\notif_ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-anydpi-v26\\ic_launcher.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-xxhdpi_add_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-xxhdpi\\add_ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\xml_data_extraction_rules.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\xml\\data_extraction_rules.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\drawable_profile.png.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\drawable\\profile.png"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\drawable_ic_launcher_background.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\drawable\\ic_launcher_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\drawable_search_bar_rounded.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\drawable\\search_bar_rounded.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-xxhdpi_notif_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-xxhdpi\\notif_ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-xxxhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-hdpi_add_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-hdpi\\add_ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-xxhdpi_back_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-xxhdpi\\back_ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\layout_fragment_add_profile.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\fragment_add_profile.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\font_inter.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\font\\inter.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\layout_organizer_row.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\organizer_row.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\drawable_user_ic_launcher_background.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\drawable\\user_ic_launcher_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-xhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\drawable_circle_profile_pic_white.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\drawable\\circle_profile_pic_white.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-xxxhdpi_back_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-xxxhdpi\\back_ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-mdpi_add_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-mdpi\\add_ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-xhdpi_user_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-xhdpi\\user_ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-xxhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\layout_activity_attendee_main.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\activity_attendee_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\layout_attendee_all_events_row.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\attendee_all_events_row.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-xhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\drawable_dark_round_button.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\drawable\\dark_round_button.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\layout_attendee_sign_up_event_view.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\attendee_sign_up_event_view.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\drawable_cancel1.png.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\drawable\\cancel1.png"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\anim_slide_out_left.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\anim\\slide_out_left.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\font_inter_medium.ttf.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\font\\inter_medium.ttf"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\layout_attendee_home_page_view.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\attendee_home_page_view.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-anydpi-v26\\ic_launcher_round.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\layout_attendee_home_page_all_events_view.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\attendee_home_page_all_events_view.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-xxxhdpi_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-xxxhdpi\\ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-mdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-xxxhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-hdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\layout_user_selection_view.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\user_selection_view.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\drawable_icons8_qr_50.png.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\drawable\\icons8_qr_50.png"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\layout_organizer_reuse_or_scan_qrcode_view.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\organizer_reuse_or_scan_qrcode_view.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-xxxhdpi_user_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-xxxhdpi\\user_ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\anim_slide_in_right.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\anim\\slide_in_right.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-xhdpi_back_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-xhdpi\\back_ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\font_inter_bold.ttf.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\font\\inter_bold.ttf"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\layout_organizer_home_page_view.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\organizer_home_page_view.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-xxhdpi_user_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-xxhdpi\\user_ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\layout_organizer_event_name_list.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\organizer_event_name_list.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\layout_attendee_row.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\attendee_row.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\drawable_add_ic_launcher_background.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\drawable\\add_ic_launcher_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-mdpi_back_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-mdpi\\back_ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "com.example.fiftysix.app-merged_res-57:/layout_profile_attendee.xml.flat",
+        "source": "com.example.fiftysix.app-main-59:/layout/profile_attendee.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-mdpi_notif_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-mdpi\\notif_ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-hdpi_notif_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-hdpi\\notif_ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\drawable_ic_launcher_foreground.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\drawable\\ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-xxxhdpi_add_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-xxxhdpi\\add_ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\layout_activity_main.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\activity_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\mipmap-xhdpi_ic_launcher_foreground.webp.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\mipmap-xhdpi\\ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-merged_res-57:\\layout_organizer_event_details_list.xml.flat",
+        "source": "C:\\Users\\prodb\\.gradle\\daemon\\8.6\\com.example.fiftysix.app-main-59:\\layout\\organizer_event_details_list.xml"
+    }
+]

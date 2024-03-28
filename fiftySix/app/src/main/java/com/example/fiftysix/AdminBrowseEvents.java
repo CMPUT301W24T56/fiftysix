@@ -61,7 +61,7 @@ public class AdminBrowseEvents extends AppCompatActivity {
                             String posterURL = document.getString("posterURL");
                             String details = document.getString("details");
 
-                            eventList.add(new Event(eventID, eventName, eventLocation, eventDate, details, 100, 1000, posterURL));
+                            eventList.add(new Event(eventID, eventName, eventLocation, eventDate, details, 100, 1000,1000, posterURL));
                             eventAdapter.notifyDataSetChanged();
                         }
                     } else {

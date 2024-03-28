@@ -35,13 +35,16 @@
         android:theme="@style/Theme.FiftySix"
         tools:targetApi="31">
         <activity
+            android:name=".OrganizerSignUpDataActivity"
+            android:exported="false" />
+        <activity
             android:name=".ImageDisplayActivity"
             android:exported="false" />
         <activity
             android:name=".AdminBrowseImages"
             android:exported="false" />
         <activity
-            android:name=".OrganizerAttendeeDataActivity"
+            android:name=".OrganizerCheckInDataActivity"
             android:exported="false" />
         <activity
             android:name=".AdminMainActivity"

@@ -124,7 +124,7 @@ public class OrganizerAttendeeDataActivity extends AppCompatActivity {
                                                     String attendeePhoneNumber = documentSnapshot.getString("phone");
                                                     String attendeeEmail = documentSnapshot.getString("email");
                                                     String profileURL = documentSnapshot.getString("profileImageURL");
-                                                    eventAttendeeDataList.add(new Event(eventID, attendeeName, attendeePhoneNumber, attendeeEmail, "temp hard coded for testing", 0, 0, profileURL));
+                                                    eventAttendeeDataList.add(new Event(eventID, attendeeName, attendeePhoneNumber, attendeeEmail, "temp hard coded for testing", 0, 0,0, profileURL));
                                                     organizerAttendeesEventAdapter.notifyDataSetChanged();
                                                 }
                                             }

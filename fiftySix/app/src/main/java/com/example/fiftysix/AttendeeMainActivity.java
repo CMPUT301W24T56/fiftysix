@@ -457,6 +457,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
                                                         String imageUrl = value.getString("posterURL");
                                                         String inDate = value.getString("date");
                                                         String location = value.getString("location");
+                                                        Integer signUpCount = value.getLong("attendeeSignUpCount").intValue();
                                                         String details = value.getString("details");
                                                         String posterID = value.getString("posterID");
                                                         db.collection("PosterImages").document(posterID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -464,7 +465,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
                                                             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                                                                 if (value != null) {
                                                                     String imageUrl = value.getString("image");
-                                                                    myEventDataList.add(new Event(eventID, eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit, imageUrl));
+                                                                    myEventDataList.add(new Event(eventID, eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit,signUpCount, imageUrl));
                                                                     attendeeMyEventAdapter.notifyDataSetChanged();
                                                                 }
                                                             }
@@ -526,6 +527,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
                                                         Integer inAttendeeCount = value.getLong("attendeeCount").intValue();
                                                         String imageUrl = value.getString("posterURL");
                                                         String inDate = value.getString("date");
+                                                        Integer signUpCount = value.getLong("attendeeSignUpCount").intValue();
                                                         String location = value.getString("location");
                                                         String details = value.getString("details");
                                                         String posterID = value.getString("posterID");
@@ -534,7 +536,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
                                                             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                                                                 if (value != null) {
                                                                     String imageUrl = value.getString("image");
-                                                                    signUpEventDataList.add(new Event(eventID, eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit, imageUrl));
+                                                                    signUpEventDataList.add(new Event(eventID, eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit,signUpCount, imageUrl));
                                                                     attendeeSignUpEventAdapter.notifyDataSetChanged();
                                                                 }
                                                             }
@@ -571,6 +573,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
                             Integer inAttendeeCount = doc.getLong("attendeeCount").intValue();
                             String imageUrl = doc.getString("posterURL");
                             String inDate = doc.getString("date");
+                            Integer signUpCount = doc.getLong("attendeeSignUpCount").intValue();
                             String location = doc.getString("location");
                             String details = doc.getString("details");
                             String posterID = doc.getString("posterID");
@@ -582,7 +585,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
                                     if (value != null) {
 
                                         String imageUrl = value.getString("image");
-                                        allEventDataList.add(new Event(eventID, eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit, imageUrl));
+                                        allEventDataList.add(new Event(eventID, eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit, signUpCount, imageUrl));
                                         attendeeAllEventAdapter.notifyDataSetChanged();
                                     }
                                 }

@@ -30,5 +30,12 @@
         <include layout="@layout/organizer_reuse_or_scan_qrcode_view" />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <include layout="@layout/organizer_notifications" />
+    </LinearLayout>
+
 
 </ViewFlipper>
