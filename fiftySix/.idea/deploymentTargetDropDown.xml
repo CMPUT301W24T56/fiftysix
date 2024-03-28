@@ -11,13 +11,13 @@
       <entry key="browse_event()">
         <State />
       </entry>
-      <entry key="browse_events()">
-        <State />
-      </entry>
       <entry key="check_set_limit()">
         <State />
       </entry>
       <entry key="check_sign_up_events()">
+        <State />
+      </entry>
+      <entry key="send_notification()">
         <State />
       </entry>
     </value>
