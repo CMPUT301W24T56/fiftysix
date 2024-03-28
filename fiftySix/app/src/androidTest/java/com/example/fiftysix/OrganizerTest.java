@@ -11,7 +11,17 @@ public class OrganizerTest {
     private Context context = ApplicationProvider.getApplicationContext();
 
 
+    private Organizer mockOrganizer() {
+        Organizer orgaznier = new Organizer(context);
+        return orgaznier;
+    }
 
+    @Test
+    void addEvent() {
+        Organizer organizer = mockOrganizer();
+        organizer.createEventNewQRCode("details1","location1",1,"eventName1","Date1");
+
+    }
 
 
 
