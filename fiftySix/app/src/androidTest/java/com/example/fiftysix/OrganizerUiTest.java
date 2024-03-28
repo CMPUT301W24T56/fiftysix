@@ -95,7 +95,6 @@ public class OrganizerUiTest {
                 .perform(ViewActions.click());
 
     }
-  /* todo - need to fix the adapter loading data problem */
     @Test
     public void send_notification() throws InterruptedException {
         // going to organizer home

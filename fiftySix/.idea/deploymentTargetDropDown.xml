@@ -2,19 +2,19 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="Organizer_page_navigation()">
-        <State />
-      </entry>
       <entry key="app">
         <State />
       </entry>
       <entry key="browse_event()">
         <State />
       </entry>
-      <entry key="check_set_limit()">
+      <entry key="browse_events()">
         <State />
       </entry>
       <entry key="check_sign_up_events()">
+        <State />
+      </entry>
+      <entry key="check_sign_up_events_and_leave()">
         <State />
       </entry>
       <entry key="send_notification()">

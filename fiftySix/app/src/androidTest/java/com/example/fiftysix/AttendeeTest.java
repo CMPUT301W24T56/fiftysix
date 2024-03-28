@@ -79,12 +79,14 @@ public class AttendeeTest {
 
         onData(allOf(is(instanceOf(String.class)), is("Browse All Events"))).perform(click());
         // checking event details.
-        onView(withText("Event Name Poster")).perform(scrollTo(),click());
+        onView(withText("Arsh_Arora")).perform(scrollTo(),click());
+        onView(withId(R.id.SignupEvents)).perform(scrollTo(),click());
     }
     /* todo
-    *   constraints - events should gave unique name . test cant pass if multiple events have same name. */
+    *   constraints - events should gave unique name . test cant pass if multiple events have same name.
+    *   leaving the event is not working  properly */
     @Test
-    public void check_sign_up_events() {
+    public void check_sign_up_events_and_leave() {
         // going to attendee main page
         onView(withId(R.id.buttonAttendee)).perform(click());
 
@@ -93,7 +95,12 @@ public class AttendeeTest {
 
         onData(allOf(is(instanceOf(String.class)), is("Event Sign-ups"))).perform(click());
         // enter the event name. below.
-        onView(withText("Event Name Poster")).perform(scrollTo(),click());
+        onView(withText("Arsh_Arora")).perform(scrollTo(),click());
+
+        // leave the event...
+        // onView(withId(R.id.leave_event)).perform(click());
+
+
 
 
     }

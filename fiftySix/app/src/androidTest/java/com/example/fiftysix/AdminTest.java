@@ -28,6 +28,7 @@ public class AdminTest {
             ActivityScenarioRule<MainActivity>(MainActivity.class);
     /* Todo browsing profile images and deleting them from the database
     *   if the image or event is deleted by admin then check whether the profile image is being deleted from attenddees profile as or now
+    *   need to fix the problem of data loading for this.
     * */
     @Test
     public void check_admin_navigation_buttons() throws InterruptedException {
@@ -45,10 +46,10 @@ public class AdminTest {
     @Test
     public void browse_events(){
         // going to admin panel
-        // onView(withId(R.id.buttonAdmin)).perform((click()));
-        // going to browse events
-        // onView(withId(R.id.browseEvents)).perform(click());
-
+//         onView(withId(R.id.buttonAdmin)).perform((click()));
+//         // going to browse events
+//         onView(withId(R.id.browseEvents)).perform(click());
+//
 //        //  showing list of events
 //        onData(allOf(is(instanceOf(String.class)), is("Brady's Event"))).perform(click());
 
