@@ -1,19 +1,32 @@
+// attendee test
+
 package com.example.fiftysix;
 
+import static androidx.test.espresso.Espresso.closeSoftKeyboard;
+import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
+
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static java.lang.Thread.sleep;
+import static java.util.EnumSet.allOf;
+import static org.hamcrest.Matchers.allOf;
 
 import android.content.Context;
 import android.content.Intent;
 import android.provider.MediaStore;
 import android.provider.Settings;
 
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.espresso.ViewAssertion;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -26,11 +39,13 @@ public class AttendeeTest {
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new
             ActivityScenarioRule<MainActivity>(MainActivity.class);
+
     /**
      * testing whether an attendee is able to go to the profile section
-     * testing whether an attendee can edit his / her profile or not **/
+     * testing whether an attendee can edit his / her profile or not
+     **/
     @Test
-    public void edit_profile_check(){
+    public void edit_profile_check() {
         // going to attendee main page
         onView(withId(R.id.buttonAttendee)).perform(click());
 
@@ -39,9 +54,9 @@ public class AttendeeTest {
 
         // person editing their name, email, and contact info
         // Clear the already written text in all those fields
-        onView(withId(R.id.profile_name)).perform(click(), clearText()).perform(typeText("Arsh Arora"));
-        onView(withId(R.id.profile_email)).perform(click(), clearText()).perform(typeText("arsharora0388@gmail.com"));
-        onView(withId(R.id.profile_phone)).perform(click(), clearText()).perform((typeText("5877784938")));
+        onView(withId(R.id.profile_name)).perform(click(), clearText()).perform(typeText("Arsh Arora")).perform(ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.profile_email)).perform(click(), clearText()).perform(typeText("arsharora0388@gmail.com")).perform(ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.profile_phone)).perform(click(), clearText()).perform((typeText("5877784938"))).perform(ViewActions.closeSoftKeyboard());
 
 
         // Click the save button and it goes back
@@ -49,4 +64,46 @@ public class AttendeeTest {
 
     }
 
+    // working till now
+    @Test
+    public void browse_event() throws InterruptedException {
+        // going to attendee main page
+        onView(withId(R.id.buttonAttendee)).perform(click());
+
+        // clicking on the spinner item
+        onView(withId(R.id.menuButtonMyEvents)).perform(click());
+
+        onData(allOf(is(instanceOf(String.class)), is("Browse All Events"))).perform(click());
+
+        // Find the RecyclerView
+        // Check if any item in the RecyclerView with the name "Arsh1" is displayed
+        sleep(1000);
+//        onView(withId(R.id.attendeeHomeRecyclerView))
+//                .perform(RecyclerViewActions.actionOnItem(
+//                        hasDescendant(withText("Event Name")),
+//                        click()));
+    }
+
+    @Test
+    public void check_sign_up_events() {
+        // going to attendee main page
+        onView(withId(R.id.buttonAttendee)).perform(click());
+
+        // clicking on the spinner item
+        onView(withId(R.id.menuButtonMyEvents)).perform(click());
+
+        onData(allOf(is(instanceOf(String.class)), is("Event Sign-ups"))).perform(click());
+
+    }
+
+    @Test
+    public void event_check_in() {
+        onView(withId(R.id.buttonAttendee)).perform(click());
+
+        // clicking on the spinner item
+        onView(withId(R.id.menuButtonMyEvents)).perform(click());
+
+        onData(allOf(is(instanceOf(String.class)), is("Event Check-ins"))).perform(click());
+    }
 }
+

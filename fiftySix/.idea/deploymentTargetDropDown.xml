@@ -5,6 +5,15 @@
       <entry key="app">
         <State />
       </entry>
+      <entry key="browse_event()">
+        <State />
+      </entry>
+      <entry key="browse_events()">
+        <State />
+      </entry>
+      <entry key="check_admin_navigation_buttons()">
+        <State />
+      </entry>
     </value>
   </component>
 </project>
