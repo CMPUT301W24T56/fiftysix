@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<paths>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
     <external-files-path
         name="my_images"
         path="Pictures" />
+    <files-path
+        name="qr_code_images"
+        path="."/>
 </paths>
