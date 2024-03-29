@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.fiftysix.app-mergeDebugResources-55:/values-he/values-he.xml",
+            "outputFile": "com.example.fiftysix.app-mergeDebugResources-54:/values-he/values-he.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\prodb\\.gradle\\caches\\transforms-4\\bfab6e56ebbd788aed9d5b059b4986d4\\transformed\\zxing-android-embedded-4.3.0\\res\\values-he\\values-he.xml",
+                    "source": "/Users/arsharora/.gradle/caches/transforms-3/e48b12ce984be857954df9362156d86b/transformed/zxing-android-embedded-4.3.0/res/values-he/values-he.xml",
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",

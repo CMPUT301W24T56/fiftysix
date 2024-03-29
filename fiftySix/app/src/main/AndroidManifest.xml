@@ -63,6 +63,8 @@
         <activity
             android:name=".profile_attendee_edit"
             android:exported="true" />
+        <activity android:name=".location"
+            android:exported="true"/>
 
         <activity android:name=".AdminBrowseEvents" />
         <activity
@@ -87,6 +89,9 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDSj9p36UoSfFU990ZQrkib_CzFg5fPQk0"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"

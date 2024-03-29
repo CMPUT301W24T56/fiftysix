@@ -2,6 +2,7 @@ package com.example.fiftysix;
 
 import static com.blankj.utilcode.util.ActivityUtils.startActivity;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -25,6 +27,7 @@ import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.squareup.picasso.Picasso;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import org.eazegraph.lib.charts.PieChart;
@@ -36,6 +39,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAdapter.EventVH> {
 
@@ -127,10 +135,14 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         RelativeLayout expandableLayout;
         ImageView eventImage;
         Button send_notification, edit_event,Download_qr_code;
-        ImageButton attendees, signUps;
+        ImageButton attendees, signUps,location;
         Event event;
         String eventID;
         PieChart signUpPieChart, checkinPieChart;
+
+        SupportMapFragment supportMapFragment ;
+        // Define a list to hold the geolocation of all attendees
+        List<LatLng> attendeeLocations = new ArrayList<>();
 
         public EventVH(@NonNull View itemView) {
             super(itemView);
@@ -151,6 +163,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             attendees = itemView.findViewById(R.id.checkInsButton);
             signUps = itemView.findViewById(R.id.signUpsButton);
             edit_event = itemView.findViewById(R.id.EditEvent);
+            location = itemView.findViewById(R.id.location);
 
             signUpPieChart = itemView.findViewById(R.id.piechartSignUp);
             checkinPieChart = itemView.findViewById(R.id.piechartCheckIn);
@@ -208,6 +221,15 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
 
                 }
             });
+            location.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, location.class);
+                    intent.putParcelableArrayListExtra("attendeeLocations", new ArrayList<>(attendeeLocations));
+                    context.startActivity(intent);
+                }
+            });
+
             // converting the string of qrcode to bitmap . so that person can either download or share the qr_code image
             // https://easyonecoder.com/android/basic/GenerateQRCode
             // author- Easy One Coder
