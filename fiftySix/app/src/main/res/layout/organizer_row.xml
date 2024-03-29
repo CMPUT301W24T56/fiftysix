@@ -205,20 +205,18 @@
             </LinearLayout>
 
 
-
-
-
             <TextView
                 android:id="@+id/attendeeCapacity"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="251dp"
+                android:layout_height="61dp"
                 android:layout_below="@+id/progress_bars"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="29dp"
                 android:gravity="left|center"
                 android:padding="16dp"
                 android:text="Event Capacity:"
                 android:textSize="18sp" />
-
-
 
             <ImageView
                 android:id="@+id/event_poster_image"
@@ -297,6 +295,20 @@
                 android:text="Share QR Code"
                 android:textColor="@color/colorPrimaryLight"
                 android:textSize="20sp" />
+
+            <ImageButton
+                android:id="@+id/location"
+                android:layout_width="71dp"
+                android:layout_height="77dp"
+                android:layout_above="@+id/event_poster_image"
+                android:layout_below="@+id/progress_bars"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="29dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="-2dp"
+                android:layout_toStartOf="@+id/attendeeCapacity"
+                app:srcCompat="@drawable/icon8_location" />
 
 
         </RelativeLayout>

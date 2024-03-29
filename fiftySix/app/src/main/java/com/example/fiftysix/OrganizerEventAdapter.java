@@ -154,6 +154,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             attendees = itemView.findViewById(R.id.checkInsButton);
             signUps = itemView.findViewById(R.id.signUpsButton);
             edit_event = itemView.findViewById(R.id.EditEvent);
+            location = itemView.findViewById(R.id.location);
 
             signUpPieChart = itemView.findViewById(R.id.piechartSignUp);
             checkinPieChart = itemView.findViewById(R.id.piechartCheckIn);
@@ -215,7 +216,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(context, location.class);
-                    intent.putParcelableArrayListExtra("attendeeLocations", new ArrayList<>(attendeeLocations));
+                    // intent.putParcelableArrayListExtra("attendeeLocations", new ArrayList<>(attendeeLocations));
                     context.startActivity(intent);
                 }
             });

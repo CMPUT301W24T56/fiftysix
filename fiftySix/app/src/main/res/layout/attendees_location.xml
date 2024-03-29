@@ -10,7 +10,6 @@
 
     <fragment
         android:id="@+id/location_attendees"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="621dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -18,7 +17,9 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        />
 
     <ImageButton
         android:id="@+id/back"
