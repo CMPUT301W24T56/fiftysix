@@ -86,6 +86,9 @@ dependencies {
     // Chart and graph library
     implementation("com.github.blackfizz:eazegraph:1.2.5l@aar")
     implementation("com.nineoldandroids:library:2.4.0")
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation 'com.karumi.dexter:6.2.1'
 
     implementation("com.squareup.picasso:picasso:2.71828")
 
