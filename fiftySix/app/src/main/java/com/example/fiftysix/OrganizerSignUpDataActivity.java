@@ -27,8 +27,8 @@ public class OrganizerSignUpDataActivity extends AppCompatActivity {
 
     private Organizer organizer;
     private String organizerID;
-    private OrganizerCheckInEventAdapter organizerCheckInEventAdapter;
-    private ArrayList<Event> eventAttendeeDataList;
+    private OrganizerSignUpEventAdapter organizerSignUpEventAdapter;
+    private ArrayList<Profile> profileDataList;
     private RecyclerView recyclerView;
     private String eventID;
 
@@ -55,9 +55,9 @@ public class OrganizerSignUpDataActivity extends AppCompatActivity {
         organizer = new Organizer(context);
         organizerID = organizer.getOrganizerID();
 
-        eventAttendeeDataList = new ArrayList<>();
-        organizerCheckInEventAdapter = new OrganizerCheckInEventAdapter(eventAttendeeDataList, this);
-        recyclerView.setAdapter(organizerCheckInEventAdapter);
+        profileDataList = new ArrayList<>();
+        organizerSignUpEventAdapter = new OrganizerSignUpEventAdapter(profileDataList, this);
+        recyclerView.setAdapter(organizerSignUpEventAdapter);
         recyclerView.setHasFixedSize(false);
 
         db = FirebaseFirestore.getInstance();
@@ -110,29 +110,22 @@ public class OrganizerSignUpDataActivity extends AppCompatActivity {
                             public void onSuccess(QuerySnapshot querySnapshot) {
                                 if (querySnapshot != null) {
 
-                                    Log.e("SignUpActivity", ": querySnapshot not null");
 
                                     // Loops through all attendees at the event and adds them to eventAttendeeDataList to be displayed to the organizer
                                     for (QueryDocumentSnapshot attendeeDoc : querySnapshot) {
                                         String attendeeID = attendeeDoc.getId();
 
-                                        Log.e("SignUpActivity", ": attendeeID = " + attendeeID);
-
                                         // Gets the profile matching the attendee at the event, used to display the attendees info to the organizer.
                                         db.collection("Profiles").document(attendeeID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                             @Override
                                             public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-
                                                 if (documentSnapshot != null) {
                                                     String attendeeName = documentSnapshot.getString("name");
                                                     String attendeePhoneNumber = documentSnapshot.getString("phone");
                                                     String attendeeEmail = documentSnapshot.getString("email");
                                                     String profileURL = documentSnapshot.getString("profileImageURL");
-
-                                                    Log.e("SignUpActivity", ": attendeeName = " + attendeeName);
-                                                    eventAttendeeDataList.add(new Event(eventID, attendeeName, attendeePhoneNumber, attendeeEmail, "temp hard coded for testing", 0, 0, 0,profileURL));
-                                                    organizerCheckInEventAdapter.notifyDataSetChanged();
+                                                    profileDataList.add(new Profile(attendeeName, attendeePhoneNumber, "", attendeeEmail, profileURL));
+                                                    organizerSignUpEventAdapter.notifyDataSetChanged();
                                                 }
                                             }
                                         });

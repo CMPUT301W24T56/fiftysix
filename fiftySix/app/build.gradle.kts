@@ -81,6 +81,9 @@ dependencies {
     // For Card view
     implementation("androidx.cardview:cardview:1.0.0")
 
+    // Notification circle
+    implementation("io.github.nikartm:image-support:2.0.0")
+
 
     // https://www.geeksforgeeks.org/how-to-add-a-pie-chart-into-an-android-application/#google_vignette
     // Chart and graph library

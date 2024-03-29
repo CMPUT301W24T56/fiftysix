@@ -40,8 +40,8 @@ public class AdminMainActivity extends AppCompatActivity {
         profilesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(AdminMainActivity.this, AdminBrowseProfiles.class);
-//                startActivity(intent);
+                Intent intent = new Intent(AdminMainActivity.this, AdminBrowseProfiles.class);
+                startActivity(intent);
             }
         });
 

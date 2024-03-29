@@ -59,43 +59,60 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
     @Override
     public void onBindViewHolder(@NonNull EventVH holder, int position) {
 
+
+
         Event event = eventList.get(position);
         holder.codeName.setText(event.getEventName());
         holder.versionTxt.setText(event.getLocation());
         holder.apiLevelTxt.setText(event.getDate());
         holder.descriptionTxt.setText(event.getDetails());
 
+        Integer checkInLimit = event.getAttendeeLimit();
+        Integer signUpLimit = event.getAttendeeLimit();
+        Integer checkins = event.getAttendeeCount();
+        Integer signups = event.getSignUpCount();
         holder.signUpPieChart.clearChart();
         holder.checkinPieChart.clearChart();
 
-        holder.signUpPieChart.addPieSlice(new PieModel(
-                "R",
-                event.getAttendeeLimit()-event.getSignUpCount(),
-                Color.parseColor("#f3e7db")));
-        holder.signUpPieChart.addPieSlice(new PieModel(
-                "R",
-                event.getSignUpCount(),
-                Color.parseColor("#aa8565")));
-
-
-        holder.checkinPieChart.addPieSlice(new PieModel(
-                "R",
-                event.getAttendeeLimit()-event.getAttendeeCount(),
-                Color.parseColor("#f3e7db")));
-        holder.checkinPieChart.addPieSlice(new PieModel(
-                "R",
-                event.getAttendeeCount(),
-                Color.parseColor("#aa8565")));
-
-
-
-
-        if(event.getAttendeeLimit() == 2147483647){
-            holder.descriptionEvent.setText("Capacity: Unlimited");
+        if(checkInLimit == 2147483647){
+            holder.descriptionEvent.setText("Max: Unlimited");
+            if (checkins != 0){
+                checkInLimit = checkins;
+            }
+            if (signups != 0){
+                signUpLimit = signups;
+            }
         }
         else{
             holder.descriptionEvent.setText("Max: " + event.getAttendeeLimit().toString());
+            checkInLimit -= checkins;
+            signUpLimit -= signups;
         }
+
+
+        holder.signUpPieChart.addPieSlice(new PieModel(
+                "R",
+                signUpLimit,
+                Color.parseColor("#f3e7db")));
+        holder.signUpPieChart.addPieSlice(new PieModel(
+                "R",
+                signups,
+                Color.parseColor("#aa8565")));
+
+
+        holder.checkinPieChart.addPieSlice(new PieModel(
+                "R",
+                checkInLimit,
+                Color.parseColor("#f3e7db")));
+        holder.checkinPieChart.addPieSlice(new PieModel(
+                "R",
+                checkins,
+                Color.parseColor("#aa8565")));
+
+
+
+
+
 
         holder.attendeeCount.setText(event.getAttendeeCount().toString());
         holder.currentSignUps.setText(event.getSignUpCount().toString());
