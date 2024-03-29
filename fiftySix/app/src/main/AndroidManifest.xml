@@ -44,6 +44,9 @@
             android:name=".AdminBrowseImages"
             android:exported="false" />
         <activity
+            android:name=".AdminBrowseProfiles"
+            android:exported="false" />
+        <activity
             android:name=".OrganizerCheckInDataActivity"
             android:exported="false" />
         <activity
