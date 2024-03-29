@@ -101,8 +101,6 @@ public class AttendeeTest {
         // onView(withId(R.id.leave_event)).perform(click());
 
 
-
-
     }
 
     @Test
