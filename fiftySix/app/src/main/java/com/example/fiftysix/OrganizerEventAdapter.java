@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ImageView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -144,10 +145,12 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         RelativeLayout expandableLayout;
         ImageView eventImage;
         Button send_notification, edit_event,Download_qr_code;
-        ImageButton attendees, signUps;
+        ImageButton attendees, signUps,location;
         Event event;
         String eventID;
         PieChart signUpPieChart, checkinPieChart;
+
+        private List<LatLng> attendeeLocations;
 
         public EventVH(@NonNull View itemView) {
             super(itemView);
@@ -168,6 +171,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             attendees = itemView.findViewById(R.id.checkInsButton);
             signUps = itemView.findViewById(R.id.signUpsButton);
             edit_event = itemView.findViewById(R.id.EditEvent);
+            location = itemView.findViewById(R.id.location);
 
             signUpPieChart = itemView.findViewById(R.id.piechartSignUp);
             checkinPieChart = itemView.findViewById(R.id.piechartCheckIn);
@@ -223,6 +227,14 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                     intent3.putExtra("eventID", eventID);
                     context.startActivity(intent3);
 
+                }
+            });
+            location.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, location.class);
+                    // intent.putParcelableArrayListExtra("attendeeLocations", new ArrayList<>(attendeeLocations));
+                    context.startActivity(intent);
                 }
             });
             // converting the string of qrcode to bitmap . so that person can either download or share the qr_code image
