@@ -185,6 +185,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                                 mile.hideMilestone();
                                 mileStoneDataList.remove(position);
                                 milestoneAdapter.notifyDataSetChanged();
+                                notifBadge.setBadgeValue(mileStoneDataList.size());
                             }
                         })
                         // A null listener allows the button to dismiss the dialog and take no further action.
@@ -564,6 +565,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                                 if (view == true){
                                     mileStoneDataList.add(milestone);
                                     milestoneAdapter.notifyDataSetChanged();
+                                    notifBadge.setBadgeValue(mileStoneDataList.size());
                                 }
                             }
                         }

@@ -132,17 +132,7 @@ public class Profile {
         return this.imageUrl;
     }
 
-    public String getName(){
-        return this.name;
-    }
 
-    public String getEmail(){
-        return this.email;
-    }
-
-    public String getPhoneNumber(){
-        return this.phoneNumber;
-    }
 
     private boolean profileInDataBase(){
         return (FirebaseDatabase.getInstance().getReference("Users/"+userID+"/name") != null );
