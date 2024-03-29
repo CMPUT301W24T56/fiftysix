@@ -36,6 +36,8 @@ public class Profile {
     private String imageID;
     private String currentImageID;
     private String imageUrl;
+    private String checkInTime;
+    private Boolean expandable;
 
 
 
@@ -48,6 +50,20 @@ public class Profile {
     // TODO: check if profile exists already or if this is a new profile.
     // TODO: Upload data to firebase.
     // TODO: Allow changes to image.
+
+    public Profile(String name, String phoneNumber, String checkInTime, String email, String imageUrl){
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.checkInTime = checkInTime;
+        this.email = email;
+        this.imageUrl = imageUrl;
+
+        this.expandable = false;
+    }
+
+
+
+
 
     public Profile(String userID){
         this.userID = userID;
@@ -215,5 +231,35 @@ public class Profile {
                 });
     }
 
+    public Boolean getExpandable() {
+        return expandable;
+    }
 
+    public void setExpandable(Boolean expandable) {
+        this.expandable = expandable;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public String getCheckInTime() {
+        return checkInTime;
+    }
 }

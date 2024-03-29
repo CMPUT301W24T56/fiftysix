@@ -28,7 +28,7 @@
             android:layoutDirection="rtl"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
 
-             />
+            />
 
     </LinearLayout>
 
@@ -94,5 +94,28 @@
         app:layout_constraintTop_toTopOf="parent"
         app:queryBackground="@drawable/search_bar_rounded"
         app:submitBackground="@drawable/search_bar_rounded" />
+
+    <ru.nikartm.support.ImageBadgeView
+        android:id="@+id/notifBadge"
+        android:layout_width="36dp"
+        android:layout_height="37dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="20dp"
+        android:padding="10dp"
+        android:src="@drawable/transparent_background_button"
+        app:ibv_badgeColor="#d0342c"
+        app:ibv_badgeLimitValue="false"
+        app:ibv_badgeTextColor="#ffffff"
+        app:ibv_badgeTextSize="12sp"
+        app:ibv_badgeTextStyle="bold"
+        app:ibv_badgeValue="0"
+        app:ibv_fixedBadgeRadius="15dp"
+        app:layout_constraintBottom_toBottomOf="@+id/notification_button"
+        app:layout_constraintEnd_toEndOf="@+id/notification_button"
+        app:layout_constraintHorizontal_bias="0.731"
+        app:layout_constraintStart_toStartOf="@+id/notification_button"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintVertical_bias="0.454" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

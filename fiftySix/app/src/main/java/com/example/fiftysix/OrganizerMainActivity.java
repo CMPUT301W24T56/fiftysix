@@ -5,6 +5,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import static android.app.PendingIntent.getActivity;
 import static android.content.ContentValues.TAG;
 
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -26,10 +28,13 @@ import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -38,6 +43,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -45,6 +51,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 
+import com.google.firebase.firestore.model.Document;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -54,6 +61,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import ru.nikartm.support.ImageBadgeView;
 
 public class OrganizerMainActivity extends AppCompatActivity {
 
@@ -74,6 +83,17 @@ public class OrganizerMainActivity extends AppCompatActivity {
     private String reUseQRID;
     private String organizerID;
     private OrganizerEventAdapter organizerEventAdapter;
+
+
+
+
+    private MilestoneAdapter milestoneAdapter;
+    private ArrayList<MileStone> mileStoneDataList;
+
+
+
+
+
     private ArrayList<Event> eventDataList;
     private int attendeeLimit = Integer.MAX_VALUE;
     private ActivityResultLauncher<Intent> galleryLauncher;
@@ -91,6 +111,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
     private ImageButton orgHomeButton;
 
     private ImageButton backOrgNotif;
+    private ImageBadgeView notifBadge;
 
 
     // Buttons on Create event page
@@ -123,23 +144,17 @@ public class OrganizerMainActivity extends AppCompatActivity {
         organizer = new Organizer(context);
         organizerID = organizer.getOrganizerID();
 
-
-
-
         // Firebase
         db = FirebaseFirestore.getInstance();
         orgEventRef = db.collection("Users").document(organizer.getOrganizerID()).collection("EventsByOrganizer");
         eventRef = db.collection("Events");
         imageRef = db.collection("Images");
 
-
         setButtons();
         setEditText();
         setupAttendeeLimitSwitch();
 
-
         eventDataList = new ArrayList<>();
-        //eventDataList.add(new Event("Event Name", "Event Location", "Event Date"));
 
         // Sets home page recyler view event data
         organizerEventAdapter = new OrganizerEventAdapter(eventDataList, this);
@@ -150,64 +165,39 @@ public class OrganizerMainActivity extends AppCompatActivity {
         posterHandler = new Poster();
 
 
+        // Milestone Stuff
+        ListView mileStoneListView = (ListView) findViewById(R.id.milestoneListView);
+        mileStoneDataList = new ArrayList<MileStone>();
+        milestoneAdapter = new MilestoneAdapter(this, R.layout.organizer_notification_list_item, mileStoneDataList);
+        mileStoneListView.setAdapter(milestoneAdapter);
+        notifBadge = findViewById(R.id.notifBadge);
+        notifBadge.setVisibility(View.INVISIBLE);
+        mileStoneListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                MileStone mile = milestoneAdapter.getItem(position);
+
+                new AlertDialog.Builder(OrganizerMainActivity.this)
+                        .setTitle("Delete Notification")
+                        .setMessage("Are you sure you want to delete this notification?")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                mile.hideMilestone();
+                                mileStoneDataList.remove(position);
+                                milestoneAdapter.notifyDataSetChanged();
+                            }
+                        })
+                        // A null listener allows the button to dismiss the dialog and take no further action.
+                        .setNegativeButton(android.R.string.no, null)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }
+        });
 
 
 
         // Adds events from database to the organizers home screen. Will only show events created by the organizer
-
-
-        eventRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    Log.e("Firestore", error.toString());
-                    return;
-                }
-                if (value != null){
-                    eventRef.whereEqualTo("organizer", organizerID).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot querySnapshot) {
-                            if (querySnapshot != null) {
-                                eventDataList.clear();
-                                for (QueryDocumentSnapshot doc : querySnapshot) {
-                                    //Log.e(TAG, "onEvent: organizer " + doc.getString("organizer").toString() + " organizerID = " + organizerID);
-                                    String eventOrganizer = doc.getString("organizer").toString();
-                                    //Log.e(TAG, "Inside if: organizer " + doc.getString("organizer"));
-                                    String eventID = doc.getId();
-                                    String eventName = doc.getString("eventName");
-                                    String posterID = doc.getString("posterID");
-                                    Integer inAttendeeLimit = doc.getLong("attendeeLimit").intValue();
-                                    Integer inAttendeeCount = doc.getLong("attendeeCount").intValue();
-                                    Integer signUpCount = doc.getLong("attendeeSignUpCount").intValue();
-                                    String inDate = doc.getString("date");
-                                    String location = doc.getString("location");
-                                    String details = doc.getString("details");
-
-                                    Log.d("EVENTNAME", "hello " + eventID);
-
-                                    // TODO: Sign Up Milestones
-                                    addAtttendanceMilestoneUpdates(eventID, eventName, signUpCount, inAttendeeLimit);
-
-                                    db.collection("PosterImages").whereEqualTo("poster", posterID).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                        @Override
-                                        public void onSuccess(QuerySnapshot querySnapshotImage) {
-                                            for (QueryDocumentSnapshot doc : querySnapshotImage){
-
-                                                Log.e("Added to list", "onSuccess: Event has been added to eventDataList, OrganizerMain "+eventName);
-                                                String posterURL = doc.getString("image");
-                                                eventDataList.add(new Event(eventID, eventName, location, inDate, details, inAttendeeCount, signUpCount, inAttendeeLimit, posterURL));
-                                                organizerEventAdapter.notifyDataSetChanged();
-                                            }
-
-                                        }
-                                    });
-                                }
-                            }
-                        }
-                    });
-                }
-            }
-        });
+        loadOrganizerEvents();
 
 
         galleryLauncher = registerForActivityResult(
@@ -218,7 +208,6 @@ public class OrganizerMainActivity extends AppCompatActivity {
                     }
                 }
         );
-
         cameraLauncher = registerForActivityResult(
                 new ActivityResultContracts.TakePicture(),
                 result -> {
@@ -228,6 +217,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                     }
                 }
         );
+
 
 
         // Opens page to create event
@@ -250,6 +240,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 notificationView(v);
             }
+
         });
 
         backOrgNotif.setOnClickListener(new View.OnClickListener() {
@@ -258,10 +249,6 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 homeView(v);
             }
         });
-
-
-
-
     }
 
 
@@ -523,9 +510,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                                 if (querySnapshot != null) {
                                     eventDataList.clear();
                                     for (QueryDocumentSnapshot doc : querySnapshot) {
-                                        //Log.e(TAG, "onEvent: organizer " + doc.getString("organizer").toString() + " organizerID = " + organizerID);
-                                        String eventOrganizer = doc.getString("organizer").toString();
-                                        //Log.e(TAG, "Inside if: organizer " + doc.getString("organizer"));
+
                                         String eventID = doc.getId();
                                         String eventName = doc.getString("eventName");
                                         String posterID = doc.getString("posterID");
@@ -535,10 +520,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                                         String inDate = doc.getString("date");
                                         String location = doc.getString("location");
                                         String details = doc.getString("details");
-
-                                       // Log.d("EVENTNAME", "hello " + eventID);
-
-                                        // TODO: Sign Up Milestones
+                                        addAtttendanceMilestoneUpdates(eventID, eventName, signUpCount, inAttendeeLimit);
 
                                         db.collection("PosterImages").whereEqualTo("poster", posterID).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                             @Override
@@ -563,50 +545,108 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
         }
 
+
+
         private void addAtttendanceMilestoneUpdates(String eventID, String eventName, Integer checkIns, Integer attendeeLimit){
-            //AlertDialog.Builder builder = new AlertDialog.Builder(OrganizerMainActivity.this);
-            //builder.setTitle("New MileStone");
+            String message;
 
-            String message = "Null";
-
-
-
-            // Attendee count Milestones
+            // Makes milestones based on number of signups
             if (checkIns == 1){
                 message = "Congratulations, your first attendee has arrived.";
-                MileStone milestone = new MileStone(organizerID, eventID, eventName, message, checkIns);
+                MileStone milestone = new MileStone(organizerID, eventID, eventName, message, checkIns.toString());
                 milestone.addToDatabase();
+                db.collection("Users").document(organizerID).collection("EventsByOrganizer").document(eventID).collection("Milestones").document(checkIns.toString()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot != null){
+                            if (documentSnapshot.getBoolean("viewable") != null){
+                                Boolean view = documentSnapshot.getBoolean("viewable").booleanValue();
+                                if (view == true){
+                                    mileStoneDataList.add(milestone);
+                                    milestoneAdapter.notifyDataSetChanged();
+                                }
+                            }
+                        }
+                    }
+                });
             }
-
-            int [] attendeeCountMilestones = { 25, 50, 100, 250, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 7500, 10000 };
-            double [] capacityPercentMilestones = { (attendeeLimit*0.25), (attendeeLimit*0.5), (attendeeLimit*0.75)};
-            String [] percentageFull = {"25%", "50%", "75%"};
-
-            for (int i = 0; i < attendeeCountMilestones.length; i++ ){
-                if (checkIns == attendeeCountMilestones[i]){
-                    message = "Congratulations," + checkIns.toString() + "  attendees have arrived.";
-                    MileStone milestone = new MileStone(organizerID, eventID, eventName, message, checkIns);
-                    milestone.addToDatabase();
+            else{
+                int [] attendeeCountMilestones = { 25, 50, 100, 250, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 7500, 10000 };
+                for (int i = 0; i < attendeeCountMilestones.length; i++ ){
+                    if (checkIns == attendeeCountMilestones[i]){
+                        notifBadge.setVisibility(View.VISIBLE);
+                        message = "Congratulations, " + checkIns.toString() + "  attendees have arrived.";
+                        MileStone milestone = new MileStone(organizerID, eventID, eventName, message, checkIns.toString());
+                        milestone.addToDatabase();
+                        db.collection("Users").document(organizerID).collection("EventsByOrganizer").document(eventID).collection("Milestones").document(checkIns.toString()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                if (documentSnapshot != null){
+                                    if (documentSnapshot.getBoolean("viewable") != null){
+                                        Boolean view = documentSnapshot.getBoolean("viewable").booleanValue();
+                                        if (view == true){
+                                            mileStoneDataList.add(milestone);
+                                            milestoneAdapter.notifyDataSetChanged();
+                                            notifBadge.setBadgeValue(mileStoneDataList.size());
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
                 }
             }
 
-            if (checkIns == attendeeLimit){
-                message = "Congratulations, your event has reached max capacity.";
-                MileStone milestone = new MileStone(organizerID, eventID, eventName, message, checkIns);
-                milestone.addToDatabase();
+            // Makes milestones based on percent of capacity filled by signups
+            double [] capacityPercentMilestones = { (attendeeLimit*0.25), (attendeeLimit*0.5), (attendeeLimit*0.75)};
+            String [] percentageFull = {"25%", "50%", "75%"};
+            for (int i = 0; i < capacityPercentMilestones.length; i++ ){
+                if (attendeeLimit > capacityPercentMilestones[i]){
+                    notifBadge.setVisibility(View.VISIBLE);
+                    message = "Congratulations, " + percentageFull[i] + "  of available spots have been filled.";
+                    MileStone milestone = new MileStone(organizerID, eventID, eventName, message,  percentageFull[i]);
+                    milestone.addToDatabase();
+                    db.collection("Users").document(organizerID).collection("EventsByOrganizer").document(eventID).collection("Milestones").document(percentageFull[i]).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            if (documentSnapshot != null){
+                                if (documentSnapshot.getBoolean("viewable") != null){
+                                    Boolean view = documentSnapshot.getBoolean("viewable").booleanValue();
+                                    if (view == true){
+                                        mileStoneDataList.add(milestone);
+                                        milestoneAdapter.notifyDataSetChanged();
+                                        notifBadge.setBadgeValue(mileStoneDataList.size());
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
             }
-
-
-
-
-            //builder.setTitle("New MileStone");
+            if (checkIns == attendeeLimit){
+                notifBadge.setVisibility(View.VISIBLE);
+                message = "Congratulations, your event has reached max capacity.";
+                MileStone milestone = new MileStone(organizerID, eventID, eventName, message, "100%");
+                milestone.addToDatabase();
+                db.collection("Users").document(organizerID).collection("EventsByOrganizer").document(eventID).collection("Milestones").document("100%").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot != null){
+                            if (documentSnapshot.getBoolean("viewable") != null){
+                                Boolean view = documentSnapshot.getBoolean("viewable").booleanValue();
+                                if (view == true){
+                                    mileStoneDataList.add(milestone);
+                                    milestoneAdapter.notifyDataSetChanged();
+                                    notifBadge.setBadgeValue(mileStoneDataList.size());
+                                }
+                            }
+                        }
+                    }
+                });
+            }
         }
 
-        private void addSingUpMilestoneUpdates(Integer attendees, Integer attendeeLimit){
-            AlertDialog.Builder builder = new AlertDialog.Builder(OrganizerMainActivity.this);
 
-            builder.setTitle("New MileStone");
-        }
 
         
         private void initializeCreateEvent(){
