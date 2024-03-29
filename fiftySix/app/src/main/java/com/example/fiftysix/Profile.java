@@ -69,6 +69,14 @@ public class Profile {
         });
     }
 
+    // Used for the ADMIN BROWSE PROFILES
+    public Profile(String userID, String name, String email, String phone) {
+        this.userID = userID;
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phone;
+    }
+
     public void deleteProfilePic(String userID){
         userRef.document(userID).update("profileImageURL", "https://ui-avatars.com/api/?rounded=true&name="+ this.name +"&background=random&size=512");
     }
@@ -108,6 +116,17 @@ public class Profile {
         return this.imageUrl;
     }
 
+    public String getName(){
+        return this.name;
+    }
+
+    public String getEmail(){
+        return this.email;
+    }
+
+    public String getPhoneNumber(){
+        return this.phoneNumber;
+    }
 
     private boolean profileInDataBase(){
         return (FirebaseDatabase.getInstance().getReference("Users/"+userID+"/name") != null );
