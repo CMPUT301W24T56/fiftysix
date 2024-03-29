@@ -33,7 +33,7 @@ public class OrganizerCheckInEventAdapter extends RecyclerView.Adapter<Organizer
     @NonNull
     @Override
     public EventVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.organizer_attendee_data_row, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.organizer_checkin_data_row, parent, false);
         return new EventVH(view);
     }
 

@@ -129,6 +129,7 @@ public class Organizer {
         Map<String,Object> orgEventsData = new HashMap<>();
         orgEventsData.put("event","event"); // Only want the document id as it is the event ID, doesn't matter what is in the document
         this.ref.document(this.organizerID).collection("EventsByOrganizer").document(eventIDKey).set(orgEventsData);
+
     }
 
     /**

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -16,10 +17,11 @@ public class MileStone {
     private String userID;
     private String eventID;
     private Boolean viewable;
-    private Integer attendees;
+    private String attendees;
 
 
-    public MileStone(String userID, String eventID, String eventName, String message, Integer attendees) {
+
+    public MileStone(String userID, String eventID, String eventName, String message, String attendees) {
         this.eventName = eventName;
         this.message = message;
         this.userID = userID;
@@ -30,18 +32,26 @@ public class MileStone {
 
     public void addToDatabase(){
 
-        FirebaseFirestore.getInstance().collection("Users").document(userID).collection("EventsByOrganizer").document(eventID).collection("Milestones").document(attendees.toString()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        Map<String,Object> milestoneData = new HashMap<>();
+        milestoneData.put("eventName", eventName);
+        milestoneData.put("message", message);
+        milestoneData.put("viewable", viewable);
+
+
+
+
+        FirebaseFirestore.getInstance().collection("Users").document(userID).collection("EventsByOrganizer").document(eventID).collection("Milestones").document(attendees).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                Map<String,Object> milestoneData = new HashMap<>();
-                milestoneData.put("eventName", eventName);
-                milestoneData.put("message", message);
-                milestoneData.put("viewable", viewable);
-
-                FirebaseFirestore.getInstance().collection("Users").document(userID).collection("EventsByOrganizer").document(eventID).collection("Milestones").document(attendees.toString()).set(milestoneData);
-
+                if (! documentSnapshot.exists()){
+                    FirebaseFirestore.getInstance().collection("Users").document(userID).collection("EventsByOrganizer").document(eventID).collection("Milestones").document(attendees).set(milestoneData);
+                    FirebaseFirestore.getInstance().collection("Events").document(eventID).collection("Milestones").document(attendees).set(milestoneData);
+                }
             }
         });
+
+
+
     }
 
     public void hideMilestone(){
@@ -51,6 +61,26 @@ public class MileStone {
         milestoneData.put("message", message);
         milestoneData.put("viewable", viewable);
 
-        FirebaseFirestore.getInstance().collection("Users").document(userID).collection("EventsByOrganizer").document(eventID).collection("Milestones").document(attendees.toString()).update(milestoneData);
+        FirebaseFirestore.getInstance().collection("Users").document(userID).collection("EventsByOrganizer").document(eventID).collection("Milestones").document(attendees).update(milestoneData);
+    }
+
+    public String getTitle() {
+        return eventName;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getEventID() {
+        return eventID;
+    }
+
+    public String getUserID() { return userID; }
+
+    public String getAttendeeCount() { return attendees; }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

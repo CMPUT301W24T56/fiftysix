@@ -3,12 +3,9 @@ package com.example.fiftysix;
 import static androidx.databinding.DataBindingUtil.setContentView;
 
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -36,7 +33,7 @@ public class OrganizerAttendeesEventAdapter extends RecyclerView.Adapter<Organiz
     @NonNull
     @Override
     public EventVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.organizer_attendee_data_row, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.organizer_checkin_data_row, parent, false);
         return new EventVH(view);
     }
 
