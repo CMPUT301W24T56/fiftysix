@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -32,7 +33,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -51,6 +56,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
@@ -129,13 +135,12 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private Spinner allEventSpinner;
     private Spinner myEventsSignUpSpinner;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1; // Or any other integer unique to this request in your app
-
-
+    private FusedLocationProviderClient fusedLocationClient ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // View flipper, used to avoid opening new activities and keep the app running fast, Stores all of the layouts for attendee inside it.
         setContentView(R.layout.attendee_flipper);
 
@@ -725,6 +730,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
                         // Once permission is granted, proceed with scanning code
                         if (checkLocationPermission()) {
                             // Location permission granted, proceed with scanning code
+                             // location granted for app.
                             scanCode();
                             myEventsView(v);
                         } else {
@@ -738,19 +744,25 @@ public class AttendeeMainActivity extends AppCompatActivity {
                 alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
                         // User clicked No, handle accordingly
                         // For example, you can show a message or perform another action
                         Toast.makeText(AttendeeMainActivity.this, "Location sharing not enabled", Toast.LENGTH_SHORT).show();
+                        proceedWithScanning(v);
+
                     }
                 });
 
                 // Show AlertDialog
                 AlertDialog alertDialog = alertDialogBuilder.create();
                 alertDialog.show();
-                scanCode();
-                myEventsView(v);
             }
         });
+    }
+    private void proceedWithScanning(View v) {
+        // Proceed with scanning and viewing events
+        scanCode();
+        myEventsView(v); // Adjust as necessary to fit your method's requirements
     }
     private boolean checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(AttendeeMainActivity.this,
@@ -765,8 +777,39 @@ public class AttendeeMainActivity extends AppCompatActivity {
             return false;
         } else {
             // Permission is granted
+            // need to get the location and store it in a variable.
+            getLastLocation();
             return true;
         }
+    }
+
+
+
+    private double longitude, latitude;
+
+    private void getLastLocation() {
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Task<Location> task = fusedLocationClient.getLastLocation();
+            task.addOnSuccessListener(this, location -> {
+                if (location != null) {
+                    // Call method to store the location in Firestore
+                    longitude = location.getLatitude();
+                    latitude = location.getLongitude();
+                    // got the location
+                    Log.d("location_user", "" + longitude + " " + latitude);
+                    storeLocation(location.getLatitude(), location.getLongitude());
+                } else {
+                    Toast.makeText(this, "Failed to get location", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    private void storeLocation(double latitude, double longitude) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
     }
     /**
      *  Sets all onClicks for buttons, in the profile page, allows the attendee to scan a QR code to check in to an event
