@@ -128,6 +128,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private Spinner myEventSpinner;
     private Spinner allEventSpinner;
     private Spinner myEventsSignUpSpinner;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1; // Or any other integer unique to this request in your app
 
 
 
@@ -712,12 +713,61 @@ public class AttendeeMainActivity extends AppCompatActivity {
         addEventScanCheckinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // ask for the permission using alert dialog
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(AttendeeMainActivity.this);
+                alertDialogBuilder.setTitle("Location Permission");
+                alertDialogBuilder.setMessage("Do you want to enable sharing your location?");
+                alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // User clicked Yes, handle permission logic here
+                        // For example, you can request location permission here
+                        // Once permission is granted, proceed with scanning code
+                        if (checkLocationPermission()) {
+                            // Location permission granted, proceed with scanning code
+                            scanCode();
+                            myEventsView(v);
+                        } else {
+                            // Location permission not granted, handle accordingly
+                            // You may show another AlertDialog informing the user about the importance of location permission
+                            // or redirect the user to app settings to enable permission
+                            Toast.makeText(AttendeeMainActivity.this, "Location permission denied", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // User clicked No, handle accordingly
+                        // For example, you can show a message or perform another action
+                        Toast.makeText(AttendeeMainActivity.this, "Location sharing not enabled", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                // Show AlertDialog
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
                 scanCode();
                 myEventsView(v);
             }
         });
     }
-
+    private boolean checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(AttendeeMainActivity.this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            // Request the permission
+            ActivityCompat.requestPermissions(AttendeeMainActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST_CODE);
+            // Return false as permission is not granted
+            return false;
+        } else {
+            // Permission is granted
+            return true;
+        }
+    }
     /**
      *  Sets all onClicks for buttons, in the profile page, allows the attendee to scan a QR code to check in to an event
      */
