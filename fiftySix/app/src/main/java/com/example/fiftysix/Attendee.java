@@ -18,11 +18,13 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.provider.Settings;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -50,6 +52,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.ServerTimestamp;
 
@@ -132,7 +135,41 @@ public class Attendee {
             }
         });
     }
+    public void checkInToEventwithlocation(String qRCodeID, AttendeeCallBack attendeeCallBack,double longitude,double latitude){
 
+        Map<String,Object> attendeeCheckedInEventsData = new HashMap<>();
+        attendeeCheckedInEventsData.put("eventDate","tempDate");
+        //this.ref.document(this.attendeeID).collection("CheckedIntoEvents").document(eventID).set(attendeeCheckedInEventsData);
+
+        Map<String,Object> attendeeCheckedInCount = new HashMap<>();
+        attendeeCheckedInCount.put("timesCheckedIn",1);
+
+        // making a location coordinate
+        Location location = new Location("providerName");
+        location.setLongitude(longitude);
+        location.setLatitude(latitude);
+
+        //https://firebase.google.com/docs/firestore/query-data/get-data#java_4
+        // Use this to fetch specific document.
+        DocumentReference docRef = db.collection("CheckInQRCode").document(qRCodeID);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        eventID = document.get("event").toString();
+                        checkInToEventID(eventID, attendeeCallBack,location);
+
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+    }
 
     public void leaveEvent(String eventID){
         db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("currentlyAtEvent", "no");
@@ -235,6 +272,72 @@ public class Attendee {
                                         ref.document(attendeeID).collection("UpcomingEvents").document(eventID).set(attendeeCheckedInEventsData);
                                         db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).set(attendeeCheckedInCount);
                                         db.collection("Events").document(eventID).update("attendeeCount", FieldValue.increment(1));
+                                        attendeeCallBack.checkInSuccess(true, eventName);
+                                    }
+                                } else {
+                                    Log.d(TAG, "Failed with: ", task.getException());
+                                    attendeeCallBack.checkInSuccess(false, eventName);
+                                }
+                            }
+                        });
+
+
+                    } else {
+
+                        attendeeCallBack.checkInSuccess(false, eventName);
+                    }
+                }
+            }
+        });
+
+
+    }
+    public void checkInToEventID(String eventID, AttendeeCallBack attendeeCallBack, Location location) {
+
+        db.collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot != null) {
+                    Integer attendeeCount = documentSnapshot.getLong("attendeeCount").intValue();
+                    Integer attendeeLimit = documentSnapshot.getLong("attendeeLimit").intValue();
+                    String eventName = documentSnapshot.getString("eventName");
+                    GeoPoint newLocation = new GeoPoint(location.getLongitude(),location.getLatitude());
+
+                    // Attendee can check in, event isn't full
+                    if (attendeeCount < attendeeLimit) {
+                        ref.document(attendeeID).collection("UpcomingEvents").document(eventID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    String checkInTime = Calendar.getInstance().getTime().toString();
+                                    List<Map<String, Object>> locationsList = (List<Map<String, Object>>) documentSnapshot.get("location");
+                                    if (locationsList == null) locationsList = new ArrayList<>();
+
+
+                                    // Document exists, attendee has previously checked into the event (Checking into an event again)
+                                    if (document.exists()) {
+                                        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("timesCheckedIn", FieldValue.increment(1));
+                                        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("currentlyAtEvent", "yes");
+                                        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("checkInTime", checkInTime);
+                                        db.collection("Events").document(eventID).update("attendeeCount", FieldValue.increment(1));
+                                        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("location", newLocation);
+                                        // update the location as well. update it..
+                                    }
+                                    // Attendee has never checked into the event before
+                                    else {
+                                        Map<String, Object> attendeeCheckedInEventsData = new HashMap<>();
+                                        attendeeCheckedInEventsData.put("checkInTime", checkInTime);
+                                        Map<String, Object> attendeeCheckedInCount = new HashMap<>();
+                                        attendeeCheckedInCount.put("timesCheckedIn", 1);
+                                        attendeeCheckedInCount.put("checkInTime", checkInTime);
+                                        attendeeCheckedInCount.put("currentlyAtEvent", "yes");
+                                        attendeeCheckedInCount.put("location", newLocation); // Store location
+
+                                        ref.document(attendeeID).collection("UpcomingEvents").document(eventID).set(attendeeCheckedInEventsData);
+                                        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).set(attendeeCheckedInCount);
+                                        db.collection("Events").document(eventID).update("attendeeCount", FieldValue.increment(1));
+                                        // add the location as well as update it..
                                         attendeeCallBack.checkInSuccess(true, eventName);
                                     }
                                 } else {

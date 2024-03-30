@@ -136,6 +136,8 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private Spinner myEventsSignUpSpinner;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1; // Or any other integer unique to this request in your app
     private FusedLocationProviderClient fusedLocationClient ;
+    private double longitude, latitude;
+    private boolean location_permission;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -387,36 +389,65 @@ public class AttendeeMainActivity extends AppCompatActivity {
     }
     ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result->{
 
-        if(result.getContents() != null){
-
-                    eventCheckinID = result.getContents().toString();
-                    attendee.checkInToEvent(eventCheckinID, new Attendee.AttendeeCallBack() {
-                        @Override
-                        public void checkInSuccess(Boolean checkinSuccess, String eventName) {
-                            if (checkinSuccess){
-                                android.app.AlertDialog.Builder builder = new AlertDialog.Builder(AttendeeMainActivity.this);
-                                builder.setTitle("Checked In Successful");
-                                builder.setMessage(eventName);
-                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                }).show();
+        if(result.getContents() != null ){
+                    if (location_permission == false) {
+                        eventCheckinID = result.getContents().toString();
+                        attendee.checkInToEvent(eventCheckinID, new Attendee.AttendeeCallBack() {
+                            @Override
+                            public void checkInSuccess(Boolean checkinSuccess, String eventName) {
+                                if (checkinSuccess) {
+                                    android.app.AlertDialog.Builder builder = new AlertDialog.Builder(AttendeeMainActivity.this);
+                                    builder.setTitle("Checked In Successful");
+                                    builder.setMessage(eventName);
+                                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    }).show();
+                                } else {
+                                    android.app.AlertDialog.Builder builder = new AlertDialog.Builder(AttendeeMainActivity.this);
+                                    builder.setTitle("Checked In Failed");
+                                    builder.setMessage(eventName + " is at max capacity");
+                                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    }).show();
+                                }
                             }
-                            else {
-                                android.app.AlertDialog.Builder builder = new AlertDialog.Builder(AttendeeMainActivity.this);
-                                builder.setTitle("Checked In Failed");
-                                builder.setMessage(eventName + " is at max capacity");
-                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                }).show();
+                        });
+                    }
+                    else {
+                        eventCheckinID = result.getContents().toString();
+                        attendee.checkInToEventwithlocation(eventCheckinID, new Attendee.AttendeeCallBack() {
+                            @Override
+                            public void checkInSuccess(Boolean checkinSuccess, String eventName) {
+                                if (checkinSuccess) {
+                                    android.app.AlertDialog.Builder builder = new AlertDialog.Builder(AttendeeMainActivity.this);
+                                    builder.setTitle("Checked In Successful");
+                                    builder.setMessage(eventName);
+                                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    }).show();
+                                } else {
+                                    android.app.AlertDialog.Builder builder = new AlertDialog.Builder(AttendeeMainActivity.this);
+                                    builder.setTitle("Checked In Failed");
+                                    builder.setMessage(eventName + " is at max capacity");
+                                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    }).show();
+                                }
                             }
-                        }
-                    });
+                        },longitude,latitude);
+                    }
         }
     });
 
@@ -774,18 +805,18 @@ public class AttendeeMainActivity extends AppCompatActivity {
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     LOCATION_PERMISSION_REQUEST_CODE);
             // Return false as permission is not granted
+            location_permission = false;
             return false;
         } else {
             // Permission is granted
             // need to get the location and store it in a variable.
             getLastLocation();
+            location_permission = true;
             return true;
         }
     }
 
 
-
-    private double longitude, latitude;
 
     private void getLastLocation() {
 
