@@ -613,7 +613,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
                             Integer signUpCount = doc.getLong("attendeeSignUpCount").intValue();
                             String location = doc.getString("location");
                             String details = doc.getString("details");
-                            String posterID = doc.getString("posterID");
+                            String posterID = doc.getStrigit ng("posterID");
 
                             db.collection("PosterImages").document(posterID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                 @Override
