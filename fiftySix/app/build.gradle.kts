@@ -85,6 +85,9 @@ dependencies {
     implementation("io.github.nikartm:image-support:2.0.0")
 
 
+    implementation("com.google.android.gms:play-services-location:19.0.1")
+
+
     // https://www.geeksforgeeks.org/how-to-add-a-pie-chart-into-an-android-application/#google_vignette
     // Chart and graph library
     implementation("com.github.blackfizz:eazegraph:1.2.5l@aar")

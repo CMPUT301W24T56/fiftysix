@@ -108,7 +108,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
     private ImageButton addEventButton;
     private ImageButton orgProfileButton;
     private ImageButton orgNotificationButton;
-    private ImageButton orgHomeButton;
+    private ImageButton buttonOrgHomeBack;
 
     private ImageButton backOrgNotif;
     private ImageBadgeView notifBadge;
@@ -250,6 +250,16 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 homeView(v);
             }
         });
+
+
+
+
+        buttonOrgHomeBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
 
@@ -378,7 +388,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
             addEventButton = (ImageButton) findViewById(R.id.buttonAddEvent);
             orgProfileButton = (ImageButton) findViewById(R.id.buttonOrganizerProfile);
             orgNotificationButton = (ImageButton) findViewById(R.id.notification_button);
-            orgHomeButton = (ImageButton) findViewById(R.id.button_organizer_home);
+            buttonOrgHomeBack = (ImageButton) findViewById(R.id.buttonOrgHomeBack);
             // Create event page buttons
             reuseCheckInQR = (Button) findViewById(R.id.reuseCheckinQR);
             createEvent = (Button) findViewById(R.id.buttonCreateEvent);
@@ -600,32 +610,35 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 }
             }
 
-            // Makes milestones based on percent of capacity filled by signups
-            double [] capacityPercentMilestones = { (attendeeLimit*0.25), (attendeeLimit*0.5), (attendeeLimit*0.75)};
-            String [] percentageFull = {"25%", "50%", "75%"};
-            for (int i = 0; i < capacityPercentMilestones.length; i++ ){
-                if (attendeeLimit > capacityPercentMilestones[i]){
-                    notifBadge.setVisibility(View.VISIBLE);
-                    message = "Congratulations, " + percentageFull[i] + "  of available spots have been filled.";
-                    MileStone milestone = new MileStone(organizerID, eventID, eventName, message,  percentageFull[i]);
-                    milestone.addToDatabase();
-                    db.collection("Users").document(organizerID).collection("EventsByOrganizer").document(eventID).collection("Milestones").document(percentageFull[i]).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            if (documentSnapshot != null){
-                                if (documentSnapshot.getBoolean("viewable") != null){
-                                    Boolean view = documentSnapshot.getBoolean("viewable").booleanValue();
-                                    if (view == true){
-                                        mileStoneDataList.add(milestone);
-                                        milestoneAdapter.notifyDataSetChanged();
-                                        notifBadge.setBadgeValue(mileStoneDataList.size());
+            if (checkIns > 0){
+                // Makes milestones based on percent of capacity filled by signups
+                double [] capacityPercentMilestones = { (attendeeLimit*0.25), (attendeeLimit*0.5), (attendeeLimit*0.75)};
+                String [] percentageFull = {"25%", "50%", "75%"};
+                for (int i = 0; i < capacityPercentMilestones.length; i++ ){
+                    if (checkIns > capacityPercentMilestones[i]){
+                        notifBadge.setVisibility(View.VISIBLE);
+                        message = "Congratulations, " + percentageFull[i] + "  of available spots have been filled.";
+                        MileStone milestone = new MileStone(organizerID, eventID, eventName, message,  percentageFull[i]);
+                        milestone.addToDatabase();
+                        db.collection("Users").document(organizerID).collection("EventsByOrganizer").document(eventID).collection("Milestones").document(percentageFull[i]).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                if (documentSnapshot != null){
+                                    if (documentSnapshot.getBoolean("viewable") != null){
+                                        Boolean view = documentSnapshot.getBoolean("viewable").booleanValue();
+                                        if (view == true){
+                                            mileStoneDataList.add(milestone);
+                                            milestoneAdapter.notifyDataSetChanged();
+                                            notifBadge.setBadgeValue(mileStoneDataList.size());
+                                        }
                                     }
                                 }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             }
+
             if (checkIns == attendeeLimit){
                 notifBadge.setVisibility(View.VISIBLE);
                 message = "Congratulations, your event has reached max capacity.";

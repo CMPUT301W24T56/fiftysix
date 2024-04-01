@@ -232,8 +232,10 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             location.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    event = eventList.get(getAdapterPosition());
+                    eventID = event.getEventID();
                     Intent intent = new Intent(context, location.class);
-                    // intent.putParcelableArrayListExtra("attendeeLocations", new ArrayList<>(attendeeLocations));
+                    intent.putExtra("eventID", eventID);
                     context.startActivity(intent);
                 }
             });
