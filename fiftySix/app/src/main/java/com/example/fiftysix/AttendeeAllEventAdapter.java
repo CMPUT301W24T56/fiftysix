@@ -120,6 +120,8 @@ public class AttendeeAllEventAdapter extends RecyclerView.Adapter<AttendeeAllEve
                     Attendee attendee = new Attendee(mContext);
                     Event event = eventList.get(getAdapterPosition());
                     attendee.signUpForEvent(event.getEventID());
+
+
                 }
             });
 

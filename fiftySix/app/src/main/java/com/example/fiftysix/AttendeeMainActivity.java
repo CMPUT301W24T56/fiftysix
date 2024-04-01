@@ -1,6 +1,7 @@
 package com.example.fiftysix;
 
 import static android.content.ContentValues.TAG;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -10,6 +11,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -17,6 +19,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -32,7 +38,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -51,7 +63,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 public class AttendeeMainActivity extends AppCompatActivity {
@@ -77,7 +91,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private ArrayList<Event> signUpEventDataList;
     private CollectionReference imageRef;
     private AttendeeMyEventAdapter attendeeMyEventAdapter;
-    private AttendeeMyEventAdapter attendeeSignUpEventAdapter;
+    private AttendeeCheckinEventAdapter attendeeSignUpEventAdapter;
     private AttendeeAllEventAdapter attendeeAllEventAdapter;
 
 
@@ -96,6 +110,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private ImageButton attendeeHomeButton;
     private Button browseAllEventsButton;
     private Button browseMyEvents;
+    private ImageButton buttonAttendeeBackAllEvents, buttonAttendeeBackCheckin, buttonAttendeeBackSignUp;
 
     // Buttons on Add event page
     private Button addEventScanCheckinButton;
@@ -129,6 +144,12 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private Spinner allEventSpinner;
     private Spinner myEventsSignUpSpinner;
 
+    private LocationManager locationManager;
+    private final static int REQUEST_CODE=100;
+    FusedLocationProviderClient fusedLocationProviderClient;
+    private int requestCode;
+    private String[] permissions;
+    private int[] grantResults;
 
 
     @Override
@@ -146,7 +167,13 @@ public class AttendeeMainActivity extends AppCompatActivity {
         setButtons();
         setEditText();
 
+
+
+
+
         // Creates/Gets attendee
+        getLocation();
+        //Log.d("LOCATION", "onCreate: " + location.getLongitude());
         attendee = new Attendee(context);
         attendeeID = attendee.getDeviceId();
 
@@ -174,9 +201,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
         initializeProfileLayout(); // Adds onclick listeners and what should happen on click.
 
 
-
-
-
         // IDK what to name these two
         galleryLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -195,11 +219,77 @@ public class AttendeeMainActivity extends AppCompatActivity {
                     }
                 }
         );
+
+
+        // Geolocation stuff
+
+        LocationManager locationMangaer = null;
+        LocationListener locationListener = null;
+
+        locationMangaer = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+
     }
 
 
-
     //________________________________________Methods________________________________________
+
+    // Source "How to Get Current Location in Android Studio||Get user's current Location||Location App 2022" - by "Coding with Aiman" - Youtube.com
+    private void getLocation() {
+        List<Address> addresses;
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(AttendeeMainActivity.this);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+
+
+
+            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null) {
+                        Geocoder geocoder = new Geocoder(AttendeeMainActivity.this, Locale.getDefault());
+                        List<Address> addresses = null;
+                        try {
+                            addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                            new Attendee(getApplicationContext()).setLocation(addresses.get(0));
+                        }
+                        catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+            });
+        }
+        else {
+            ActivityCompat.requestPermissions(AttendeeMainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission was granted, open camera
+                openCamera();
+            } else {
+                // Permission was denied
+                Toast.makeText(this, "Camera permission is required to use the camera", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        if (requestCode == REQUEST_CODE){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                getLocation();
+            }
+        }
+        else{
+            Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
+            attendee.setLocation(null);
+        }
+    }
+
 
 
     /**
@@ -273,19 +363,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private void requestCameraPermission() {
         ActivityCompat.requestPermissions(AttendeeMainActivity.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
     }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_CAMERA_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission was granted, open camera
-                openCamera();
-            } else {
-                // Permission was denied
-                Toast.makeText(this, "Camera permission is required to use the camera", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
+
 
     /**
      * Opens users device camera
@@ -331,7 +409,10 @@ public class AttendeeMainActivity extends AppCompatActivity {
         //attendeeAddEventButton = (ImageButton) findViewById(R.id.buttonAttendeeSignInEventAllEvents);
         attendeeProfileButton = (ImageButton) findViewById(R.id.buttonAttendeeProfile);
         attendeeNotificationButton = (ImageButton) findViewById(R.id.buttonAttendeeNotificationBelAllEvents);
-        attendeeHomeButton = (ImageButton) findViewById(R.id.buttonAttendeeHomeAllEvents);
+        buttonAttendeeBackAllEvents = (ImageButton) findViewById(R.id.buttonAttendeeHomeAllEvents);
+        buttonAttendeeBackCheckin = (ImageButton) findViewById(R.id.buttonAttendeeBackCheckin);
+        buttonAttendeeBackSignUp = (ImageButton) findViewById(R.id.buttonAttendeeBackSignUp);
+
 
         // Add event page buttons
         addEventScanCheckinButton = (Button) findViewById(R.id.buttonAttendeeCheckinWithQR);
@@ -420,140 +501,91 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private void displayMyCheckins(){
         // Adds events from database to the attendee home screen. Will only show events the attendee has signed up for.
 
-        eventRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        FirebaseFirestore.getInstance().collection("Users").document(attendeeID).collection("UpcomingEvents").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                attCheckinEventRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot querySnapshot) {
-                        if(querySnapshot.isEmpty()){
+                myEventDataList.clear();
+                attendeeMyEventAdapter.notifyDataSetChanged();
 
-                        }
-                        else{
-                            attCheckinEventRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                @Override
-                                public void onEvent(@Nullable QuerySnapshot querySnapshots,
-                                                    @Nullable FirebaseFirestoreException error) {
-                                    if (error != null) {
-                                        Log.e("Firestore", error.toString());
-                                        return;
-                                    }
-                                    if (querySnapshots.isEmpty());
-                                    else if (querySnapshots != null) {
-                                        myEventDataList.clear();
-                                        for (QueryDocumentSnapshot doc : querySnapshots) {
-                                            String eventID = doc.getId();
-                                            eventRef.document(eventID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                                                    if (error != null) {
-                                                        Log.e("Firestore", error.toString());
-                                                        return;
-                                                    }
-                                                    if (querySnapshots != null) {
-                                                        String eventName = value.getString("eventName");
-                                                        Integer inAttendeeLimit = value.getLong("attendeeLimit").intValue();
-                                                        Integer inAttendeeCount = value.getLong("attendeeCount").intValue();
-                                                        String imageUrl = value.getString("posterURL");
-                                                        String inDate = value.getString("date");
-                                                        String location = value.getString("location");
-                                                        Integer signUpCount = value.getLong("attendeeSignUpCount").intValue();
-                                                        String details = value.getString("details");
-                                                        String posterID = value.getString("posterID");
-                                                        db.collection("PosterImages").document(posterID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                                            @Override
-                                                            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                                                                if (value != null) {
-                                                                    String imageUrl = value.getString("image");
-                                                                    myEventDataList.add(new Event(eventID, eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit,signUpCount, imageUrl));
-                                                                    attendeeMyEventAdapter.notifyDataSetChanged();
-                                                                }
-                                                            }
-                                                        });
-                                                    }
-                                                }
-                                            });
+                if (value != null) {
+                    for (QueryDocumentSnapshot v : value) {
+                        String eventID = v.getId();
+                        FirebaseFirestore.getInstance().collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                if (documentSnapshot != null) {
+                                    String eventName = documentSnapshot.getString("eventName");
+                                    Integer inAttendeeLimit = documentSnapshot.getLong("attendeeLimit").intValue();
+                                    Integer inAttendeeCount = documentSnapshot.getLong("attendeeCount").intValue();
+                                    String inDate = documentSnapshot.getString("date");
+                                    Integer signUpCount = documentSnapshot.getLong("attendeeSignUpCount").intValue();
+                                    String location = documentSnapshot.getString("location");
+                                    String details = documentSnapshot.getString("details");
+                                    String posterID = documentSnapshot.getString("posterID");
+
+                                    db.collection("PosterImages").document(posterID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DocumentSnapshot documentSnapshot2) {
+                                            if (documentSnapshot2 != null) {
+                                                String imageUrl = documentSnapshot2.getString("image");
+                                                myEventDataList.add(new Event(eventID, eventName, location, inDate, details, inAttendeeCount, signUpCount, inAttendeeLimit, imageUrl));
+                                                attendeeMyEventAdapter.notifyDataSetChanged();
+                                            }
                                         }
-                                    }
+                                    });
                                 }
-                            });
-                        }
+                            }
+                        });
                     }
-                });
+                }
             }
         });
-
-
-
-
     }
 
-    private void displayMySignUps(){
+    private void displayMySignUps() {
         // Adds events from database to the attendee home screen. Will only show events the attendee has signed up for.
 
-        eventRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        FirebaseFirestore.getInstance().collection("Users").document(attendeeID).collection("SignedUpEvents").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                attSignUpEventRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot querySnapshot) {
-                        if(querySnapshot.isEmpty()){
+                signUpEventDataList.clear();
+                attendeeSignUpEventAdapter.notifyDataSetChanged();
 
-                        }
-                        else{
-                            attSignUpEventRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                @Override
-                                public void onEvent(@Nullable QuerySnapshot querySnapshots,
-                                                    @Nullable FirebaseFirestoreException error) {
-                                    if (error != null) {
-                                        Log.e("Firestore", error.toString());
-                                        return;
-                                    }
-                                    if (querySnapshots.isEmpty());
-                                    else if (querySnapshots != null) {
-                                        signUpEventDataList.clear();
-                                        for (QueryDocumentSnapshot doc : querySnapshots) {
-                                            String eventID = doc.getId();
-                                            eventRef.document(eventID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                                                    if (error != null) {
-                                                        Log.e("Firestore", error.toString());
-                                                        return;
-                                                    }
-                                                    if (querySnapshots != null) {
-                                                        String eventName = value.getString("eventName");
-                                                        Integer inAttendeeLimit = value.getLong("attendeeLimit").intValue();
-                                                        Integer inAttendeeCount = value.getLong("attendeeCount").intValue();
-                                                        String imageUrl = value.getString("posterURL");
-                                                        String inDate = value.getString("date");
-                                                        Integer signUpCount = value.getLong("attendeeSignUpCount").intValue();
-                                                        String location = value.getString("location");
-                                                        String details = value.getString("details");
-                                                        String posterID = value.getString("posterID");
-                                                        db.collection("PosterImages").document(posterID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                                            @Override
-                                                            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                                                                if (value != null) {
-                                                                    String imageUrl = value.getString("image");
-                                                                    signUpEventDataList.add(new Event(eventID, eventName, location, inDate, details, inAttendeeCount, inAttendeeLimit,signUpCount, imageUrl));
-                                                                    attendeeSignUpEventAdapter.notifyDataSetChanged();
-                                                                }
-                                                            }
-                                                        });
-                                                    }
-                                                }
-                                            });
+                if (value != null) {
+                    for (QueryDocumentSnapshot v : value) {
+                        String eventID = v.getId();
+                        FirebaseFirestore.getInstance().collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                if (documentSnapshot != null) {
+                                    String eventName = documentSnapshot.getString("eventName");
+                                    Integer inAttendeeLimit = documentSnapshot.getLong("attendeeLimit").intValue();
+                                    Integer inAttendeeCount = documentSnapshot.getLong("attendeeCount").intValue();
+                                    String inDate = documentSnapshot.getString("date");
+                                    Integer signUpCount = documentSnapshot.getLong("attendeeSignUpCount").intValue();
+                                    String location = documentSnapshot.getString("location");
+                                    String details = documentSnapshot.getString("details");
+                                    String posterID = documentSnapshot.getString("posterID");
+
+                                    db.collection("PosterImages").document(posterID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DocumentSnapshot documentSnapshot2) {
+                                            if (documentSnapshot2 != null) {
+                                                String imageUrl = documentSnapshot2.getString("image");
+                                                signUpEventDataList.add(new Event(eventID, eventName, location, inDate, details, inAttendeeCount, signUpCount, inAttendeeLimit, imageUrl));
+                                                attendeeSignUpEventAdapter.notifyDataSetChanged();
+                                            }
                                         }
-                                    }
+                                    });
                                 }
-                            });
-                        }
+                            }
+                        });
                     }
-                });
+                }
             }
         });
     }
+
 
     /**
      *  Loads and displays event data that the attendee is currently signed up for from firebase,
@@ -772,6 +804,27 @@ public class AttendeeMainActivity extends AppCompatActivity {
             }
         });
 
+
+        //________________________ Return to MainActivity Buttons ___________________________________
+        buttonAttendeeBackAllEvents.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        buttonAttendeeBackCheckin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        buttonAttendeeBackSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
     }
 
     /**
@@ -794,7 +847,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
         recyclerViewAllEvents.setAdapter(attendeeAllEventAdapter);
         recyclerViewAllEvents.setHasFixedSize(false);
 
-        attendeeSignUpEventAdapter = new AttendeeMyEventAdapter(signUpEventDataList, getApplicationContext());
+        attendeeSignUpEventAdapter = new AttendeeCheckinEventAdapter(signUpEventDataList, getApplicationContext());
         recyclerViewSignUpEvents.setAdapter(attendeeSignUpEventAdapter);
         recyclerViewSignUpEvents.setHasFixedSize(false);
     }

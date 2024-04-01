@@ -144,8 +144,8 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         LinearLayout linearLayout;
         RelativeLayout expandableLayout;
         ImageView eventImage;
-        Button send_notification, edit_event,Download_qr_code;
-        ImageButton attendees, signUps,location;
+        Button send_notification, edit_event,Download_qr_code, location;
+        ImageButton attendees, signUps;
         Event event;
         String eventID;
         PieChart signUpPieChart, checkinPieChart;
@@ -171,7 +171,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             attendees = itemView.findViewById(R.id.checkInsButton);
             signUps = itemView.findViewById(R.id.signUpsButton);
             edit_event = itemView.findViewById(R.id.EditEvent);
-            location = itemView.findViewById(R.id.location);
+            location = itemView.findViewById(R.id.signup_map);
 
             signUpPieChart = itemView.findViewById(R.id.piechartSignUp);
             checkinPieChart = itemView.findViewById(R.id.piechartCheckIn);
@@ -232,8 +232,10 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             location.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    event = eventList.get(getAdapterPosition());
+                    eventID = event.getEventID();
                     Intent intent = new Intent(context, location.class);
-                    // intent.putParcelableArrayListExtra("attendeeLocations", new ArrayList<>(attendeeLocations));
+                    intent.putExtra("eventID", eventID);
                     context.startActivity(intent);
                 }
             });

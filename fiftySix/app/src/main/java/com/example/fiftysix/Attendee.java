@@ -18,6 +18,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Location;
 import android.provider.Settings;
 
 import com.google.firebase.firestore.CollectionReference;
@@ -65,6 +67,7 @@ public class Attendee {
     private CollectionReference ref;
     private String userType = "attendee";
     private String eventID;
+    private Address location;
 
 
     // ________________________________CONSTRUCTORS_____________________________________
@@ -78,6 +81,15 @@ public class Attendee {
         this.attendeeID = getDeviceId();
         this.db = FirebaseFirestore.getInstance();
         this.ref = db.collection("Users");
+        attendeeExists(); // Adds organizer to data base if the organizer doesn't already exist
+    }
+
+    public Attendee(Context mContext, Address location) {
+        this.mContext = mContext;
+        this.attendeeID = getDeviceId();
+        this.db = FirebaseFirestore.getInstance();
+        this.ref = db.collection("Users");
+        this.location = location;
         attendeeExists(); // Adds organizer to data base if the organizer doesn't already exist
     }
 
@@ -134,10 +146,21 @@ public class Attendee {
     }
 
 
+
+
+
+
     public void leaveEvent(String eventID){
         db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("currentlyAtEvent", "no");
         db.collection("Users").document(attendeeID).collection("UpcomingEvents").document(eventID).delete();
         db.collection("Events").document(eventID).update("attendeeCount", FieldValue.increment(-1));
+    }
+
+    public void leaveSignUp(String eventID){
+        db.collection("Events").document(eventID).collection("attendeeSignUps").document(attendeeID).update("signUpTime",Calendar.getInstance().getTime().toString());
+        db.collection("Events").document(eventID).collection("attendeeSignUps").document(attendeeID).delete();
+        db.collection("Users").document(attendeeID).collection("SignedUpEvents").document(eventID).delete();
+        db.collection("Events").document(eventID).update("attendeeSignUpCount", FieldValue.increment(-1));
     }
 
     public void signUpForEvent(String eventID){
@@ -168,14 +191,31 @@ public class Attendee {
                                         Map<String, Object> attendeeCheckedInEventsData = new HashMap<>();
                                         attendeeCheckedInEventsData.put("signUpTime", signUpInTime);
 
+
+
+
                                         Map<String, Object> attendeeCheckedInCount = new HashMap<>();
                                         //attendeeCheckedInCount.put("timesCheckedIn", 1);
                                         attendeeCheckedInCount.put("signUpTime", signUpInTime);
                                         //attendeeCheckedInCount.put("currentlyAtEvent", "yes");
 
-                                        ref.document(attendeeID).collection("SignedUpEvents").document(eventID).set(attendeeCheckedInEventsData);
-                                        db.collection("Events").document(eventID).collection("attendeeSignUps").document(attendeeID).set(attendeeCheckedInCount);
-                                        db.collection("Events").document(eventID).update("attendeeSignUpCount", FieldValue.increment(1));
+
+
+
+                                        ref.document(attendeeID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                DocumentSnapshot documentLocation = task.getResult();
+                                                String latitude = documentLocation.getString("latitude");
+                                                String longitude = documentLocation.getString("longitude");
+                                                attendeeCheckedInCount.put("longitude", latitude);
+                                                attendeeCheckedInCount.put("latitude", longitude);
+
+                                                ref.document(attendeeID).collection("SignedUpEvents").document(eventID).set(attendeeCheckedInEventsData);
+                                                db.collection("Events").document(eventID).collection("attendeeSignUps").document(attendeeID).set(attendeeCheckedInCount);
+                                                db.collection("Events").document(eventID).update("attendeeSignUpCount", FieldValue.increment(1));
+                                            }
+                                        });
                                     }
                                 } else {
                                     Log.d(TAG, "Failed with: ", task.getException());
@@ -183,13 +223,10 @@ public class Attendee {
                             }
                         });
                     } else {
-
-
                     }
                 }
             }
         });
-
     }
 
 
@@ -255,6 +292,66 @@ public class Attendee {
 
 
     }
+
+    // No Callback
+    public void checkInToEventID(String eventID) {
+
+        db.collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot != null) {
+                    Integer attendeeCount = documentSnapshot.getLong("attendeeCount").intValue();
+                    Integer attendeeLimit = documentSnapshot.getLong("attendeeLimit").intValue();
+                    String eventName = documentSnapshot.getString("eventName");
+
+
+                    // Attendee can check in, event isn't full
+                    if (attendeeCount < attendeeLimit) {
+                        ref.document(attendeeID).collection("UpcomingEvents").document(eventID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    String checkInTime = Calendar.getInstance().getTime().toString();
+
+                                    // Document exists, attendee has previously checked into the event (Checking into an event again)
+                                    if (document.exists()) {
+                                        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("timesCheckedIn", FieldValue.increment(1));
+                                        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("currentlyAtEvent", "yes");
+                                        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("checkInTime", checkInTime);
+                                        db.collection("Events").document(eventID).update("attendeeCount", FieldValue.increment(1));
+
+                                    }
+                                    // Attendee has never checked into the event before
+                                    else {
+                                        Map<String, Object> attendeeCheckedInEventsData = new HashMap<>();
+                                        attendeeCheckedInEventsData.put("checkInTime", checkInTime);
+
+                                        Map<String, Object> attendeeCheckedInCount = new HashMap<>();
+                                        attendeeCheckedInCount.put("timesCheckedIn", 1);
+                                        attendeeCheckedInCount.put("checkInTime", checkInTime);
+                                        attendeeCheckedInCount.put("currentlyAtEvent", "yes");
+
+                                        ref.document(attendeeID).collection("UpcomingEvents").document(eventID).set(attendeeCheckedInEventsData);
+                                        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).set(attendeeCheckedInCount);
+                                        db.collection("Events").document(eventID).update("attendeeCount", FieldValue.increment(1));
+                                    }
+                                } else {
+                                    Log.d(TAG, "Failed with: ", task.getException());
+                                }
+                            }
+                        });
+                    } else {
+                    }
+                }
+            }
+        });
+
+
+    }
+
+
+
 
 
     private void addUpcomingEventToAttendeeDataBase(String eventIDKey){
@@ -339,6 +436,29 @@ public class Attendee {
 
             }
         });
+    }
+
+
+    public void setLocation(Address location){
+
+        this.location = location;
+
+        Map<String,Object> locationData = new HashMap<>();
+        // Location permission was denied
+        if (location == null) {
+            locationData.put("latitude",null);
+            locationData.put("longitude",null);
+        }
+        // Location permission was enabled, data stored in firebase.
+        else{
+            String lat = String.valueOf(location.getLatitude());
+            String lon = String.valueOf(location.getLongitude());
+            locationData.put("latitude",lat);
+            locationData.put("longitude",lon);
+            //locationData.put("geo",location);
+        }
+        this.ref.document(this.attendeeID).update(locationData);
+
     }
 
 

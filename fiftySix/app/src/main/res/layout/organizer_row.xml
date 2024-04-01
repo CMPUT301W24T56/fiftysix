@@ -29,22 +29,6 @@
             android:layout_height="1000dp">
 
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/notify"
-                android:layout_width="384dp"
-                android:layout_height="64dp"
-                android:layout_above="@+id/EditEvent"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/dark_round_button"
-                android:fontFamily="@font/inter_medium"
-                android:text="Send Notification"
-                android:textColor="@color/colorPrimaryLight"
-                android:textSize="20sp" />
-
             <TextView
                 android:id="@+id/version"
                 android:layout_width="wrap_content"
@@ -207,46 +191,31 @@
 
             <TextView
                 android:id="@+id/attendeeCapacity"
-                android:layout_width="251dp"
+                android:layout_width="match_parent"
                 android:layout_height="61dp"
                 android:layout_below="@+id/progress_bars"
+                android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="29dp"
-                android:gravity="left|center"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="0dp"
                 android:padding="16dp"
+                android:textAlignment="textStart"
                 android:text="Event Capacity:"
                 android:textSize="18sp" />
 
             <ImageView
                 android:id="@+id/event_poster_image"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:layout_above="@+id/attendeeDetails"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/share_qr_code"
                 android:layout_below="@id/attendeeCapacity"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
                 android:adjustViewBounds="true"
                 android:padding="50dp"
                 android:scaleType="centerCrop"
                 tools:src="@tools:sample/avatars" />
 
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/EditEvent"
-                android:layout_width="384dp"
-                android:layout_height="64dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/dark_round_button"
-                android:fontFamily="@font/inter_medium"
-                android:text="Edit Event"
-                android:textColor="@color/colorPrimaryLight"
-                android:textSize="20sp" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/share_qr_code"
@@ -280,21 +249,37 @@
                 android:textColor="@color/colorPrimaryLight"
                 android:textSize="20sp" />
 
-
-
-            <ImageButton
-                android:id="@+id/location"
-                android:layout_width="71dp"
-                android:layout_height="77dp"
-                android:layout_above="@+id/event_poster_image"
-                android:layout_below="@+id/progress_bars"
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/notify"
+                android:layout_width="384dp"
+                android:layout_height="64dp"
+                android:layout_above="@+id/EditEvent"
                 android:layout_alignParentStart="true"
-                android:layout_marginStart="29dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginBottom="-2dp"
-                android:layout_toStartOf="@+id/attendeeCapacity"
-                app:srcCompat="@drawable/icon8_location" />
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/dark_round_button"
+                android:fontFamily="@font/inter_medium"
+                android:text="Send Notification"
+                android:textColor="@color/colorPrimaryLight"
+                android:textSize="20sp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/EditEvent"
+                android:layout_width="384dp"
+                android:layout_height="64dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/dark_round_button"
+                android:fontFamily="@font/inter_medium"
+                android:text="Edit Event"
+                android:textColor="@color/colorPrimaryLight"
+                android:textSize="20sp" />
 
 
         </RelativeLayout>

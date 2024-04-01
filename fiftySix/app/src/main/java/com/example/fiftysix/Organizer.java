@@ -96,6 +96,9 @@ public class Organizer {
     }
 
 
+    public void createPromoQRCode(){}
+
+
     /**
      * Adds the organizer to the firebase, using the device ID as it's primary key. Stored inside of the Users collection.
      */

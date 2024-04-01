@@ -5,38 +5,39 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.ImageView;
-import com.squareup.picasso.Picasso;
-
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class AttendeeMyEventAdapter extends RecyclerView.Adapter<AttendeeMyEventAdapter.EventVH> {
+public class AttendeeCheckinEventAdapter extends RecyclerView.Adapter<AttendeeCheckinEventAdapter.EventVH> {
 
     List<Event> eventList;
     Context mContext;
 
-    public AttendeeMyEventAdapter(ArrayList<Event> eventList, Context mContext) {
+    public AttendeeCheckinEventAdapter(ArrayList<Event> eventList, Context mContext) {
         this.eventList = eventList;
         this.mContext = mContext;
     }
 
     @NonNull
     @Override
-    public EventVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.attendee_my_events_row, parent, false);
-        return new EventVH(view);
+    public AttendeeCheckinEventAdapter.EventVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.attendee_signups_row, parent, false);
+        return new AttendeeCheckinEventAdapter.EventVH(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull EventVH holder, int position) {
+
 
         Event event = eventList.get(position);
         holder.eventName.setText(event.getEventName());
@@ -48,10 +49,11 @@ public class AttendeeMyEventAdapter extends RecyclerView.Adapter<AttendeeMyEvent
             holder.descriptionEvent.setText("Capacity: Unlimited");
         }
         else{
-            holder.descriptionEvent.setText("Capacity: " + event.getAttendeeLimit().toString());
+            holder.descriptionEvent.setText("Sign-Up Limit: " + event.getAttendeeLimit().toString());
         }
 
-        holder.attendeeCount.setText("Current Attendees: " + event.getAttendeeCount().toString());
+        holder.attendeeCount.setText("People Signed-Up: " + event.getSignUpCount().toString());
+
 
 
         String imageUrl = event.getPosterURL();
@@ -63,8 +65,14 @@ public class AttendeeMyEventAdapter extends RecyclerView.Adapter<AttendeeMyEvent
                     .into(holder.eventImage); // Your ImageView
         }
 
+
+
+
+
         boolean isExpandable = eventList.get(position).getExpandable();
         holder.expandableLayout.setVisibility(isExpandable ? View.VISIBLE : View.GONE);
+
+
 
     }
 
@@ -79,10 +87,11 @@ public class AttendeeMyEventAdapter extends RecyclerView.Adapter<AttendeeMyEvent
         LinearLayout linearLayout;
         RelativeLayout expandableLayout;
         ImageView eventImage;
-        Button leaveEvent;
+        Button cancelSignupButton, checkinButton;
 
         public EventVH(@NonNull View itemView) {
             super(itemView);
+
 
             eventName = itemView.findViewById(R.id.event_name);
             eventDate = itemView.findViewById(R.id.event_date);
@@ -94,8 +103,13 @@ public class AttendeeMyEventAdapter extends RecyclerView.Adapter<AttendeeMyEvent
             linearLayout = itemView.findViewById(R.id.linear_layout);
             expandableLayout = itemView.findViewById(R.id.expandable_layout);
 
+
+
             eventImage = itemView.findViewById(R.id.event_poster_image);
-            leaveEvent = itemView.findViewById(R.id.leave_event);
+            cancelSignupButton = itemView.findViewById(R.id.cancel_signup);
+            checkinButton = itemView.findViewById(R.id.checkin_from_signup);
+
+
 
 
             linearLayout.setOnClickListener(new View.OnClickListener() {
@@ -108,19 +122,41 @@ public class AttendeeMyEventAdapter extends RecyclerView.Adapter<AttendeeMyEvent
                 }
             });
 
-            leaveEvent.setOnClickListener(new View.OnClickListener() {
+
+
+
+
+
+            cancelSignupButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Attendee attendee = new Attendee(mContext);
+                    Event event = eventList.get(getAdapterPosition());
+                    attendee.leaveSignUp(event.getEventID());
+                    eventList.clear();
+                }
+            });
+
+
+
+            checkinButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
                     Attendee attendee = new Attendee(mContext);
                     Event event = eventList.get(getAdapterPosition());
-                    attendee.leaveEvent(event.getEventID());
-
+                    attendee.checkInToEventID(event.getEventID());
                 }
             });
+
+
+
+
+
 
 
         }
     }
 
 }
+
