@@ -72,7 +72,7 @@
         app:layout_constraintEnd_toStartOf="@+id/buttonAttendeeNotificationBelAllEvents"
         app:layout_constraintStart_toEndOf="@+id/buttonAttendeeHomeAllEvents"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:srcCompat="@mipmap/add_ic_launcher_foreground" />
+        app:srcCompat="@drawable/icons8_qr_50" />
 
     <ImageButton
         android:id="@+id/buttonAttendeeNotificationBelAllEvents"
