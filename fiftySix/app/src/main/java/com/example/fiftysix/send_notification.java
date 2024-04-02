@@ -1,5 +1,13 @@
 package com.example.fiftysix;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
@@ -9,9 +17,15 @@ import android.widget.ImageButton;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
+import com.blankj.utilcode.util.NotificationUtils;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
+
+import org.checkerframework.checker.units.qual.N;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +49,17 @@ public class send_notification extends AppCompatActivity {
         });
         message = findViewById(R.id.message);
         send = findViewById(R.id.send_button);
+
+       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) !=
+                    PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(send_notification.this,new String[]{android.Manifest
+                        .permission.POST_NOTIFICATIONS},101);
+
+            }
+
+        }
+
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,21 +83,27 @@ public class send_notification extends AppCompatActivity {
     }
 
     private void sendNotificationToEventAttendees(String eventId, String eventName, String message) {
-        String channelId = "Channel_ID_Notification";
-        String topic = "event_" + eventId;
+        Notification notification;
+       NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            notification = new Notification.Builder(this)
+                                        .setSmallIcon(R.mipmap.ic_launcher)
+                                        .setContentTitle(eventName)
+                                        .setContentText(message)
+                                         .setChannelId(eventId)
+                                         .build();
+            nm.createNotificationChannel(new NotificationChannel(eventId,"new channel",NotificationManager.IMPORTANCE_HIGH));
 
-        Map<String, String> notificationData = new HashMap<>();
-        notificationData.put("title", eventName);
-        notificationData.put("message", message);
-
-        // See documentation on defining a message payload.
-        RemoteMessage send_message = new RemoteMessage.Builder(topic)
-                .setData(notificationData)
-                .build();
-
-// Send a message to the devices subscribed to the provided topic.
-        FirebaseMessaging.getInstance().send(send_message);
+        }else {
+            notification = new Notification.Builder(this)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle(eventName)
+                    .setContentText(message)
+                    .build();
+        }
+        nm.notify(100,notification);
         Log.d("FCM-notification","message successfully send ");
+
     }
 
 
