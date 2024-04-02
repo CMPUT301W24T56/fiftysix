@@ -155,7 +155,7 @@ public class Attendee {
         db.collection("Users").document(attendeeID).collection("UpcomingEvents").document(eventID).delete();
         db.collection("Events").document(eventID).update("attendeeCount", FieldValue.increment(-1));
 
-        String topic = "event_" + eventID;
+        String topic = eventID;
         FirebaseMessaging.getInstance().unsubscribeFromTopic(topic);
 
     }
@@ -165,13 +165,13 @@ public class Attendee {
         db.collection("Events").document(eventID).collection("attendeeSignUps").document(attendeeID).delete();
         db.collection("Users").document(attendeeID).collection("SignedUpEvents").document(eventID).delete();
         db.collection("Events").document(eventID).update("attendeeSignUpCount", FieldValue.increment(-1));
-        String topic = "event_" + eventID;
+        String topic = eventID;
         FirebaseMessaging.getInstance().unsubscribeFromTopic(topic);
 
     }
 
     public void signUpForEvent(String eventID){
-        String topic = "event_" + eventID;
+        String topic = eventID;
         FirebaseMessaging.getInstance().subscribeToTopic(topic);
         Log.d("FCM-notification","attendee successfully signed in to the event");
         db.collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {

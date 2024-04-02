@@ -85,30 +85,63 @@ public class send_notification extends AppCompatActivity {
         }
     }
 
+//    private void sendNotificationToEventAttendees(String eventId, String eventName, String message) {
+//        Notification notification;
+//        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//            notification = new Notification.Builder(this)
+//                                        .setSmallIcon(R.mipmap.ic_launcher)
+//                                        .setContentTitle(eventName)
+//                                        .setContentText(message)
+//                                         .setChannelId(eventId)
+//                                         .build();
+//            nm.createNotificationChannel(new NotificationChannel(eventId,eventName,NotificationManager.IMPORTANCE_HIGH));
+//
+//        }else {
+//            notification = new Notification.Builder(this)
+//                    .setSmallIcon(R.mipmap.ic_launcher)
+//                    .setContentTitle(eventName)
+//                    .setContentText(message)
+//                    .build();
+//        }
+//        Message fmmessage = Message.builder()
+//                .setNotification(notification)
+//                .setTopic("topic_name")
+//                .build();
+//
+//// Send the message
+//
+//        String response = FirebaseMessaging.getInstance().send(fmmessage);
+//        System.out.println("Successfully sent message: " + response);
+//        nm.notify(100,notification);
+//        Log.d("FCM-notification","message successfully send ");
+//
+//    }
+
     private void sendNotificationToEventAttendees(String eventId, String eventName, String message) {
         Notification notification;
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             notification = new Notification.Builder(this)
-                                        .setSmallIcon(R.mipmap.ic_launcher)
-                                        .setContentTitle(eventName)
-                                        .setContentText(message)
-                                         .setChannelId(eventId)
-                                         .build();
-            nm.createNotificationChannel(new NotificationChannel("event_" + eventId,eventName,NotificationManager.IMPORTANCE_HIGH));
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle(eventName)
+                    .setContentText(message)
+                    .setChannelId(eventId)
+                    .build();
+            nm.createNotificationChannel(new NotificationChannel(eventId, eventName, NotificationManager.IMPORTANCE_HIGH));
 
-        }else {
+        } else {
             notification = new Notification.Builder(this)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle(eventName)
                     .setContentText(message)
                     .build();
         }
-        nm.notify(100,notification);
-        Log.d("FCM-notification","message successfully send ");
 
+        // Send the message to the specific topic
+        FirebaseMessaging.getInstance().subscribeToTopic(eventId);
+        nm.notify(100, notification);
+        Log.d("FCM-notification", "message successfully send ");
     }
-
-
 
 }
