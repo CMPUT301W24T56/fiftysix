@@ -106,7 +106,7 @@ dependencies {
     implementation("com.google.firebase:firebase-storage:20.3.0")
     implementation("androidx.navigation:navigation-fragment:2.7.6")
     implementation("androidx.navigation:navigation-ui:2.7.6")
-    implementation("com.google.firebase:firebase-messaging:20.0.0")
+    implementation("com.google.firebase:firebase-messaging:23.0.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

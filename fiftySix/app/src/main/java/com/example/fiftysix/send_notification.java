@@ -1,5 +1,7 @@
 package com.example.fiftysix;
 
+import static android.content.ContentValues.TAG;
+
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -10,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -84,7 +87,7 @@ public class send_notification extends AppCompatActivity {
 
     private void sendNotificationToEventAttendees(String eventId, String eventName, String message) {
         Notification notification;
-       NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             notification = new Notification.Builder(this)
                                         .setSmallIcon(R.mipmap.ic_launcher)
@@ -92,7 +95,7 @@ public class send_notification extends AppCompatActivity {
                                         .setContentText(message)
                                          .setChannelId(eventId)
                                          .build();
-            nm.createNotificationChannel(new NotificationChannel(eventId,"new channel",NotificationManager.IMPORTANCE_HIGH));
+            nm.createNotificationChannel(new NotificationChannel("event_" + eventId,eventName,NotificationManager.IMPORTANCE_HIGH));
 
         }else {
             notification = new Notification.Builder(this)
