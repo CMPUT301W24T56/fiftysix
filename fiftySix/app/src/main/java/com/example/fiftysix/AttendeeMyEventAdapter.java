@@ -1,5 +1,7 @@
 package com.example.fiftysix;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +11,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 
@@ -79,7 +84,7 @@ public class AttendeeMyEventAdapter extends RecyclerView.Adapter<AttendeeMyEvent
         LinearLayout linearLayout;
         RelativeLayout expandableLayout;
         ImageView eventImage;
-        Button leaveEvent;
+        Button leaveEvent, viewAnnouncements;
 
         public EventVH(@NonNull View itemView) {
             super(itemView);
@@ -96,6 +101,7 @@ public class AttendeeMyEventAdapter extends RecyclerView.Adapter<AttendeeMyEvent
 
             eventImage = itemView.findViewById(R.id.event_poster_image);
             leaveEvent = itemView.findViewById(R.id.leave_event);
+            viewAnnouncements = itemView.findViewById(R.id.view_announcements);
 
 
             linearLayout.setOnClickListener(new View.OnClickListener() {
@@ -119,7 +125,48 @@ public class AttendeeMyEventAdapter extends RecyclerView.Adapter<AttendeeMyEvent
                 }
             });
 
+            viewAnnouncements.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        Event event = eventList.get(position);
+                        fetchAndDisplayAnnouncements(event.getEventID(), itemView.getContext());
+                    }
+                }
+            });
 
+        }
+    }
+
+    private void fetchAndDisplayAnnouncements(String eventId, Context context) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("Events").document(eventId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists() && documentSnapshot.contains("announcements")) {
+                        List<String> announcements = (List<String>) documentSnapshot.get("announcements");
+                        assert announcements != null;
+                        displayAnnouncements(context, announcements);
+                    } else {
+                        Toast.makeText(context, "No announcements available.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> Toast.makeText(context, "Error fetching announcements.", Toast.LENGTH_SHORT).show());
+    }
+
+    private void displayAnnouncements(Context context, List<String> announcements) {
+        // Create and show the announcements dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Announcements");
+        String[] items = announcements.toArray(new String[0]);
+        builder.setItems(items, null);
+        builder.setPositiveButton("Close", null);
+        AlertDialog dialog = builder.create();
+
+        // Show the dialog only if the activity is not finishing to avoid BadTokenException
+        if (context instanceof Activity && !((Activity) context).isFinishing()) {
+            dialog.show();
         }
     }
 
