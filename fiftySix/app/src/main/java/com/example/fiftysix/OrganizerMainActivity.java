@@ -674,6 +674,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                     String eventAddress = eventAddressEditText.getText().toString();
                     String eventDetails = eventDetailsEditText.getText().toString();
                     String posterID = organizer.createEventNewQRCode( eventDetails, eventAddress, attendeeLimit, eventTitle, eventDate);
+
                     posterHandler.uploadImageAndStoreReference(selectedImageUri, posterID, "Event", new Poster.PosterUploadCallback() {
                         @Override
                         public void onUploadSuccess(String imageUrl) {}

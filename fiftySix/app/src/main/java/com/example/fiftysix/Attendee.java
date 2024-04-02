@@ -54,7 +54,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.ServerTimestamp;
-
+import com.google.firebase.messaging.FirebaseMessaging;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -154,6 +154,10 @@ public class Attendee {
         db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("currentlyAtEvent", "no");
         db.collection("Users").document(attendeeID).collection("UpcomingEvents").document(eventID).delete();
         db.collection("Events").document(eventID).update("attendeeCount", FieldValue.increment(-1));
+
+        String topic = "event_" + eventID;
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(topic);
+
     }
 
     public void leaveSignUp(String eventID){
@@ -161,9 +165,15 @@ public class Attendee {
         db.collection("Events").document(eventID).collection("attendeeSignUps").document(attendeeID).delete();
         db.collection("Users").document(attendeeID).collection("SignedUpEvents").document(eventID).delete();
         db.collection("Events").document(eventID).update("attendeeSignUpCount", FieldValue.increment(-1));
+        String topic = "event_" + eventID;
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(topic);
+
     }
 
     public void signUpForEvent(String eventID){
+        String topic = "event_" + eventID;
+        FirebaseMessaging.getInstance().subscribeToTopic(topic);
+        Log.d("FCM-notification","attendee successfully signed in to the event");
         db.collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -231,7 +241,8 @@ public class Attendee {
 
 
     public void checkInToEventID(String eventID, AttendeeCallBack attendeeCallBack) {
-
+        String topic = "event_" + eventID;
+        FirebaseMessaging.getInstance().subscribeToTopic(topic);
         db.collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
