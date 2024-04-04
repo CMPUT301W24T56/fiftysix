@@ -42,6 +42,7 @@ dependencies {
     //implementation("com.amulyakhare:com.amulyakhare.textdrawable:1.0.1")
 
     implementation("jp.wasabeef:picasso-transformations:2.4.0")
+    implementation("androidx.datastore:datastore-core-android:1.1.0-beta02")
 
 
     // Aggregator dependency on JUnit api, engine, and params

@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -29,5 +30,12 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
                     .build();
             nm.notify(100,notification);
         }
+    }
+    @Override
+    public void onNewToken(@NonNull String token) {
+        super.onNewToken(token);
+        // Handle the new token here
+        Log.d("New Token", token);
+        // You can send the token to your server or perform any other action.
     }
 }
