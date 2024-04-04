@@ -1,5 +1,6 @@
 package com.example.fiftysix;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -17,13 +18,14 @@ import androidx.core.content.ContextCompat;
 public class send_notification extends AppCompatActivity {
     private ImageButton cancel, send;
     private EditText message;
-
+    private Context context;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         Log.d("TAG", "onCreate: not working ");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.notification);
-
+        context = this;
         cancel = findViewById(R.id.cancel);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,7 +67,7 @@ public class send_notification extends AppCompatActivity {
             Intent serviceIntent = new Intent(this, notification.class);
             startService(serviceIntent);
             notification nm = new notification();
-            nm.sendNotificationToEventAttendees(eventID, eventName, message);
+            nm.sendNotificationToEventAttendees(eventID, eventName, message,context);
         }
         finish();
     }

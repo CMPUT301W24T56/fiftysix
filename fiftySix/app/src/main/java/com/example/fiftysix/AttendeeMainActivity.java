@@ -167,10 +167,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
         setButtons();
         setEditText();
 
-
-
-
-
         // Creates/Gets attendee
         getLocation();
         //Log.d("LOCATION", "onCreate: " + location.getLongitude());
@@ -980,8 +976,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
         allEventSpinner.setAdapter(adapter);
         myEventsSignUpSpinner.setAdapter(adapter);
     }
-
-
 
 
 
