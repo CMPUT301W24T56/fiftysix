@@ -23,7 +23,7 @@ public class notification {
     public void sendNotificationToEventAttendees(String eventId, String eventName, String message, Context context) {
         Log.d("even_id",eventId);
         Map<String,String> data = new HashMap<>();
-        data.put("notification",message);
+        data.put("announcements",message);
         db.collection("Events").document(eventId).get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
