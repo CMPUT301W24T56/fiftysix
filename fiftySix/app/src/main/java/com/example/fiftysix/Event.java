@@ -126,6 +126,11 @@ public class Event {
 
     // ________________________________METHODS_____________________________________
 
+    public void setPromoQR(String promoQRCodeID){
+        FirebaseFirestore.getInstance().collection("Events").document(this.eventID).update("promoQRCode", promoQRCodeID);
+    }
+
+
     public String getPosterID(){ return posterID;}
 
     public String getEventID() {

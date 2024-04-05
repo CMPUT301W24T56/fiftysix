@@ -46,6 +46,7 @@ public class CheckInQRCode{
     private String eventID;
     private Bitmap qrCode;
     private String qrCodeID;
+    private String type = "checkIn";
     private FirebaseFirestore db;
     private CollectionReference qrRef;
     private FirebaseStorage storage;
@@ -107,6 +108,7 @@ public class CheckInQRCode{
             // Adds QRcode to firebase.
             Map<String,Object> qrData = new HashMap<>();
             qrData.put("event",this.eventID);
+            qrData.put("type",this.type);
             qrRef
                     .document(this.qrCodeID)
                     .set(qrData)
@@ -142,6 +144,7 @@ public class CheckInQRCode{
     private void uploadData(){
         Map<String,Object> qrData = new HashMap<>();
         qrData.put("event",this.eventID);
+        qrData.put("type",this.type);
 
         this.qrRef
                 .document(this.qrCodeID)

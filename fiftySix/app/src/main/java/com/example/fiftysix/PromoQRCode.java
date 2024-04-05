@@ -50,7 +50,7 @@ public class PromoQRCode {
 
 
     // Constructor: requires eventID to instantiate.
-    public PromoQRCode(String eventID, Context contextIN) {
+    public PromoQRCode( Context contextIN ) {
 
         this.eventID = eventID;
 
@@ -63,11 +63,10 @@ public class PromoQRCode {
         this.storageRef = storage.getReference();
         this.imagePath = "images/promoQRCode/" + qrCodeID;
         this.mContext = contextIN;
-        this.eventID = eventID;
+        this.eventID = null;
         this.uriToBitMap = null;
         this.type = "promo";
 
-        this.generateQR();
 
     }
 
@@ -83,6 +82,11 @@ public class PromoQRCode {
         return qrCode;
     }
     public String getQRCodeID(){ return qrCodeID; }
+
+    public void setEvent(String eventID){
+        this.eventID = eventID;
+        this.generateQR();
+    }
 
 
     // Generates a QR code (Bitmap) containing a string of the eventID. Adds image of qr code and event data to firebase.
@@ -100,6 +104,7 @@ public class PromoQRCode {
             // Adds QRcode to firebase.
             Map<String,Object> qrData = new HashMap<>();
             qrData.put("event",this.eventID);
+            qrData.put("type",this.type);
             qrRef
                     .document(this.qrCodeID)
                     .set(qrData)

@@ -121,9 +121,12 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
     // Buttons on Create event page
     private Button createEvent;
+    private Button generatePromoQR;
     private ImageButton eventDetailsBack;
     private Button reuseCheckInQR;
     private EditText eventTitleEditText;
+
+    private PromoQRCode promoQRCode;
 
     private EditText eventAddressEditText;
     private EditText eventDetailsEditText;
@@ -154,6 +157,8 @@ public class OrganizerMainActivity extends AppCompatActivity {
         // Creates Organizer Object
         organizer = new Organizer(context);
         organizerID = organizer.getOrganizerID();
+
+        promoQRCode = null;
 
         // Firebase
         db = FirebaseFirestore.getInstance();
@@ -526,6 +531,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
             switchAttendeeLimit = findViewById(R.id.switchAttendeeLimit);
             switchSignUpLimit = findViewById(R.id.switchSignUpLimit);
             //eventPosterImage = findViewById(R.id.event_poster_image);
+            generatePromoQR = findViewById(R.id.generatePromoQR);
 
             backOrgNotif = (ImageButton) findViewById(R.id.backOrgNotif);
 
@@ -928,7 +934,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                         eventEndTime = eventEndTime.split(" ")[2];
 
                         // Creates Event
-                        String posterID = organizer.createEventNewQRCode( eventDetails, eventAddress, attendeeLimit, attendeeSignUpLimit, eventTitle, eventStartDate, eventEndDate, eventStartTime, eventEndTime);
+                        String posterID = organizer.createEventNewQRCode( eventDetails, eventAddress, attendeeLimit, attendeeSignUpLimit, eventTitle, eventStartDate, eventEndDate, eventStartTime, eventEndTime, promoQRCode);
                         // Adds poster image
                         posterHandler.uploadImageAndStoreReference(selectedImageUri, posterID, "Event", new Poster.PosterUploadCallback() {
                             @Override
@@ -950,6 +956,11 @@ public class OrganizerMainActivity extends AppCompatActivity {
                         eventAddressEditText.setText(null);
                         eventDetailsEditText.setText(null);
 
+
+
+
+                        promoQRCode = null;
+
                     }
                 }
             });
@@ -967,6 +978,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     previousView(v);
+                    promoQRCode = null;
                 }
             });
 
@@ -985,6 +997,14 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     showImageSourceDialog();
+                }
+            });
+
+            generatePromoQR.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO:
+                    promoQRCode = new PromoQRCode(getApplicationContext());
                 }
             });
         }
