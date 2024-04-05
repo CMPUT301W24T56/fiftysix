@@ -92,7 +92,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
     // Backend Misc
     private Attendee attendee;
     private String attendeeID;
-    private String eventCheckinID;
+    private String qrCodeID;
     private ArrayList<Event> myEventDataList;
     private ArrayList<Event> allEventDataList;
     private ArrayList<Event> signUpEventDataList;
@@ -590,56 +590,75 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
         if(result.getContents() != null){
 
-                    eventCheckinID = result.getContents().toString();
-                    attendee.alreadyCheckedIn(eventCheckinID, new Attendee.AttendeeCallBack() {
-                        @Override
-                        public void checkInSuccess(Boolean checkinSuccess, String eventName) {
-                            if (checkinSuccess){
-                                attendee.checkInToEvent(eventCheckinID, new Attendee.AttendeeCallBack() {
-                                    @Override
-                                    public void checkInSuccess(Boolean checkinSuccess, String eventName) {
-                                        if (checkinSuccess){
-                                            android.app.AlertDialog.Builder builder = new AlertDialog.Builder(AttendeeMainActivity.this);
-                                            builder.setTitle("Check-in Successful");
-                                            builder.setMessage(eventName);
-                                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    dialog.dismiss();
-                                                }
-                                            }).show();
-                                        }
-                                        else {
-                                            android.app.AlertDialog.Builder builder = new AlertDialog.Builder(AttendeeMainActivity.this);
-                                            builder.setTitle("Check-in Failed");
-                                            builder.setMessage(eventName + " is at max capacity");
-                                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    dialog.dismiss();
-                                                }
-                                            }).show();
-                                        }
-                                    }
-                                });
-                            }
-                            else{
-                                android.app.AlertDialog.Builder builder = new AlertDialog.Builder(AttendeeMainActivity.this);
-                                builder.setTitle("Check-in Failed");
-                                builder.setMessage("User already checked into this event.");
-                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                }).show();
+                    qrCodeID = result.getContents().toString();
 
+                    db.collection("CheckInQRCode").document(qrCodeID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            if (documentSnapshot.exists()){
+                                String qrType = documentSnapshot.getString("type");
+                                String eventID = documentSnapshot.getString("event");
+
+                                if (qrType != null){
+                                    // Is a Promo QR Code
+                                    if (qrType.equals("promo")){
+                                        //TODO:  Open & Display event
+
+
+                                    }
+                                    // Is a checkin QR Code
+                                    else{
+                                        attendee.alreadyCheckedIn(eventID, new Attendee.AttendeeCallBack() {
+                                            @Override
+                                            public void checkInSuccess(Boolean checkinSuccess, String eventName) {
+                                                if (checkinSuccess){
+                                                    attendee.checkInToEvent(eventID, new Attendee.AttendeeCallBack() {
+                                                        @Override
+                                                        public void checkInSuccess(Boolean checkinSuccess, String eventName) {
+                                                            if (checkinSuccess){
+                                                                android.app.AlertDialog.Builder builder = new AlertDialog.Builder(AttendeeMainActivity.this);
+                                                                builder.setTitle("Check-in Successful");
+                                                                builder.setMessage(eventName);
+                                                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(DialogInterface dialog, int which) {
+                                                                        dialog.dismiss();
+                                                                    }
+                                                                }).show();
+                                                            }
+                                                            else {
+                                                                android.app.AlertDialog.Builder builder = new AlertDialog.Builder(AttendeeMainActivity.this);
+                                                                builder.setTitle("Check-in Failed");
+                                                                builder.setMessage(eventName + " is at max capacity");
+                                                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(DialogInterface dialog, int which) {
+                                                                        dialog.dismiss();
+                                                                    }
+                                                                }).show();
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                                else{
+                                                    android.app.AlertDialog.Builder builder = new AlertDialog.Builder(AttendeeMainActivity.this);
+                                                    builder.setTitle("Check-in Failed");
+                                                    builder.setMessage("User already checked into this event.");
+                                                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            dialog.dismiss();
+                                                        }
+                                                    }).show();
+
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
                             }
                         }
                     });
-
-
-
         }
     });
 
@@ -1015,21 +1034,33 @@ public class AttendeeMainActivity extends AppCompatActivity {
         buttonAttendeeSignInEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addEventsView(v); // Opens add event page
+
+                scanCode();
+                myEventsView(v);
+
+                //addEventsView(v); // Opens add event page
 
             }
         });
         buttonAttendeeSignInEventAllEvents.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addEventsView(v); // Opens add event page
+
+                scanCode();
+                myEventsView(v);
+
+                //addEventsView(v); // Opens add event page
 
             }
         });
         buttonAttendeeSignInEventSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addEventsView(v); // Opens add event page
+
+                scanCode();
+                myEventsView(v);
+
+                //addEventsView(v); // Opens add event page
 
             }
         });
