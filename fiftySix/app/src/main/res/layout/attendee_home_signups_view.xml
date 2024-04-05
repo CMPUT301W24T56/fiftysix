@@ -9,7 +9,7 @@
     android:weightSum="5">
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="563dp"
         android:layout_marginBottom="15dp"
@@ -35,8 +35,10 @@
             android:layout_height="match_parent" />
 
     </LinearLayout>
+
+
     <ImageButton
-        android:id="@+id/buttonAttendeeBackSignUp"
+        android:id="@+id/buttonAttendeeBack"
         android:layout_width="73dp"
         android:layout_height="81dp"
         android:layout_marginStart="15dp"
@@ -46,9 +48,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         app:srcCompat="@drawable/baseline_arrow_back_24" />
-
 
     <ImageButton
         android:id="@+id/buttonAttendeeProfileSignUp"
@@ -56,7 +57,7 @@
         android:layout_height="60dp"
         android:layout_marginEnd="320dp"
         android:background="@drawable/transparent_background_button"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -70,21 +71,21 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-        app:srcCompat="@drawable/icons8_qr_50" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:srcCompat="@drawable/icons8_qr_50"  />
 
     <ImageButton
         android:id="@+id/buttonAttendeeNotificationBellSignUp"
         android:layout_width="77dp"
         android:layout_height="63dp"
         android:layout_marginStart="320dp"
-        android:layout_marginTop="4dp"
         android:layout_marginEnd="15dp"
         android:background="@drawable/transparent_background_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.512"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         app:srcCompat="@mipmap/notif_ic_launcher_foreground" />
 
     <Spinner
@@ -93,7 +94,7 @@
         android:layout_height="55dp"
         android:layout_marginStart="320dp"
         android:background="@drawable/baseline_menu_24"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

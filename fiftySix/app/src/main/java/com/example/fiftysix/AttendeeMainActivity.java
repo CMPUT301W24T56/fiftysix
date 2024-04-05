@@ -82,21 +82,19 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private CollectionReference attCheckinEventRef;
     private CollectionReference eventRef;
     private CollectionReference attSignUpEventRef;
+    private CollectionReference imageRef;
 
     // Layouts & views
     private ViewFlipper viewFlipper;
-    private RecyclerView recyclerViewMyEvents;
-    private RecyclerView recyclerViewAllEvents;
-    private RecyclerView recyclerViewSignUpEvents;
+    private RecyclerView recyclerViewMyEvents, recyclerViewAllEvents, recyclerViewSignUpEvents;
+
+    // Spinners for home page
+    private Spinner myEventSpinner, allEventSpinner, myEventsSignUpSpinner, settingsSpinner;
 
     // Backend Misc
     private Attendee attendee;
-    private String attendeeID;
-    private String qrCodeID;
-    private ArrayList<Event> myEventDataList;
-    private ArrayList<Event> allEventDataList;
-    private ArrayList<Event> signUpEventDataList;
-    private CollectionReference imageRef;
+    private String attendeeID, qrCodeID;
+    private ArrayList<Event> myEventDataList, allEventDataList, signUpEventDataList;
     private AttendeeMyEventAdapter attendeeMyEventAdapter;
     private AttendeeCheckinEventAdapter attendeeSignUpEventAdapter;
     private AttendeeAllEventAdapter attendeeAllEventAdapter;
@@ -111,13 +109,11 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 201;
 
     // Buttons on home pages
-    private ImageButton attendeeAddEventButton;
-    private ImageButton attendeeProfileButton;
+
     private ImageButton attendeeNotificationButton;
-    private ImageButton attendeeHomeButton;
-    private Button browseAllEventsButton;
-    private Button browseMyEvents;
-    private ImageButton buttonAttendeeBackAllEvents, buttonAttendeeBackCheckin, buttonAttendeeBackSignUp;
+
+    // Back Buttons
+    private ImageButton buttonAttendeeBackAllEvents, buttonAttendeeBackCheckin, buttonAttendeeBackSignUp, buttonSettingsBack;
 
     // Buttons on Add event page
     private Button addEventScanCheckinButton;
@@ -136,6 +132,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
     // Settings
     private Switch locationSwitch;
+    private ImageButton   buttonSettingsEventSignUp, buttonSettingsNotificationBell;
 
 
     // Add Event Buttons
@@ -144,15 +141,11 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private ImageButton buttonAttendeeSignInEventSignUp;
 
     // Profile Buttons
-    private ImageButton buttonAttendeeProfile;
-    private ImageButton buttonAttendeeProfileSignUp;
-    private ImageButton buttonAttendeeProfileAllEvents;
+    private ImageButton buttonAttendeeProfile, buttonAttendeeProfileSignUp, buttonAttendeeProfileAllEvents, buttonSettingsProfile;
 
 
-    // Spinners for home page
-    private Spinner myEventSpinner;
-    private Spinner allEventSpinner;
-    private Spinner myEventsSignUpSpinner;
+
+
 
 
     // Getting geolocation
@@ -247,6 +240,16 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
 
         setupLocationSwitch();
+
+
+
+
+
+
+
+
+
+
 
 
     }
@@ -356,12 +359,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
 
 
-
-
-
-
-
-
     // Source "How to Get Current Location in Android Studio||Get user's current Location||Location App 2022" - by "Coding with Aiman" - Youtube.com
     private void getLocation() {
         List<Address> addresses;
@@ -415,7 +412,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
     }
 
 
-
     /**
      * Sets view flipper to specific index to display the corresponding home page showing MY events
      * @param v: View
@@ -444,7 +440,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private void profileView(View v){
         viewFlipper.setDisplayedChild(3);
     }
-
 
     private void signUpEventsView(View v) {viewFlipper.setDisplayedChild(4);}
 
@@ -490,7 +485,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(AttendeeMainActivity.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
     }
 
-
     /**
      * Opens users device camera
      */
@@ -532,13 +526,10 @@ public class AttendeeMainActivity extends AppCompatActivity {
      */
     private void setButtons(){
         // Home page buttons
-        //attendeeAddEventButton = (ImageButton) findViewById(R.id.buttonAttendeeSignInEventAllEvents);
-        attendeeProfileButton = (ImageButton) findViewById(R.id.buttonAttendeeProfile);
         attendeeNotificationButton = (ImageButton) findViewById(R.id.buttonAttendeeNotificationBelAllEvents);
         buttonAttendeeBackAllEvents = (ImageButton) findViewById(R.id.buttonAttendeeHomeAllEvents);
         buttonAttendeeBackCheckin = (ImageButton) findViewById(R.id.buttonAttendeeBackCheckin);
         buttonAttendeeBackSignUp = (ImageButton) findViewById(R.id.buttonAttendeeBackSignUp);
-
 
         // Add event page buttons
         addEventScanCheckinButton = (Button) findViewById(R.id.buttonAttendeeCheckinWithQR);
@@ -562,6 +553,12 @@ public class AttendeeMainActivity extends AppCompatActivity {
         buttonAttendeeProfileSignUp = (ImageButton) findViewById(R.id.buttonAttendeeProfileSignUp);
         buttonAttendeeProfileAllEvents = (ImageButton) findViewById(R.id.buttonAttendeeProfileAllEvents);
 
+        // Settings
+        buttonSettingsProfile = findViewById(R.id.buttonSettingsProfile);
+        buttonSettingsBack = findViewById(R.id.buttonSettingsBack);
+        buttonSettingsEventSignUp = findViewById(R.id.buttonSettingsEventSignUp);
+        buttonSettingsNotificationBell = findViewById(R.id.buttonSettingsNotificationBell);
+        buttonAttendeeBackSignUp = findViewById(R.id.buttonAttendeeBack);
     }
 
     /**
@@ -806,7 +803,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
     }
 
-
     /**
      *  Loads and displays event data that the attendee is currently signed up for from firebase,
      */
@@ -1028,45 +1024,52 @@ public class AttendeeMainActivity extends AppCompatActivity {
                 profileView(v);
             }
         });
+        buttonSettingsProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                profileView(v);
+            }
+        });
 
         //________________________ Notifications _______________________________________
 
         attendeeNotificationButton.setOnClickListener(v -> {
             //startActivity(new Intent(AttendeeMainActivity.this, Notification.class));
         });
+        buttonSettingsNotificationBell.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO
+            }
+        });
 
         //________________________ Add Event Buttons ___________________________________
         buttonAttendeeSignInEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 scanCode();
                 myEventsView(v);
-
-                //addEventsView(v); // Opens add event page
-
             }
         });
         buttonAttendeeSignInEventAllEvents.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 scanCode();
                 myEventsView(v);
-
-                //addEventsView(v); // Opens add event page
-
             }
         });
         buttonAttendeeSignInEventSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 scanCode();
                 myEventsView(v);
-
-                //addEventsView(v); // Opens add event page
-
+            }
+        });
+        buttonSettingsEventSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scanCode();
+                myEventsView(v);
             }
         });
 
@@ -1090,6 +1093,14 @@ public class AttendeeMainActivity extends AppCompatActivity {
                 finish();
             }
         });
+        buttonSettingsBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+
 
     }
 
@@ -1132,10 +1143,10 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
     private void addSpinners(){
         // Adds Drop down menu to top left
-        Spinner myEventSpinner = findViewById(R.id.menuButtonMyEvents);
-        Spinner allEventSpinner = findViewById(R.id.menuButtonAllEvents);
-        Spinner myEventsSignUpSpinner = findViewById(R.id.menuButtonMyEventsSignUp);
-        Spinner settingsSpinner = findViewById(R.id.menuButtonSettings);
+        myEventSpinner = findViewById(R.id.menuButtonMyEvents);
+        allEventSpinner = findViewById(R.id.menuButtonAllEvents);
+        myEventsSignUpSpinner = findViewById(R.id.menuButtonMyEventsSignUp);
+        settingsSpinner = findViewById(R.id.menuButtonSettings);
 
 
         settingsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
