@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class notification {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -88,8 +89,10 @@ public class notification {
                     }
                 });
         sendNotification(context, eventId,eventName, message);
-
     }
+
+
+    //  public void
     private void sendNotification(Context context, String eventId, String eventName, String message) {
         createNotificationChannel(context,eventId);
 
@@ -118,4 +121,5 @@ public class notification {
             notificationManager.createNotificationChannel(channel);
         }
     }
+
 }

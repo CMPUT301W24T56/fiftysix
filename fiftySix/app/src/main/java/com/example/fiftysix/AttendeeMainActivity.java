@@ -227,16 +227,51 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
         // update token of device
         // updatetoken(attendeeID);
+        checkAnnouncements();
     }
 
 
     //________________________________________Methods________________________________________
+    // author - open AI
+    // prompt - facing trouble in getting the list of event ids from firebase database. and checking whether the field exists or not.
+    // link - https://chat.openai.com/c/b8fca599-4ae0-4581-b9ee-141381105537
+    public void checkAnnouncements() {
+        attendee.getAllSignedUpEventIds(attendeeID, new Attendee.OnSignedUpEventsListener() {
+            @Override
+            public void onSignedUpEventsRetrieved(List<String> eventIds) {
+                // Print the event IDs
+                for (String event : eventIds) {
+                    DocumentReference docRef = db.collection("Events").document(event);
+                    // now setting listener on that event.
+                    docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException e) {
+                            if (e != null) {
+                                Log.e("Error", "Listen failed: " + e);
+                                return;
+                            }
 
-//    public void updatetoken(String attendeeid){
-//        announcements = new MyFirebaseMessaging(attendeeid);
-//
-//        announcements.
-//    }
+                            if (snapshot != null && snapshot.exists()) {
+                                // Check if the specified field exists and has changed
+                                if (snapshot.contains("announcements") && snapshot.getMetadata().hasPendingWrites()) {
+                                    Log.d("changes_announcement", " changes are there");
+                                }
+                                Log.d("Document Data", "Current data: " + snapshot.getData());
+                            } else {
+                                Log.d("Snapshot", "Current data: null");
+                            }
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                // Handle error
+                Log.e("Error", errorMessage);
+            }
+        });
+    }
 
     // Source "How to Get Current Location in Android Studio||Get user's current Location||Location App 2022" - by "Coding with Aiman" - Youtube.com
     private void getLocation() {

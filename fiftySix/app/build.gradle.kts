@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
-    id("com.google.gms.google-services")
     id("de.mannodermaus.android-junit5")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -68,7 +68,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
-    implementation(platform("com.google.firebase:firebase-bom:32.7.3"))
+    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
     implementation("com.google.firebase:firebase-analytics")
 
     //Recycler View
@@ -107,7 +107,7 @@ dependencies {
     implementation("com.google.firebase:firebase-storage:20.3.0")
     implementation("androidx.navigation:navigation-fragment:2.7.6")
     implementation("androidx.navigation:navigation-ui:2.7.6")
-    implementation("com.google.firebase:firebase-messaging:23.0.0")
+    implementation("com.google.firebase:firebase-messaging")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
