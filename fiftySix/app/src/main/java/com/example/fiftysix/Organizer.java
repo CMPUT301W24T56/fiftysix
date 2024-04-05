@@ -85,8 +85,11 @@ public class Organizer {
         addEventToOrganizerDataBase(event.getEventID());
 
         String eventID = event.getEventID();
-        promoQRCode.setEvent(eventID);
-        event.setPromoQR(promoQRCode.getQRCodeID());
+
+        if (promoQRCode != null){
+            promoQRCode.setEvent(eventID);
+            event.setPromoQR(promoQRCode.getQRCodeID());
+        }
 
         return event.getPosterID();
     }

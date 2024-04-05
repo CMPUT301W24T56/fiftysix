@@ -601,18 +601,23 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
                                 if (qrType != null){
                                     // Is a Promo QR Code
+
                                     if (qrType.equals("promo")){
                                         //TODO:  Open & Display event
-
-
+                                        Context context = getApplicationContext();
+                                        Intent intent = new Intent(AttendeeMainActivity.this, PromoScanActivity.class);
+                                        intent.putExtra("eventID", eventID);
+                                        startActivity(intent);
                                     }
+
+
                                     // Is a checkin QR Code
                                     else{
                                         attendee.alreadyCheckedIn(eventID, new Attendee.AttendeeCallBack() {
                                             @Override
                                             public void checkInSuccess(Boolean checkinSuccess, String eventName) {
                                                 if (checkinSuccess){
-                                                    attendee.checkInToEvent(eventID, new Attendee.AttendeeCallBack() {
+                                                    attendee.checkInToEvent(qrCodeID, new Attendee.AttendeeCallBack() {
                                                         @Override
                                                         public void checkInSuccess(Boolean checkinSuccess, String eventName) {
                                                             if (checkinSuccess){

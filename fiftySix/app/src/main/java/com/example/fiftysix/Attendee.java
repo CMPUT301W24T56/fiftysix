@@ -247,12 +247,58 @@ public class Attendee {
                 if (documentSnapshot != null){
                     String checkedIn = documentSnapshot.getString("currentlyAtEvent");
 
-                    if (checkedIn.equals("yes")){
-                        attendeeCallBack.checkInSuccess(false, "Already checked in");
+                    if (checkedIn != null){
+                        if (checkedIn.equals("yes")){
+                            attendeeCallBack.checkInSuccess(false, "Already checked in");
+                        }
+                        else{
+                            attendeeCallBack.checkInSuccess(true, "Not checked in");
+                        }
                     }
                     else{
                         attendeeCallBack.checkInSuccess(true, "Not checked in");
                     }
+                }
+            }
+        });
+    }
+
+
+
+    public void hasSignUpSpace(String eventID, AttendeeCallBack attendeeCallBack){
+        db.collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()){
+
+
+                    Integer attendeeSignUpLimit = documentSnapshot.getLong("attendeeSignUpLimit").intValue();
+                    Integer attendeeSignUpCount =documentSnapshot.getLong("attendeeSignUpCount").intValue();
+                    if (attendeeSignUpLimit > attendeeSignUpCount){
+                        attendeeCallBack.checkInSuccess(true, "Has space");
+                    }
+                    else{
+                        attendeeCallBack.checkInSuccess(false, "Is full");
+                    }
+
+                }
+                else{
+                    attendeeCallBack.checkInSuccess(true, "Has space");
+                }
+            }
+        });
+    }
+
+
+    public void alreadySignedUp(String eventID, AttendeeCallBack attendeeCallBack){
+        db.collection("Events").document(eventID).collection("SignedUpEvents").document(attendeeID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()){
+                    attendeeCallBack.checkInSuccess(false, "Already signed up");
+                }
+                else{
+                    attendeeCallBack.checkInSuccess(true, "Not signed in");
                 }
             }
         });

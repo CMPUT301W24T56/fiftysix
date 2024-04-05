@@ -11,7 +11,7 @@
 
 
     <ImageButton
-        android:id="@+id/buttonBackCreateEvent"
+        android:id="@+id/buttonBack"
         android:layout_width="93dp"
         android:layout_height="83dp"
         android:layout_marginEnd="30dp"
@@ -24,7 +24,7 @@
 
     <LinearLayout
         android:layout_gravity="center_vertical"
-        android:id="@+id/linearLayout2"
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -35,7 +35,7 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
 
             <LinearLayout
@@ -45,7 +45,7 @@
 
 
                 <TextView
-                    android:id="@+id/textViewTitle"
+                    android:id="@+id/eventTitleTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -56,9 +56,9 @@
                     android:textSize="28sp" />
 
                 <ImageView
-                    android:id="@+id/event_poster_image"
+                    android:id="@+id/eventPosterImageView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="400dp"
                     android:layout_above="@+id/share_qr_code"
                     android:layout_below="@id/textViewTitle"
                     android:layout_marginTop="0dp"
@@ -69,37 +69,37 @@
 
 
                 <TextView
-                    android:id="@+id/eventStartDateButton"
+                    android:id="@+id/eventLocationTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
+
                     android:layout_marginTop="15dp"
                     android:layout_marginBottom="5dp"
                     android:hint="Location"
                     android:inputType="datetime"
                     android:paddingLeft="20dp"
-                    android:textAlignment="viewStart"
+                    android:textAlignment="textStart"
                     android:textColor="@color/black"
                     android:textColorHint="@color/black"
                     android:textSize="18sp" />
 
                 <TextView
-                    android:id="@+id/eventStartTimeButton"
+                    android:id="@+id/eventDateTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
+
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="15dp"
                     android:hint="Date"
                     android:inputType="datetime"
                     android:paddingLeft="20dp"
-                    android:textAlignment="viewStart"
+                    android:textAlignment="textStart"
                     android:textColor="@color/black"
                     android:textColorHint="@color/black"
                     android:textSize="18sp" />
 
                 <TextView
-                    android:id="@+id/eventEndDateButton"
+                    android:id="@+id/eventDetailsTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -108,7 +108,7 @@
                     android:hint="Description"
                     android:inputType="datetime"
                     android:paddingLeft="20dp"
-                    android:textAlignment="viewStart"
+                    android:textAlignment="textStart"
                     android:textColor="@color/black"
                     android:textColorHint="@color/black"
                     android:textSize="18sp" />
@@ -122,7 +122,7 @@
     </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/buttonCreateEvent"
+        android:id="@+id/buttonSignUpEvent"
 
         android:layout_width="300dp"
         android:layout_height="60dp"
