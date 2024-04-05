@@ -21,11 +21,11 @@ import java.util.List;
 
 public class OrganizerAttendeesEventAdapter extends RecyclerView.Adapter<OrganizerAttendeesEventAdapter.EventVH> {
 
-    List<Event> eventList;
+    List<Profile> profileList;
     private Context context;
 
-    public OrganizerAttendeesEventAdapter(ArrayList<Event> eventList, Context context) {
-        this.eventList = eventList;
+    public OrganizerAttendeesEventAdapter(ArrayList<Profile> profileList, Context context) {
+        this.profileList = profileList;
         this.context = context;
     }
 
@@ -40,14 +40,14 @@ public class OrganizerAttendeesEventAdapter extends RecyclerView.Adapter<Organiz
     @Override
     public void onBindViewHolder(@NonNull EventVH holder, int position) {
 
-        Event event = eventList.get(position);
-        holder.attendeeName.setText(event.getEventName());
-        holder.phoneNumber.setText(event.getLocation());
-        holder.email.setText(event.getDate());
-        holder.phoneNumber.setText(event.getDetails());
+        Profile profile = profileList.get(position);
+        holder.attendeeName.setText(profile.getName());
+        holder.phoneNumber.setText(profile.getPhoneNumber());
+        holder.email.setText(profile.getEmail());
 
 
-        String imageUrl = event.getPosterURL();
+
+        String imageUrl = profile.getImageUrl();
 
         if (imageUrl != null && !imageUrl.isEmpty()) {
             Picasso.get()
@@ -56,14 +56,14 @@ public class OrganizerAttendeesEventAdapter extends RecyclerView.Adapter<Organiz
                     .into(holder.attendeeImage); // Your ImageView
         }
 
-        boolean isExpandable = eventList.get(position).getExpandable();
+        boolean isExpandable = profileList.get(position).getExpandable();
         holder.expandableLayout.setVisibility(isExpandable ? View.VISIBLE : View.GONE);
 
     }
 
     @Override
     public int getItemCount() {
-        return eventList.size();
+        return profileList.size();
     }
 
     public class EventVH extends RecyclerView.ViewHolder {
@@ -94,8 +94,8 @@ public class OrganizerAttendeesEventAdapter extends RecyclerView.Adapter<Organiz
                 @Override
                 public void onClick(View v) {
 
-                    Event event = eventList.get(getAdapterPosition());
-                    event.setExpandable(!event.getExpandable());
+                    Profile profile = profileList.get(getAdapterPosition());
+                    profile.setExpandable(!profile.getExpandable());
                     notifyItemChanged(getAdapterPosition());
                 }
             });

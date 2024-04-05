@@ -1,8 +1,6 @@
 package com.example.fiftysix;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,19 +39,40 @@ public class AttendeeAllEventAdapter extends RecyclerView.Adapter<AttendeeAllEve
     public void onBindViewHolder(@NonNull EventVH holder, int position) {
 
         Event event = eventList.get(position);
-        holder.codeName.setText(event.getEventName());
-        holder.versionTxt.setText(event.getLocation());
-        holder.apiLevelTxt.setText(event.getDate());
+        holder.eventName.setText(event.getEventName());
+        holder.locationOfEvent.setText(event.getLocation());
         holder.descriptionTxt.setText(event.getDetails());
 
-        if(event.getAttendeeLimit() == 2147483647){
-            holder.descriptionEvent.setText("Capacity: Unlimited");
-        }
-        else{
-            holder.descriptionEvent.setText("Capacity: " + event.getAttendeeLimit().toString());
+
+
+        Integer signUpLimit = event.getSignUpLimit();
+        Integer signups = event.getSignUpCount();
+
+
+        String endDay = event.getEndDate();
+        String endTime = event.getEndTime();
+        String startDay = event.getStartDate();
+        String startTime = event.getStartTime();
+
+        if (endDay != null){
+            String start = "Event Start: " + startTime.toString() + ",  " + startDay.toString();
+            String end =   "Event End:  " + endTime.toString() + ",  " + endDay.toString();
+            holder.startDate.setText(start);
+            holder.endDate.setText(end);
+
         }
 
-        holder.attendeeCount.setText("Current Attendees: " + event.getAttendeeCount().toString());
+
+        if(signUpLimit == 2147483647){
+            holder.attendeeLimit.setText("Sign-up Limit: Unlimited");
+        }
+        else{
+            holder.attendeeLimit.setText("Sign-up Limit: " + event.getSignUpLimit().toString());
+        }
+
+
+
+        holder.attendeeCount.setText("Sign-ups: " + signups.toString());
 
 
         String imageUrl = event.getPosterURL();
@@ -77,7 +96,7 @@ public class AttendeeAllEventAdapter extends RecyclerView.Adapter<AttendeeAllEve
 
     public class EventVH extends RecyclerView.ViewHolder {
 
-        TextView codeName, versionTxt, apiLevelTxt, descriptionTxt, attendeeCount, descriptionEvent;
+        TextView eventName, locationOfEvent, startDate, endDate, descriptionTxt, attendeeLimit, attendeeCount;
         LinearLayout linearLayout;
         RelativeLayout expandableLayout;
         ImageView eventImage;
@@ -86,12 +105,14 @@ public class AttendeeAllEventAdapter extends RecyclerView.Adapter<AttendeeAllEve
         public EventVH(@NonNull View itemView) {
             super(itemView);
 
-            codeName = itemView.findViewById(R.id.code_name);
-            versionTxt = itemView.findViewById(R.id.version);
-            apiLevelTxt = itemView.findViewById(R.id.apiLevel);
+            eventName = itemView.findViewById(R.id.eventName);
+            locationOfEvent = itemView.findViewById(R.id.locationOfEvent);
+
+            startDate = itemView.findViewById(R.id.startDate);
+            endDate = itemView.findViewById(R.id.endDate);
             descriptionTxt = itemView.findViewById(R.id.description);
-            attendeeCount = itemView.findViewById(R.id.attendeeCapacity);
-            descriptionEvent = itemView.findViewById(R.id.currentAttendees);
+            attendeeLimit = itemView.findViewById(R.id.attendeeCapacity);
+            attendeeCount = itemView.findViewById(R.id.currentAttendees);
 
             linearLayout = itemView.findViewById(R.id.linear_layout);
             expandableLayout = itemView.findViewById(R.id.expandable_layout);
@@ -105,9 +126,15 @@ public class AttendeeAllEventAdapter extends RecyclerView.Adapter<AttendeeAllEve
                 public void onClick(View v) {
 
                     Event event = eventList.get(getAdapterPosition());
-                    event.setExpandable(!event.getExpandable());
-                    notifyItemChanged(getAdapterPosition());
+                    if (event.getEventID() == null){
+                        event.setExpandable(false);
+                        notifyItemChanged(getAdapterPosition());
 
+                    }
+                    else{
+                        event.setExpandable(!event.getExpandable());
+                        notifyItemChanged(getAdapterPosition());
+                    }
                 }
             });
 

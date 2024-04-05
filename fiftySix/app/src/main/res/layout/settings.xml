@@ -1,6 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_page_organizer"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#291017"
+    android:weightSum="5">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/settingsLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="563dp"
+        android:layout_marginBottom="15dp"
+        android:layout_weight="4"
+        android:background="#FFFFFF"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.496"
+        tools:layout_editor_absoluteX="0dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="470dp"
+            android:fontFamily="@font/inter"
+            android:text="Settings"
+            android:textSize="28sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <Switch
+                android:id="@+id/locationSwitch"
+                android:layout_width="289dp"
+                android:layout_height="58dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/dark_round_button"
+                android:padding="16dp"
+                android:paddingLeft="15dp"
+                android:text="Allow Location"
+                android:textColor="@color/colorPrimaryLight"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.194" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageButton
+        android:id="@+id/buttonSettingsSignUp"
+        android:layout_width="73dp"
+        android:layout_height="81dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="320dp"
+        android:background="@drawable/transparent_background_button"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settingsLinearLayout"
+        app:srcCompat="@drawable/baseline_arrow_back_24" />
+
+
+    <ImageButton
+        android:id="@+id/buttonSettingsProfile"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="320dp"
+        android:background="@drawable/transparent_background_button"
+        app:layout_constraintBottom_toTopOf="@+id/settingsLinearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/user_ic_launcher_foreground" />
+
+    <ImageButton
+        android:id="@+id/buttonSettingsEventSignUp"
+        android:layout_width="73dp"
+        android:layout_height="81dp"
+        android:background="@drawable/transparent_background_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settingsLinearLayout"
+        app:srcCompat="@drawable/icons8_qr_50" />
+
+    <ImageButton
+        android:id="@+id/buttonSettingsNotificationBell"
+        android:layout_width="77dp"
+        android:layout_height="63dp"
+        android:layout_marginStart="320dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="15dp"
+        android:background="@drawable/transparent_background_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settingsLinearLayout"
+        app:srcCompat="@mipmap/notif_ic_launcher_foreground" />
+
+    <Spinner
+        android:id="@+id/menuButtonSettings"
+        android:layout_width="61dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="320dp"
+        android:background="@drawable/baseline_menu_24"
+        app:layout_constraintBottom_toTopOf="@+id/settingsLinearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

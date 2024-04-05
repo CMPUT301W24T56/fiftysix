@@ -53,15 +53,19 @@ public class location extends AppCompatActivity {
                 if (value != null){
                     for (QueryDocumentSnapshot attendeeDoc : value){
                         String attendeeID = attendeeDoc.getId();
-                        String attendeeLat = attendeeDoc.getString("latitude").toString();
-                        String attendeeLong = attendeeDoc.getString("longitude").toString();
 
-                        if (attendeeLat != null && attendeeLong != null){
-                            Float attendeeLatFloat = Float.parseFloat(attendeeLat);
-                            Float attendeeLongFloat = Float.parseFloat(attendeeLong);
 
-                            Log.d("location map", "Lat = " + attendeeLatFloat + " Float =" + attendeeLongFloat);
-                            attendeeLocations.add(new LatLng( attendeeLongFloat, attendeeLatFloat));
+                        if (attendeeDoc.getString("latitude") != null){
+
+                            String attendeeLat = attendeeDoc.getString("latitude").toString();
+                            String attendeeLong = attendeeDoc.getString("longitude").toString();
+                            if (attendeeLat != null && attendeeLong != null){
+                                Float attendeeLatFloat = Float.parseFloat(attendeeLat);
+                                Float attendeeLongFloat = Float.parseFloat(attendeeLong);
+
+                                Log.d("location map", "Lat = " + attendeeLatFloat + " Float =" + attendeeLongFloat);
+                                attendeeLocations.add(new LatLng( attendeeLatFloat, attendeeLongFloat));
+                            }
                         }
                     }
 

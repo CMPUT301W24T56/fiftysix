@@ -21,11 +21,11 @@ import java.util.List;
 
 public class OrganizerCheckInEventAdapter extends RecyclerView.Adapter<OrganizerCheckInEventAdapter.EventVH> {
 
-    List<Event> eventList;
+    List<Profile> profileList;
     private Context context;
 
-    public OrganizerCheckInEventAdapter(ArrayList<Event> eventList, Context context) {
-        this.eventList = eventList;
+    public OrganizerCheckInEventAdapter(ArrayList<Profile> profileList, Context context) {
+        this.profileList = profileList;
         this.context = context;
     }
 
@@ -40,14 +40,9 @@ public class OrganizerCheckInEventAdapter extends RecyclerView.Adapter<Organizer
     @Override
     public void onBindViewHolder(@NonNull EventVH holder, int position) {
 
-        Event event = eventList.get(position);
-        holder.attendeeName.setText(event.getEventName());
-        holder.phoneNumber.setText(event.getLocation());
-        holder.email.setText(event.getDate());
-        holder.phoneNumber.setText(event.getDetails());
+        Profile profile = profileList.get(position);
 
-
-        String imageUrl = event.getPosterURL();
+        String imageUrl = profile.getImageUrl();
 
         if (imageUrl != null && !imageUrl.isEmpty()) {
             Picasso.get()
@@ -56,14 +51,22 @@ public class OrganizerCheckInEventAdapter extends RecyclerView.Adapter<Organizer
                     .into(holder.attendeeImage); // Your ImageView
         }
 
-        boolean isExpandable = eventList.get(position).getExpandable();
+        holder.attendeeName.setText(profile.getName());
+        holder.phoneNumber.setText(profile.getPhoneNumber());
+        holder.email.setText(profile.getEmail());
+        holder.numberCheckins.setText("Times checked in: " + profile.getTimesCheckedIn());
+        holder.checkinTime.setText("Check-in time: " + profile.getCheckInTime());
+
+
+
+        boolean isExpandable = profileList.get(position).getExpandable();
         holder.expandableLayout.setVisibility(isExpandable ? View.VISIBLE : View.GONE);
 
     }
 
     @Override
     public int getItemCount() {
-        return eventList.size();
+        return profileList.size();
     }
 
     public class EventVH extends RecyclerView.ViewHolder {
@@ -78,10 +81,11 @@ public class OrganizerCheckInEventAdapter extends RecyclerView.Adapter<Organizer
             super(itemView);
 
             attendeeName = itemView.findViewById(R.id.attendee_name);
-            checkinTime = itemView.findViewById(R.id.checkin_time);
-            numberCheckins = itemView.findViewById(R.id.number_checkins);
-            phoneNumber = itemView.findViewById(R.id.phone_number);
-            email = itemView.findViewById(R.id.email);
+
+            email = itemView.findViewById(R.id.checkin_time);
+            phoneNumber = itemView.findViewById(R.id.number_checkins);
+            numberCheckins = itemView.findViewById(R.id.phone_number);
+            checkinTime = itemView.findViewById(R.id.email);
 
 
             linearLayout = itemView.findViewById(R.id.linear_layout);
@@ -94,11 +98,14 @@ public class OrganizerCheckInEventAdapter extends RecyclerView.Adapter<Organizer
                 @Override
                 public void onClick(View v) {
 
-                    Event event = eventList.get(getAdapterPosition());
-                    event.setExpandable(!event.getExpandable());
+                    Profile profile = profileList.get(getAdapterPosition());
+                    profile.setExpandable(!profile.getExpandable());
                     notifyItemChanged(getAdapterPosition());
                 }
             });
+
+
+
 
         }
     }

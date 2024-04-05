@@ -16,6 +16,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,13 +31,14 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Switch;
+import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
@@ -51,19 +54,20 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 
-import com.google.firebase.firestore.model.Document;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import ru.nikartm.support.ImageBadgeView;
 
+
+// Date picker: https://stackoverflow.com/questions/39051210/how-to-give-input-date-field-for-registration-form-in-android
 public class OrganizerMainActivity extends AppCompatActivity {
 
     // Firebase
@@ -96,6 +100,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
     private ArrayList<Event> eventDataList;
     private int attendeeLimit = Integer.MAX_VALUE;
+    private int attendeeSignUpLimit = Integer.MAX_VALUE;
     private ActivityResultLauncher<Intent> galleryLauncher;
     private ActivityResultLauncher<Uri> cameraLauncher;
     private Uri cameraImageUri = null; // To store the camera image URI
@@ -119,10 +124,16 @@ public class OrganizerMainActivity extends AppCompatActivity {
     private ImageButton eventDetailsBack;
     private Button reuseCheckInQR;
     private EditText eventTitleEditText;
-    private EditText eventDateEditText;
+
     private EditText eventAddressEditText;
     private EditText eventDetailsEditText;
-    private Switch switchAttendeeLimit;
+    private Switch switchAttendeeLimit, switchSignUpLimit;
+    private int mYear, mMonth, mDay, mHour, mMinute;
+
+
+    // Create event Buttons
+    private Button eventDateButton, eventStartTimeButton, eventEndDateButton, eventEndTimeButton;
+
 
 
     // Buttons on Upload QR page
@@ -153,6 +164,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
         setButtons();
         setEditText();
         setupAttendeeLimitSwitch();
+        setupSignUpLimitSwitch();
 
         eventDataList = new ArrayList<>();
 
@@ -257,9 +269,123 @@ public class OrganizerMainActivity extends AppCompatActivity {
         buttonOrgHomeBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+
+
+
                 finish();
             }
         });
+
+        eventDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // From https://stackoverflow.com/questions/21408050/best-way-to-select-date-from-a-calendar-and-display-it-in-the-textview
+                Calendar mcurrentDate = Calendar.getInstance();
+                mYear = mcurrentDate.get(Calendar.YEAR);
+                mMonth = mcurrentDate.get(Calendar.MONTH);
+                mDay = mcurrentDate.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog mDatePicker = new DatePickerDialog(OrganizerMainActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    public void onDateSet(DatePicker datepicker, int selectedyear, int selectedmonth, int selectedday) {
+                        Calendar myCalendar = Calendar.getInstance();
+                        myCalendar.set(Calendar.YEAR, selectedyear);
+                        myCalendar.set(Calendar.MONTH, selectedmonth);
+                        myCalendar.set(Calendar.DAY_OF_MONTH, selectedday);
+                        String myFormat = "dd/MM/yy"; //Change as you need
+                        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.FRANCE);
+                        eventDateButton.setText("Start Date: " +sdf.format(myCalendar.getTime()));
+
+                        mDay = selectedday;
+                        mMonth = selectedmonth;
+                        mYear = selectedyear;
+                    }
+                }, mYear, mMonth, mDay);
+                mDatePicker.setTitle("Select Event Start Date");
+                mDatePicker.show();
+            }
+        });
+
+
+        eventEndDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // From https://stackoverflow.com/questions/21408050/best-way-to-select-date-from-a-calendar-and-display-it-in-the-textview
+                Calendar mcurrentDate = Calendar.getInstance();
+                mYear = mcurrentDate.get(Calendar.YEAR);
+                mMonth = mcurrentDate.get(Calendar.MONTH);
+                mDay = mcurrentDate.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog mDatePicker = new DatePickerDialog(OrganizerMainActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    public void onDateSet(DatePicker datepicker, int selectedyear, int selectedmonth, int selectedday) {
+                        Calendar myCalendar = Calendar.getInstance();
+                        myCalendar.set(Calendar.YEAR, selectedyear);
+                        myCalendar.set(Calendar.MONTH, selectedmonth);
+                        myCalendar.set(Calendar.DAY_OF_MONTH, selectedday);
+                        String myFormat = "dd/MM/yy"; //Change as you need
+                        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.FRANCE);
+                        eventEndDateButton.setText("End Date: " + sdf.format(myCalendar.getTime()));
+
+                        mDay = selectedday;
+                        mMonth = selectedmonth;
+                        mYear = selectedyear;
+                    }
+                }, mYear, mMonth, mDay);
+                mDatePicker.setTitle("Select Event End Date");
+                mDatePicker.show();
+            }
+        });
+
+
+        eventStartTimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // https://stackoverflow.com/questions/17901946/timepicker-dialog-from-clicking-edittext
+
+                Calendar mcurrentTime = Calendar.getInstance();
+                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                int minute = mcurrentTime.get(Calendar.MINUTE);
+                TimePickerDialog mTimePicker;
+                mTimePicker = new TimePickerDialog(OrganizerMainActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        eventStartTimeButton.setText( "Start Time: " + selectedHour + ":" + selectedMinute);
+                    }
+                }, hour, minute, true);//Yes 24 hour time
+                mTimePicker.setTitle("Select Start Time");
+                mTimePicker.show();
+
+            }
+        });
+
+
+        eventEndTimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // https://stackoverflow.com/questions/17901946/timepicker-dialog-from-clicking-edittext
+
+                Calendar mcurrentTime = Calendar.getInstance();
+                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                int minute = mcurrentTime.get(Calendar.MINUTE);
+                TimePickerDialog mTimePicker;
+                mTimePicker = new TimePickerDialog(OrganizerMainActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        eventEndTimeButton.setText("End Time: " + selectedHour + ":" + selectedMinute);
+                    }
+                }, hour, minute, true);//Yes 24 hour time
+                mTimePicker.setTitle("Select End Time");
+                mTimePicker.show();
+            }
+        });
+
+
+
+
+
+
+
     }
 
 
@@ -370,6 +496,8 @@ public class OrganizerMainActivity extends AppCompatActivity {
         }
 
 
+
+
         public void previousView(View v){
         //viewFlipper.setInAnimation(this, android.R.anim.slide_in_left);
         //viewFlipper.setOutAnimation(this, android.R.anim.slide_out_right);
@@ -396,16 +524,21 @@ public class OrganizerMainActivity extends AppCompatActivity {
             ImageButton eventDetailsBack = (ImageButton) findViewById(R.id.buttonBackUploadQR);
             uploadQRFromScan = (Button) findViewById(R.id.EditEvent);
             switchAttendeeLimit = findViewById(R.id.switchAttendeeLimit);
+            switchSignUpLimit = findViewById(R.id.switchSignUpLimit);
             //eventPosterImage = findViewById(R.id.event_poster_image);
 
             backOrgNotif = (ImageButton) findViewById(R.id.backOrgNotif);
+
+            eventDateButton = (Button) findViewById(R.id.eventStartDateButton);
+            eventStartTimeButton = (Button) findViewById(R.id.eventStartTimeButton);
+            eventEndDateButton = (Button) findViewById(R.id.eventEndDateButton);
+            eventEndTimeButton = (Button) findViewById(R.id.eventEndTimeButton);
 
         }
 
 
         private void setEditText() {
             eventTitleEditText = (EditText) findViewById(R.id.eventNameEditText);
-            eventDateEditText = (EditText) findViewById(R.id.eventDateEditText);
             eventAddressEditText = (EditText) findViewById(R.id.eventAddressEditText);
             eventDetailsEditText = (EditText) findViewById(R.id.eventDetailsEditText);
         }
@@ -418,7 +551,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
                     if (isChecked) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(OrganizerMainActivity.this);
-                        builder.setTitle("Set Attendee Limit");
+                        builder.setTitle("Set Attendee Check-in Limit");
 
                         // Set up the input
                         final EditText input = new EditText(OrganizerMainActivity.this);
@@ -470,6 +603,65 @@ public class OrganizerMainActivity extends AppCompatActivity {
         }
 
 
+
+    private void setupSignUpLimitSwitch() {
+        switchSignUpLimit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+                if (isChecked) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(OrganizerMainActivity.this);
+                    builder.setTitle("Set Attendee Sign-up Limit");
+
+                    // Set up the input
+                    final EditText input = new EditText(OrganizerMainActivity.this);
+                    input.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    builder.setView(input);
+
+                    // Set up the buttons
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            try {
+                                int limit = Integer.parseInt(input.getText().toString());
+                                if (limit > 0) {
+                                    attendeeSignUpLimit = limit;
+                                } else {
+                                    // Invalid input, revert the switch to unchecked
+                                    switchSignUpLimit.setChecked(false);
+                                    attendeeSignUpLimit = Integer.MAX_VALUE;
+                                }
+                            } catch (NumberFormatException e) {
+                                switchSignUpLimit.setChecked(false);
+                                attendeeSignUpLimit = Integer.MAX_VALUE;
+                            }
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            // Revert the switch to unchecked since canceled
+                            switchSignUpLimit.setChecked(false);
+                        }
+                    });
+
+                    builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialogInterface) {
+                            // Handle the case where the user cancels the dialog (e.g., by pressing the back button)
+                            switchSignUpLimit.setChecked(false);
+                        }
+                    });
+
+                    builder.show();
+                } else {
+                    attendeeSignUpLimit = Integer.MAX_VALUE;
+                }
+            }
+        });
+    }
+
+
         // "youtube - Implement Barcode QR Scanner in Android studio barcode reader | Cambo Tutorial" - youtube channel = Cambo Tutorial
         private void scanCode () {
             ScanOptions options = new ScanOptions();
@@ -490,12 +682,14 @@ public class OrganizerMainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         reUseQRID = result.getContents().toString();
                         String eventTitle = eventTitleEditText.getText().toString();
-                        String eventDate = eventDateEditText.getText().toString();
+
+                        // TODO: fix this date
+                        //String eventDate = eventDateEditText.getText().toString();
                         String eventAddress = eventAddressEditText.getText().toString();
                         String eventDetails = eventDetailsEditText.getText().toString();
 
                         //Integer eventAttendeeLimit = Integer.parseInt(eventAttendeeLimitEditText.getText().toString());
-                        organizer.createEventReuseQRCode(eventDetails, eventAddress, 100, eventTitle, reUseQRID);
+                        organizer.createEventReuseQRCode(eventDetails, eventAddress, 100, 100, eventTitle, reUseQRID);
 
                         dialog.dismiss();
                     }
@@ -520,19 +714,26 @@ public class OrganizerMainActivity extends AppCompatActivity {
                             public void onSuccess(QuerySnapshot querySnapshot) {
                                 if (querySnapshot != null) {
                                     eventDataList.clear();
-                                    mileStoneDataList.clear();
+                                    //mileStoneDataList.clear();
                                     for (QueryDocumentSnapshot doc : querySnapshot) {
 
                                         String eventID = doc.getId();
                                         String eventName = doc.getString("eventName");
                                         String posterID = doc.getString("posterID");
-                                        Integer inAttendeeLimit = doc.getLong("attendeeLimit").intValue();
+                                        Integer attendeeCheckinLimitIn = doc.getLong("attendeeLimit").intValue();
+                                        Integer attendeeSignUpLimitIn = doc.getLong("attendeeSignUpLimit").intValue();
                                         Integer inAttendeeCount = doc.getLong("attendeeCount").intValue();
                                         Integer signUpCount = doc.getLong("attendeeSignUpCount").intValue();
-                                        String inDate = doc.getString("date");
+
+                                        String startDate = doc.getString("startDate");
+                                        String startTime = doc.getString("startTime");
+                                        String endDate = doc.getString("endDate");
+                                        String endTime = doc.getString("endTime");
+
+
                                         String location = doc.getString("location");
                                         String details = doc.getString("details");
-                                        addAtttendanceMilestoneUpdates(eventID, eventName, signUpCount, inAttendeeLimit);
+                                        addAtttendanceMilestoneUpdates(eventID, eventName, signUpCount, attendeeSignUpLimitIn);
 
                                         db.collection("PosterImages").whereEqualTo("poster", posterID).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                             @Override
@@ -541,7 +742,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
                                                     Log.e("Added to list", "onSuccess: Event has been added to eventDataList, OrganizerMain");
                                                     String posterURL = doc.getString("image");
-                                                    eventDataList.add(new Event(eventID, eventName, location, inDate, details, inAttendeeCount, signUpCount, inAttendeeLimit, posterURL));
+                                                    eventDataList.add(new Event(eventID, eventName, location, startDate, endDate, startTime, endTime, details, inAttendeeCount, signUpCount, attendeeCheckinLimitIn, attendeeSignUpLimitIn, posterURL));
                                                     organizerEventAdapter.notifyDataSetChanged();
                                                 }
 
@@ -554,17 +755,23 @@ public class OrganizerMainActivity extends AppCompatActivity {
                     }
                 }
             });
+            if (eventDataList.isEmpty()){
+                String hardcode = "No Events to Display";
+                eventDataList.add(new Event(hardcode, "Please make your first event!", hardcode, hardcode, hardcode, hardcode, hardcode, hardcode, 0, 0, 0, 0,hardcode));
+
+            }
 
         }
 
 
 
         private void addAtttendanceMilestoneUpdates(String eventID, String eventName, Integer checkIns, Integer attendeeLimit){
+            notifBadge.setVisibility(View.VISIBLE);
             String message;
 
             // Makes milestones based on number of signups
             if (checkIns == 1){
-                message = "Congratulations, your first attendee has arrived.";
+                message = "Congratulations, your first attendee has signed-up.";
                 MileStone milestone = new MileStone(organizerID, eventID, eventName, message, checkIns.toString());
                 milestone.addToDatabase();
                 db.collection("Users").document(organizerID).collection("EventsByOrganizer").document(eventID).collection("Milestones").document(checkIns.toString()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -588,7 +795,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 for (int i = 0; i < attendeeCountMilestones.length; i++ ){
                     if (checkIns == attendeeCountMilestones[i]){
                         notifBadge.setVisibility(View.VISIBLE);
-                        message = "Congratulations, " + checkIns.toString() + "  attendees have arrived.";
+                        message = "Congratulations, " + checkIns.toString() + "  attendees have signed-up.";
                         MileStone milestone = new MileStone(organizerID, eventID, eventName, message, checkIns.toString());
                         milestone.addToDatabase();
                         db.collection("Users").document(organizerID).collection("EventsByOrganizer").document(eventID).collection("Milestones").document(checkIns.toString()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -617,7 +824,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 for (int i = 0; i < capacityPercentMilestones.length; i++ ){
                     if (checkIns > capacityPercentMilestones[i]){
                         notifBadge.setVisibility(View.VISIBLE);
-                        message = "Congratulations, " + percentageFull[i] + "  of available spots have been filled.";
+                        message = "Congratulations, " + percentageFull[i] + "  of available sign-ups have been filled.";
                         MileStone milestone = new MileStone(organizerID, eventID, eventName, message,  percentageFull[i]);
                         milestone.addToDatabase();
                         db.collection("Users").document(organizerID).collection("EventsByOrganizer").document(eventID).collection("Milestones").document(percentageFull[i]).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -641,7 +848,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
             if (checkIns == attendeeLimit){
                 notifBadge.setVisibility(View.VISIBLE);
-                message = "Congratulations, your event has reached max capacity.";
+                message = "Congratulations, your event has reached max sign-up capacity.";
                 MileStone milestone = new MileStone(organizerID, eventID, eventName, message, "100%");
                 milestone.addToDatabase();
                 db.collection("Users").document(organizerID).collection("EventsByOrganizer").document(eventID).collection("Milestones").document("100%").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -669,23 +876,85 @@ public class OrganizerMainActivity extends AppCompatActivity {
             createEvent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+
                     String eventTitle = eventTitleEditText.getText().toString();
-                    String eventDate = eventDateEditText.getText().toString();
+                    String eventStartDate = eventDateButton.getText().toString();
+                    String eventEndDate = eventEndDateButton.getText().toString();
+                    String eventStartTime = eventStartTimeButton.getText().toString();
+                    String eventEndTime = eventEndTimeButton.getText().toString();
                     String eventAddress = eventAddressEditText.getText().toString();
                     String eventDetails = eventDetailsEditText.getText().toString();
-                    String posterID = organizer.createEventNewQRCode( eventDetails, eventAddress, attendeeLimit, eventTitle, eventDate);
-                    posterHandler.uploadImageAndStoreReference(selectedImageUri, posterID, "Event", new Poster.PosterUploadCallback() {
-                        @Override
-                        public void onUploadSuccess(String imageUrl) {}
-                        @Override
-                        public void onUploadFailure(Exception e) {
-                            Log.e(TAG, "Failed to upload image for event: " + posterID, e);
-                            // Handle failure, e.g., show a toast or alert dialog
-                        }
-                    });
-                    previousView(v);
+
+                    // Require Event Input
+                    if (eventTitle.trim().length() == 0){
+                        Log.d("Null event Title", "onClick: ");
+                        Toast.makeText(OrganizerMainActivity.this, "Please enter Event Name!",
+                                Toast.LENGTH_LONG).show();
+
+                    }
+                    else if (eventStartDate.trim().length() == 0){
+                        Toast.makeText(OrganizerMainActivity.this, "Please select Event Start Date!",
+                                Toast.LENGTH_LONG).show();
+                    }
+                    else if (eventStartTime.trim().length() == 0){
+                        Toast.makeText(OrganizerMainActivity.this, "Please select Event Start Time!",
+                                Toast.LENGTH_LONG).show();
+                    }
+                    else if (eventEndDate.trim().length() == 0){
+                        Toast.makeText(OrganizerMainActivity.this, "Please select Event End Date!",
+                                Toast.LENGTH_LONG).show();
+                    }
+                    else if (eventEndTime.trim().length() == 0){
+                        Toast.makeText(OrganizerMainActivity.this, "Please select Event End Time!",
+                                Toast.LENGTH_LONG).show();
+                    }
+                    else if (eventAddress.trim().length() == 0){
+                        Toast.makeText(OrganizerMainActivity.this, "Please select Event Address!",
+                                Toast.LENGTH_LONG).show();
+                    }
+                    else if (eventDetails.trim().length() == 0){
+                        Toast.makeText(OrganizerMainActivity.this, "Please select Event Details!",
+                                Toast.LENGTH_LONG).show();
+                    }
+
+                    // Can create event, no empty fields
+                    else{
+
+                        // Removes "Start time:"
+                        eventStartDate = eventStartDate.split(" ")[2];
+                        eventEndDate = eventEndDate.split(" ")[2];
+                        eventStartTime = eventStartTime.split(" ")[2];
+                        eventEndTime = eventEndTime.split(" ")[2];
+
+                        // Creates Event
+                        String posterID = organizer.createEventNewQRCode( eventDetails, eventAddress, attendeeLimit, attendeeSignUpLimit, eventTitle, eventStartDate, eventEndDate, eventStartTime, eventEndTime);
+                        // Adds poster image
+                        posterHandler.uploadImageAndStoreReference(selectedImageUri, posterID, "Event", new Poster.PosterUploadCallback() {
+                            @Override
+                            public void onUploadSuccess(String imageUrl) {}
+                            @Override
+                            public void onUploadFailure(Exception e) {
+                                Log.e(TAG, "Failed to upload image for event: " + posterID, e);
+                                // Handle failure, e.g., show a toast or alert dialog
+                            }
+                        });
+                        previousView(v);
+
+                        // resets text displayed
+                        eventTitleEditText.setText(null);
+                        eventDateButton.setText(null);
+                        eventEndDateButton.setText(null);
+                        eventStartTimeButton.setText(null);
+                        eventEndTimeButton.setText(null);
+                        eventAddressEditText.setText(null);
+                        eventDetailsEditText.setText(null);
+
+                    }
                 }
             });
+
+
             reuseCheckInQR.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -27,7 +27,7 @@ public class OrganizerSignUpDataActivity extends AppCompatActivity {
 
     private Organizer organizer;
     private String organizerID;
-    private OrganizerSignUpEventAdapter organizerSignUpEventAdapter;
+    private OrganizerSignUpProfileAdapter organizerSignUpProfileAdapter;
     private ArrayList<Profile> profileDataList;
     private RecyclerView recyclerView;
     private String eventID;
@@ -56,8 +56,8 @@ public class OrganizerSignUpDataActivity extends AppCompatActivity {
         organizerID = organizer.getOrganizerID();
 
         profileDataList = new ArrayList<>();
-        organizerSignUpEventAdapter = new OrganizerSignUpEventAdapter(profileDataList, this);
-        recyclerView.setAdapter(organizerSignUpEventAdapter);
+        organizerSignUpProfileAdapter = new OrganizerSignUpProfileAdapter(profileDataList, this);
+        recyclerView.setAdapter(organizerSignUpProfileAdapter);
         recyclerView.setHasFixedSize(false);
 
         db = FirebaseFirestore.getInstance();
@@ -125,7 +125,7 @@ public class OrganizerSignUpDataActivity extends AppCompatActivity {
                                                     String attendeeEmail = documentSnapshot.getString("email");
                                                     String profileURL = documentSnapshot.getString("profileImageURL");
                                                     profileDataList.add(new Profile(attendeeName, attendeePhoneNumber, "", attendeeEmail, profileURL));
-                                                    organizerSignUpEventAdapter.notifyDataSetChanged();
+                                                    organizerSignUpProfileAdapter.notifyDataSetChanged();
                                                 }
                                             }
                                         });

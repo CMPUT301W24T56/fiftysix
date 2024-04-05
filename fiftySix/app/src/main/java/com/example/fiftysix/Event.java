@@ -26,18 +26,17 @@ public class Event {
     private String organizerID;
     private String posterURL;
     private String posterID;
-    private Attendee[] attendeeList;
-    private Attendee[] rsvpAttendeeList;
     private String checkInQRCodeID; // Check if should be auto generated upon creating event
     private String details;
     private String location;
-    private Integer attendeeLimit;
+    private Integer attendeeCheckInLimit, attendeeSignUpLimit;
     private Integer attendeeCount;
     private Integer signUpCount;
     private String eventName;
     private String promoQRCodeID;
     private String queryReturnString;
     private String date;
+    private String startDate, endDate, startTime, endTime;
     private Boolean expandable;
 
     private CheckInQRCode checkInQRCode;
@@ -51,18 +50,22 @@ public class Event {
 
 
     // This constructor is used when the organizer does NOT want to reuse a check-in QR code.
-    public Event(String organizerID, String details, String location, Integer attendeeLimit, String eventName, String date, Context mContext) {
+    public Event(String organizerID, String details, String location, Integer attendeeCheckInLimit, Integer attendeeSignUpLimit, String eventName, String startDate, String endDate, String startTime, String endTime, Context mContext) {
         this.organizerID = organizerID;
 
         this.details = details;
         this.location = location;
-        this.attendeeLimit = attendeeLimit;
+        this.attendeeCheckInLimit = attendeeCheckInLimit;
+        this.attendeeSignUpLimit = attendeeSignUpLimit;
         this.eventName = eventName;
         this.mContext = mContext;
         this.db = FirebaseFirestore.getInstance();
         this.ref = db.collection("Events");
         this.eventID = FirebaseDatabase.getInstance().getReference("Events").push().getKey();
-        this.date = date;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.posterID = FirebaseDatabase.getInstance().getReference("images").push().getKey();
 
         // Generates New check-in QR code and stores the qrcode ID.
@@ -76,14 +79,18 @@ public class Event {
 
 
     // Used to create an event object from given event ID
-    public Event(String eventID, String eventName, String eventLocation, String eventDate, String details, Integer attendeeCount, Integer signUpCount, Integer attendeeLimit,  String posterURL) {
+    public Event(String eventID, String eventName, String eventLocation, String startDate, String endDate, String startTime, String endTime, String details, Integer attendeeCount, Integer signUpCount, Integer attendeeCheckInLimit, Integer attendeeSignUpLimit, String posterURL) {
         this.eventID = eventID;
         this.eventName = eventName;
         this.location = eventLocation;
-        this.date = eventDate;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.details = details;
         this.attendeeCount = attendeeCount;
-        this.attendeeLimit = attendeeLimit;
+        this.attendeeCheckInLimit = attendeeCheckInLimit;
+        this.attendeeSignUpLimit = attendeeSignUpLimit;
         this.posterURL = posterURL;
         this.expandable = false;
         this.signUpCount = signUpCount;
@@ -95,12 +102,13 @@ public class Event {
 
 
     // This constructor is used when the organizer WANTS to reuse a check-in QR code.
-    public Event(String organizerID, String details, String location, Integer attendeeLimit, String eventName, Context mContext, String checkInQRCodeID) {
+    public Event(String organizerID, String details, String location, Integer attendeeCheckInLimit, Integer attendeeSignUpLimit, String eventName, Context mContext, String checkInQRCodeID) {
         this.eventID = FirebaseDatabase.getInstance().getReference("Events").push().getKey();
         this.organizerID = organizerID;
         this.details = details;
         this.location = location;
-        this.attendeeLimit = attendeeLimit;
+        this.attendeeCheckInLimit = attendeeCheckInLimit;
+        this.attendeeSignUpLimit = attendeeSignUpLimit;
         this.eventName = eventName;
         this.mContext = mContext;
         this.checkInQRCodeID = checkInQRCodeID;
@@ -129,18 +137,20 @@ public class Event {
 
 
 
+
         Map<String,Object> eventData = new HashMap<>();
         eventData.put("attendeeCount",0);
         eventData.put("attendeeSignUpCount",0);
-        eventData.put("attendeeLimit",this.attendeeLimit);
-        eventData.put("attendeeSignUpLimit",this.attendeeLimit);
-        eventData.put("attendeeList",this.attendeeList);
-        eventData.put("attendeeSignUpList",this.rsvpAttendeeList);
+        eventData.put("attendeeLimit",this.attendeeCheckInLimit);
+        eventData.put("attendeeSignUpLimit",this.attendeeSignUpLimit);
         eventData.put("details",this.details);
         eventData.put("eventName",this.eventName);
         eventData.put("organizer",this.organizerID);
         eventData.put("checkInQRCode",this.checkInQRCodeID);
-        eventData.put("date",this.date);
+        eventData.put("startDate",this.startDate);
+        eventData.put("endDate",this.endDate);
+        eventData.put("startTime",this.startTime);
+        eventData.put("endTime",this.endTime);
         eventData.put("location",this.location);
         eventData.put("attendee",this.attendeeCount);
         eventData.put("posterID",this.posterID);
@@ -148,9 +158,8 @@ public class Event {
 
         // These are optional so we need to check if they are null
 
-        //eventData.put("poster",this.posterID);
+
         //eventData.put("promoQRCode",this.promoQRCodeID);
-        //eventData.put("map",this.map); for after part 3
 
 
         this.ref
@@ -197,8 +206,12 @@ public class Event {
         return location;
     }
 
-    public Integer getAttendeeLimit() {
-        return attendeeLimit;
+    public Integer getCheckInLimit() {
+        return attendeeCheckInLimit;
+    }
+
+    public Integer getSignUpLimit() {
+        return attendeeSignUpLimit;
     }
 
     public Integer getAttendeeCount() {
@@ -224,4 +237,20 @@ public class Event {
     }
 
     public Integer getSignUpCount() {return signUpCount;}
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
 }

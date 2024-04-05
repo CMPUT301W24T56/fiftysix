@@ -16,7 +16,7 @@
         >
 
         <TextView
-            android:id="@+id/code_name"
+            android:id="@+id/eventName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
@@ -26,35 +26,63 @@
         <RelativeLayout
             android:id="@+id/expandable_layout"
             android:layout_width="match_parent"
-            android:layout_height="1000dp">
+            android:layout_height="1080dp">
 
 
-            <TextView
-                android:id="@+id/version"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="date"
-                android:textSize="18sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"></LinearLayout>
 
             <TextView
-                android:id="@+id/apiLevel"
-                android:layout_width="wrap_content"
+                android:id="@+id/locationOfEvent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:padding="16dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="7dp"
+                android:padding="8dp"
+
                 android:text="Location"
                 android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/startDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/locationOfEvent"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="7dp"
+                android:padding="6dp"
+
+                android:text="Start Date"
+                android:textSize="18sp" />
+
+
+            <TextView
+                android:id="@+id/endDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/startDate"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="7dp"
+                android:padding="8dp"
+                android:text="End Date: "
+                android:textSize="18sp" />
+
 
             <TextView
                 android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/version"
-                android:padding="16dp"
+                android:layout_below="@+id/endDate"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="7dp"
+                android:padding="8dp"
                 android:text="Description: "
-                android:textAlignment="textStart"
                 android:textSize="18sp" />
 
             <LinearLayout
@@ -94,8 +122,7 @@
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            >
+                            app:layout_constraintTop_toTopOf="parent">
 
                         </org.eazegraph.lib.charts.PieChart>
 
@@ -143,8 +170,7 @@
                             app:srcCompat="@drawable/transparent_background_button" />
 
 
-                        <org.eazegraph.lib.charts.PieChart
-                            xmlns:app="http://schemas.android.com/apk/res-auto"
+                        <org.eazegraph.lib.charts.PieChart xmlns:app="http://schemas.android.com/apk/res-auto"
                             android:id="@+id/piechartSignUp"
                             android:layout_width="179dp"
                             android:layout_height="169dp"
@@ -153,9 +179,7 @@
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            />
-
+                            app:layout_constraintTop_toTopOf="parent" />
 
 
                         <TextView
@@ -188,27 +212,55 @@
                 </LinearLayout>
             </LinearLayout>
 
-
-            <TextView
-                android:id="@+id/attendeeCapacity"
-                android:layout_width="match_parent"
-                android:layout_height="61dp"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/capacities"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/progress_bars"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="3dp"
-                android:layout_marginTop="0dp"
-                android:padding="16dp"
-                android:textAlignment="textStart"
-                android:text="Event Capacity:"
-                android:textSize="18sp" />
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="0dp">
+
+                <TextView
+                    android:id="@+id/attendeeCapacity"
+                    android:layout_width="189dp"
+                    android:layout_height="58dp"
+
+                    android:layout_marginStart="2dp"
+                    android:padding="16dp"
+                    android:text="Check-in Capacity:"
+                    android:textAlignment="center"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/attendeeSignUpLimit"
+                    android:layout_width="189dp"
+                    android:layout_height="58dp"
+
+                    android:layout_marginEnd="2dp"
+                    android:padding="16dp"
+                    android:text="Sign-up Capacity:"
+                    android:textAlignment="center"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <ImageView
                 android:id="@+id/event_poster_image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/share_qr_code"
-                android:layout_below="@id/attendeeCapacity"
+                android:layout_below="@id/capacities"
                 android:layout_marginTop="0dp"
                 android:layout_marginBottom="0dp"
                 android:adjustViewBounds="true"

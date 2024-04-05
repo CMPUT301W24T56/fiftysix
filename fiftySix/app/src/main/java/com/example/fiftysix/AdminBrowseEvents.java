@@ -57,11 +57,16 @@ public class AdminBrowseEvents extends AppCompatActivity {
                             String eventID = document.getId();
                             String eventName = document.getString("eventName");
                             String eventLocation = document.getString("location");
-                            String eventDate = document.getString("date");
+
                             String posterURL = document.getString("posterURL");
                             String details = document.getString("details");
 
-                            eventList.add(new Event(eventID, eventName, eventLocation, eventDate, details, 100, 1000,1000, posterURL));
+                            String startDate = document.getString("startDate");
+                            String startTime = document.getString("startTime");
+                            String endDate = document.getString("endDate");
+                            String endTime = document.getString("endTime");
+
+                            eventList.add(new Event(eventID, eventName, eventLocation, startDate, endDate, startTime, endTime, details, 100, 100,1000, 1000, posterURL));
                             eventAdapter.notifyDataSetChanged();
                         }
                     } else {

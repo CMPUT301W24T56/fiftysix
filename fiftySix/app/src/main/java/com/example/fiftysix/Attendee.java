@@ -157,7 +157,7 @@ public class Attendee {
     }
 
     public void leaveSignUp(String eventID){
-        db.collection("Events").document(eventID).collection("attendeeSignUps").document(attendeeID).update("signUpTime",Calendar.getInstance().getTime().toString());
+
         db.collection("Events").document(eventID).collection("attendeeSignUps").document(attendeeID).delete();
         db.collection("Users").document(attendeeID).collection("SignedUpEvents").document(eventID).delete();
         db.collection("Events").document(eventID).update("attendeeSignUpCount", FieldValue.increment(-1));
@@ -173,8 +173,12 @@ public class Attendee {
                     String eventName = documentSnapshot.getString("eventName");
 
 
-                    // Attendee can check in, event isn't full
+                    // Attendee can  sign up, event isn't full
                     if (attendeeSignUpCount < attendeeSignUpLimit) {
+
+
+
+
                         ref.document(attendeeID).collection("SignedUpEvents").document(eventID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -191,25 +195,32 @@ public class Attendee {
                                         Map<String, Object> attendeeCheckedInEventsData = new HashMap<>();
                                         attendeeCheckedInEventsData.put("signUpTime", signUpInTime);
 
-
-
-
                                         Map<String, Object> attendeeCheckedInCount = new HashMap<>();
-                                        //attendeeCheckedInCount.put("timesCheckedIn", 1);
                                         attendeeCheckedInCount.put("signUpTime", signUpInTime);
-                                        //attendeeCheckedInCount.put("currentlyAtEvent", "yes");
-
-
-
 
                                         ref.document(attendeeID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                             @Override
                                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+
+
+
+
                                                 DocumentSnapshot documentLocation = task.getResult();
-                                                String latitude = documentLocation.getString("latitude");
-                                                String longitude = documentLocation.getString("longitude");
-                                                attendeeCheckedInCount.put("longitude", latitude);
-                                                attendeeCheckedInCount.put("latitude", longitude);
+
+                                                String locationAllowed = documentLocation.getString("locationAllowed").trim();
+
+
+                                                if (locationAllowed.equals("yes")){
+                                                    String latitude = documentLocation.getString("latitude");
+                                                    String longitude = documentLocation.getString("longitude");
+                                                    attendeeCheckedInCount.put("longitude", latitude);
+                                                    attendeeCheckedInCount.put("latitude", longitude);
+
+                                                }else{
+                                                    attendeeCheckedInCount.put("longitude", null);
+                                                    attendeeCheckedInCount.put("latitude", null);
+                                                }
 
                                                 ref.document(attendeeID).collection("SignedUpEvents").document(eventID).set(attendeeCheckedInEventsData);
                                                 db.collection("Events").document(eventID).collection("attendeeSignUps").document(attendeeID).set(attendeeCheckedInCount);
@@ -229,6 +240,24 @@ public class Attendee {
         });
     }
 
+    public void alreadyCheckedIn(String eventID, AttendeeCallBack attendeeCallBack){
+        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot != null){
+                    String checkedIn = documentSnapshot.getString("currentlyAtEvent");
+
+                    if (checkedIn.equals("yes")){
+                        attendeeCallBack.checkInSuccess(false, "Already checked in");
+                    }
+                    else{
+                        attendeeCallBack.checkInSuccess(true, "Not checked in");
+                    }
+                }
+            }
+        });
+    }
+
 
     public void checkInToEventID(String eventID, AttendeeCallBack attendeeCallBack) {
 
@@ -241,28 +270,48 @@ public class Attendee {
                     String eventName = documentSnapshot.getString("eventName");
 
 
+
                     // Attendee can check in, event isn't full
                     if (attendeeCount < attendeeLimit) {
-                        ref.document(attendeeID).collection("UpcomingEvents").document(eventID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                 if (task.isSuccessful()) {
                                     DocumentSnapshot document = task.getResult();
                                     String checkInTime = Calendar.getInstance().getTime().toString();
+                                    Map<String, Object> attendeeCheckedInEventsData = new HashMap<>();
+                                    attendeeCheckedInEventsData.put("checkInTime", checkInTime);
+
+
 
                                     // Document exists, attendee has previously checked into the event (Checking into an event again)
                                     if (document.exists()) {
+                                        Log.d("AttendeeCheck", " document exists");
                                         db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("timesCheckedIn", FieldValue.increment(1));
                                         db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("currentlyAtEvent", "yes");
                                         db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("checkInTime", checkInTime);
                                         db.collection("Events").document(eventID).update("attendeeCount", FieldValue.increment(1));
+                                        ref.document(attendeeID).collection("UpcomingEvents").document(eventID).set(attendeeCheckedInEventsData);
                                         attendeeCallBack.checkInSuccess(true, eventName);
+
+                                        ref.document(attendeeID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                DocumentSnapshot documentLocation = task.getResult();
+                                                String latitude = documentLocation.getString("latitude");
+                                                String longitude = documentLocation.getString("longitude");
+
+                                                db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("latitude", latitude);
+                                                db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("longitude", longitude);
+                                            }
+                                        });
+
+
                                     }
 
                                     // Attendee has never checked into the event before
                                     else {
-                                        Map<String, Object> attendeeCheckedInEventsData = new HashMap<>();
-                                        attendeeCheckedInEventsData.put("checkInTime", checkInTime);
+                                        Log.d("AttendeeCheck", " document DOES NOT exist");
 
                                         Map<String, Object> attendeeCheckedInCount = new HashMap<>();
                                         attendeeCheckedInCount.put("timesCheckedIn", 1);
@@ -273,6 +322,18 @@ public class Attendee {
                                         db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).set(attendeeCheckedInCount);
                                         db.collection("Events").document(eventID).update("attendeeCount", FieldValue.increment(1));
                                         attendeeCallBack.checkInSuccess(true, eventName);
+
+                                        ref.document(attendeeID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                DocumentSnapshot documentLocation = task.getResult();
+                                                String latitude = documentLocation.getString("latitude");
+                                                String longitude = documentLocation.getString("longitude");
+
+                                                db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("latitude", latitude);
+                                                db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("longitude", longitude);
+                                            }
+                                        });
                                     }
                                 } else {
                                     Log.d(TAG, "Failed with: ", task.getException());
@@ -307,25 +368,42 @@ public class Attendee {
 
                     // Attendee can check in, event isn't full
                     if (attendeeCount < attendeeLimit) {
-                        ref.document(attendeeID).collection("UpcomingEvents").document(eventID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                 if (task.isSuccessful()) {
                                     DocumentSnapshot document = task.getResult();
                                     String checkInTime = Calendar.getInstance().getTime().toString();
+                                    Map<String, Object> attendeeCheckedInEventsData = new HashMap<>();
+                                    attendeeCheckedInEventsData.put("checkInTime", checkInTime);
+
+
 
                                     // Document exists, attendee has previously checked into the event (Checking into an event again)
                                     if (document.exists()) {
+                                        Log.d("AttendeeCheck", " document exists");
                                         db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("timesCheckedIn", FieldValue.increment(1));
                                         db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("currentlyAtEvent", "yes");
                                         db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("checkInTime", checkInTime);
                                         db.collection("Events").document(eventID).update("attendeeCount", FieldValue.increment(1));
+                                        ref.document(attendeeID).collection("UpcomingEvents").document(eventID).set(attendeeCheckedInEventsData);
+                                        ref.document(attendeeID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                DocumentSnapshot documentLocation = task.getResult();
+                                                String latitude = documentLocation.getString("latitude");
+                                                String longitude = documentLocation.getString("longitude");
 
+                                                db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("latitude", latitude);
+                                                db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("longitude", longitude);
+                                            }
+                                        });
                                     }
+
                                     // Attendee has never checked into the event before
                                     else {
-                                        Map<String, Object> attendeeCheckedInEventsData = new HashMap<>();
-                                        attendeeCheckedInEventsData.put("checkInTime", checkInTime);
+                                        Log.d("AttendeeCheck", " document DOES NOT exist");
+
 
                                         Map<String, Object> attendeeCheckedInCount = new HashMap<>();
                                         attendeeCheckedInCount.put("timesCheckedIn", 1);
@@ -335,19 +413,31 @@ public class Attendee {
                                         ref.document(attendeeID).collection("UpcomingEvents").document(eventID).set(attendeeCheckedInEventsData);
                                         db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).set(attendeeCheckedInCount);
                                         db.collection("Events").document(eventID).update("attendeeCount", FieldValue.increment(1));
+
+                                        ref.document(attendeeID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                DocumentSnapshot documentLocation = task.getResult();
+                                                String latitude = documentLocation.getString("latitude");
+                                                String longitude = documentLocation.getString("longitude");
+
+                                                db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("latitude", latitude);
+                                                db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("longitude", longitude);
+                                            }
+                                        });
                                     }
                                 } else {
                                     Log.d(TAG, "Failed with: ", task.getException());
                                 }
                             }
                         });
-                    } else {
+
+
                     }
+
                 }
             }
         });
-
-
     }
 
 

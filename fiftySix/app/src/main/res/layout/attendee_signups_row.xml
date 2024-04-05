@@ -26,35 +26,59 @@
         <RelativeLayout
             android:id="@+id/expandable_layout"
             android:layout_width="match_parent"
-            android:layout_height="790dp">
+            android:layout_height="830dp">
 
 
             <TextView
-                android:id="@+id/event_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="Date"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/event_location"
-                android:layout_width="wrap_content"
+                android:id="@+id/locationOfEvent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:padding="16dp"
-                android:text="Loaction"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="7dp"
+                android:padding="8dp"
+
+                android:text="Location"
                 android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/startDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/locationOfEvent"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="7dp"
+                android:padding="6dp"
+
+                android:text="Start Date"
+                android:textSize="18sp" />
+
+
+            <TextView
+                android:id="@+id/endDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/startDate"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="7dp"
+                android:padding="8dp"
+                android:text="End Date: "
+                android:textSize="18sp" />
+
 
             <TextView
                 android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/event_date"
-                android:padding="16dp"
+                android:layout_below="@+id/endDate"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="30dp"
+                android:gravity="left|center"
+                android:layout_marginEnd="7dp"
+                android:padding="8dp"
                 android:text="Description: "
-                android:textAlignment="textStart"
                 android:textSize="18sp" />
 
             <TextView
@@ -62,8 +86,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/description"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="30dp"
                 android:gravity="left|center"
-                android:padding="16dp"
+                android:layout_marginEnd="7dp"
+                android:padding="8dp"
                 android:text="People Signed-Up:"
                 android:textSize="18sp" />
 
@@ -72,8 +99,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/currentAttendees"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="30dp"
                 android:gravity="left|center"
-                android:padding="16dp"
+                android:layout_marginEnd="7dp"
+                android:padding="8dp"
                 android:text="Sign-Up Limit:"
 
                 android:textSize="18sp" />

@@ -63,36 +63,69 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
 
         Event event = eventList.get(position);
         holder.codeName.setText(event.getEventName());
-        holder.versionTxt.setText(event.getLocation());
-        holder.apiLevelTxt.setText(event.getDate());
-        holder.descriptionTxt.setText(event.getDetails());
+        holder.locationOfEvent.setText( event.getLocation());
 
-        Integer checkInLimit = event.getAttendeeLimit();
-        Integer signUpLimit = event.getAttendeeLimit();
+        holder.descriptionTxt.setText( event.getDetails());
+
+        Integer checkInLimit = event.getCheckInLimit();
+        Integer signUpLimit = event.getSignUpLimit();
         Integer checkins = event.getAttendeeCount();
         Integer signups = event.getSignUpCount();
         holder.signUpPieChart.clearChart();
         holder.checkinPieChart.clearChart();
 
-        if(checkInLimit == 2147483647){
-            holder.descriptionEvent.setText("Max: Unlimited");
+        String endDay = event.getEndDate();
+        String endTime = event.getEndTime();
+        String startDay = event.getStartDate();
+        String startTime = event.getStartTime();
+
+        String start = "Event Start: " + startTime.toString() + ",  " + startDay.toString();
+        String end =   "Event End:  " + endTime.toString() + ",  " + endDay.toString();
+
+        holder.startDate.setText(start);
+        holder.endDate.setText(end);
+
+        Integer pieCheckIn = 0;
+        Integer pieSignUp = 0;
+
+
+        if(signUpLimit == 2147483647){
+            holder.attendeeSignUpLimit.setText("Max: Unlimited");
             if (checkins != 0){
-                checkInLimit = checkins;
+                pieSignUp = signups;
             }
-            if (signups != 0){
-                signUpLimit = signups;
+            else{
+                //TODO
+                pieSignUp = 1;
             }
+
         }
         else{
-            holder.descriptionEvent.setText("Max: " + event.getAttendeeLimit().toString());
-            checkInLimit -= checkins;
-            signUpLimit -= signups;
+            holder.attendeeSignUpLimit.setText("Max: " + event.getSignUpLimit().toString());
+            pieSignUp = signUpLimit - signups;
+        }
+
+
+        if(checkInLimit == 2147483647){
+            holder.attendeeCapacity.setText("Max: Unlimited");
+
+            if (checkins != 0){
+                pieCheckIn = checkins;
+            }
+            else{
+                pieCheckIn = 1;
+            }
+
+        }
+        else{
+            holder.attendeeCapacity.setText("Max: " + event.getCheckInLimit().toString());
+            pieCheckIn = checkInLimit - checkins;
         }
 
 
         holder.signUpPieChart.addPieSlice(new PieModel(
                 "R",
-                signUpLimit,
+                pieSignUp,
                 Color.parseColor("#f3e7db")));
         holder.signUpPieChart.addPieSlice(new PieModel(
                 "R",
@@ -102,15 +135,12 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
 
         holder.checkinPieChart.addPieSlice(new PieModel(
                 "R",
-                checkInLimit,
+                pieCheckIn,
                 Color.parseColor("#f3e7db")));
         holder.checkinPieChart.addPieSlice(new PieModel(
                 "R",
                 checkins,
                 Color.parseColor("#aa8565")));
-
-
-
 
 
 
@@ -120,6 +150,8 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
 
 
         String imageUrl = event.getPosterURL();
+
+
 
         if (imageUrl != null && !imageUrl.isEmpty()) {
             Picasso.get()
@@ -140,7 +172,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
 
     public class EventVH extends RecyclerView.ViewHolder {
 
-        TextView codeName, versionTxt, apiLevelTxt, descriptionTxt, attendeeCount, descriptionEvent, currentSignUps;
+        TextView codeName, startDate, endDate, locationOfEvent, descriptionTxt, attendeeCount, currentSignUps, attendeeCapacity, attendeeSignUpLimit;
         LinearLayout linearLayout;
         RelativeLayout expandableLayout;
         ImageView eventImage;
@@ -155,13 +187,15 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         public EventVH(@NonNull View itemView) {
             super(itemView);
 
-            codeName = itemView.findViewById(R.id.code_name);
-            versionTxt = itemView.findViewById(R.id.version);
-            apiLevelTxt = itemView.findViewById(R.id.apiLevel);
+            codeName = itemView.findViewById(R.id.eventName);
+            startDate = itemView.findViewById(R.id.startDate);
+            endDate = itemView.findViewById(R.id.endDate);
+            locationOfEvent = itemView.findViewById(R.id.locationOfEvent);
             descriptionTxt = itemView.findViewById(R.id.description);
             attendeeCount = itemView.findViewById(R.id.currentAttendees);
-            descriptionEvent = itemView.findViewById(R.id.attendeeCapacity);
+            attendeeCapacity = itemView.findViewById(R.id.attendeeCapacity);
             currentSignUps = itemView.findViewById(R.id.currentSignUps);
+            attendeeSignUpLimit = itemView.findViewById(R.id.attendeeSignUpLimit);
 
             linearLayout = itemView.findViewById(R.id.linear_layout);
             expandableLayout = itemView.findViewById(R.id.expandable_layout);
@@ -181,10 +215,10 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                 public void onClick(View v) {
                     event = eventList.get(getAdapterPosition());
                     eventID = event.getEventID();
-                    event.setExpandable(!event.getExpandable());
-                    notifyItemChanged(getAdapterPosition());
-                    Log.d("OrgEventAdapt", "EventID =  "+ event.getEventID());
-
+                    if (!eventID.equals("No Events to Display")){
+                        event.setExpandable(!event.getExpandable());
+                        notifyItemChanged(getAdapterPosition());
+                    }
                 }
             });
 

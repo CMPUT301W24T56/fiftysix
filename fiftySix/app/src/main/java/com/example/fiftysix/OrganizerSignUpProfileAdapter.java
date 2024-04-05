@@ -17,13 +17,13 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrganizerSignUpEventAdapter extends RecyclerView.Adapter<OrganizerSignUpEventAdapter.EventVH> {
+public class OrganizerSignUpProfileAdapter extends RecyclerView.Adapter<OrganizerSignUpProfileAdapter.EventVH> {
 
-    List<Profile> eventList;
+    List<Profile> profileList;
     private Context context;
 
-    public OrganizerSignUpEventAdapter(ArrayList<Profile> eventList, Context context) {
-        this.eventList = eventList;
+    public OrganizerSignUpProfileAdapter(ArrayList<Profile> eventList, Context context) {
+        this.profileList = eventList;
         this.context = context;
     }
 
@@ -38,11 +38,7 @@ public class OrganizerSignUpEventAdapter extends RecyclerView.Adapter<OrganizerS
     @Override
     public void onBindViewHolder(@NonNull EventVH holder, int position) {
 
-        Profile profile = eventList.get(position);
-        holder.attendeeName.setText(profile.getName());
-        holder.phoneNumber.setText(profile.getPhoneNumber());
-        holder.email.setText(profile.getEmail());
-
+        Profile profile = profileList.get(position);
 
 
         String imageUrl = profile.getImageUrl();
@@ -54,14 +50,22 @@ public class OrganizerSignUpEventAdapter extends RecyclerView.Adapter<OrganizerS
                     .into(holder.attendeeImage); // Your ImageView
         }
 
-        boolean isExpandable = eventList.get(position).getExpandable();
+
+        holder.attendeeName.setText(profile.getName());
+        holder.phoneNumber.setText(profile.getPhoneNumber());
+        holder.email.setText(profile.getEmail());
+
+
+
+
+        boolean isExpandable = profileList.get(position).getExpandable();
         holder.expandableLayout.setVisibility(isExpandable ? View.VISIBLE : View.GONE);
 
     }
 
     @Override
     public int getItemCount() {
-        return eventList.size();
+        return profileList.size();
     }
 
     public class EventVH extends RecyclerView.ViewHolder {
@@ -91,7 +95,7 @@ public class OrganizerSignUpEventAdapter extends RecyclerView.Adapter<OrganizerS
                 @Override
                 public void onClick(View v) {
 
-                    Profile profile = eventList.get(getAdapterPosition());
+                    Profile profile = profileList.get(getAdapterPosition());
                     profile.setExpandable(!profile.getExpandable());
                     notifyItemChanged(getAdapterPosition());
                 }

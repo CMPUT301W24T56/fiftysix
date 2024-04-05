@@ -9,31 +9,71 @@
     app:cardUseCompatPadding="true">
 
     <LinearLayout
+        android:id="@+id/linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/linear_layout"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/attendee_name"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="Attendee Name"
-            android:textSize="22sp" />
+            android:layout_height="120dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardView"
+                android:layout_width="110dp"
+                android:layout_height="103dp"
+                android:layout_marginStart="10dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="250dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    app:cardCornerRadius="250dp">
+
+                    <ImageView
+                        android:id="@+id/event_poster_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/profile" />
+
+                </androidx.cardview.widget.CardView>
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/attendee_name"
+                android:layout_width="252dp"
+                android:layout_height="94dp"
+                android:padding="16dp"
+                android:text="Attendee Name"
+
+                android:textSize="22sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/cardView"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <RelativeLayout
             android:id="@+id/expandable_layout"
             android:layout_width="match_parent"
-            android:layout_height="600dp">
+            android:layout_height="195dp">
 
 
             <TextView
                 android:id="@+id/checkin_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
+                android:gravity="left|center"
+                android:padding="12dp"
                 android:text="Time of Check-in:"
                 android:textSize="18sp" />
 
@@ -42,9 +82,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/checkin_time"
-                android:padding="16dp"
+                android:gravity="left|center"
+                android:padding="12dp"
                 android:text="Number of Check-ins:"
-                android:textAlignment="textStart"
+
                 android:textSize="18sp" />
 
             <TextView
@@ -53,7 +94,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/number_checkins"
                 android:gravity="left|center"
-                android:padding="16dp"
+                android:padding="12dp"
                 android:text="Phone Number:"
 
                 android:textSize="18sp" />
@@ -64,22 +105,9 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/phone_number"
                 android:gravity="left|center"
-                android:padding="16dp"
+                android:padding="12dp"
                 android:text="Email:"
                 android:textSize="18sp" />
-
-            <ImageView
-                android:id="@+id/event_poster_image"
-                android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:layout_below="@id/email"
-                android:layout_alignParentBottom="true"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
-                android:adjustViewBounds="true"
-                android:padding="5dp"
-                android:scaleType="centerCrop"
-                tools:src="@tools:sample/avatars" />
 
 
         </RelativeLayout>

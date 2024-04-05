@@ -16,63 +16,95 @@
         >
 
         <TextView
-            android:id="@+id/code_name"
+            android:id="@+id/eventName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="Code Name"
+            android:text="Event Name"
             android:textSize="22sp" />
 
         <RelativeLayout
             android:id="@+id/expandable_layout"
             android:layout_width="match_parent"
-            android:layout_height="675dp">
+            android:layout_height="710dp">
 
 
             <TextView
-                android:id="@+id/version"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="date"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/apiLevel"
-                android:layout_width="wrap_content"
+                android:id="@+id/locationOfEvent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:padding="16dp"
-                android:text="location"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="7dp"
+                android:padding="8dp"
+
+                android:text="Location"
                 android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/startDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/locationOfEvent"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="7dp"
+                android:padding="6dp"
+
+                android:text="Start Date"
+                android:textSize="18sp" />
+
+
+            <TextView
+                android:id="@+id/endDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/startDate"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="7dp"
+                android:padding="8dp"
+                android:text="End Date: "
+                android:textSize="18sp" />
+
 
             <TextView
                 android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/version"
-                android:padding="16dp"
+                android:layout_below="@+id/endDate"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="30dp"
+                android:gravity="left|center"
+                android:layout_marginEnd="7dp"
+                android:padding="8dp"
                 android:text="Description: "
-                android:textAlignment="textStart"
                 android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/currentAttendees"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/description"
-                android:padding="16dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="7dp"
+                android:gravity="left|center"
+                android:padding="8dp"
                 android:text="Attendees at Event:"
 
                 android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/attendeeCapacity"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/currentAttendees"
-                android:padding="16dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="7dp"
+                android:gravity="left|center"
+                android:padding="8dp"
                 android:text="Event Capacity:"
 
                 android:textSize="18sp" />

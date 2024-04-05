@@ -72,11 +72,16 @@ public class Organizer {
      * @param location String of the event location
      * @param attendeeLimit Integer of the attendee limit
      * @param eventName String of the event name
-     * @param date String date of the event
+     * @param startDate String date of the event
+     *
+     *
+     *
+     *
+     *
      * @return String posterID key
      */
-    public String createEventNewQRCode( String details, String location, Integer attendeeLimit, String eventName, String date){
-        Event event = new Event(this.organizerID, details, location, attendeeLimit, eventName, date, mContext);
+    public String createEventNewQRCode( String details, String location, Integer attendeeCheckInLimit, Integer attendeeSignUpLimit, String eventName, String startDate, String endDate, String startTime, String endTime){
+        Event event = new Event(this.organizerID, details, location, attendeeCheckInLimit, attendeeSignUpLimit, eventName, startDate, endDate, startTime, endTime, mContext);
         addEventToOrganizerDataBase(event.getEventID());
         return event.getPosterID();
     }
@@ -90,8 +95,8 @@ public class Organizer {
      * @param eventName String of the event name
      * @param oldQRID String of the old QR code id to be reused
      */
-    public void createEventReuseQRCode(String details, String location, Integer attendeeLimit, String eventName, String oldQRID){
-        Event event = new Event(this.organizerID, details, location, attendeeLimit, eventName, mContext, oldQRID);
+    public void createEventReuseQRCode(String details, String location, Integer attendeeCheckInLimit, Integer attendeeSignUpLimit, String eventName, String oldQRID){
+        Event event = new Event(this.organizerID, details, location, attendeeCheckInLimit, attendeeSignUpLimit, eventName, mContext, oldQRID);
         addEventToOrganizerDataBase(event.getEventID());
     }
 

@@ -40,7 +40,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="2000dp"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
 
@@ -55,75 +55,142 @@
                     android:textSize="28sp"/>
 
 
+                <EditText
+                    android:id="@+id/eventNameEditText"
+                    android:layout_width="289dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/dark_round_button"
+                    android:textAlignment="viewStart"
+                    android:inputType="textAutoCorrect"
+                    android:paddingLeft="15dp"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:hint="Event Name"
+                    android:textColorHint="@color/colorPrimaryLight"/>
 
-                    <EditText
-                        android:id="@+id/eventNameEditText"
-                        android:layout_width="289dp"
-                        android:layout_height="58dp"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="15dp"
-                        android:layout_marginBottom="15dp"
-                        android:background="@drawable/dark_round_button"
-                        android:inputType="textAutoCorrect"
-                        android:paddingLeft="15dp"
-                        android:text="Event Name"
-                        android:textColor="@color/colorPrimaryLight"
-                        tools:text="Event Name" />
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/eventStartDateButton"
+                    android:layout_width="289dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/dark_round_button"
+                    android:inputType="datetime"
+                    android:paddingLeft="15dp"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:textSize="18sp"
+                    android:hint="Start Date"
+                    android:textColorHint="@color/colorPrimaryLight"/>
 
-                    <EditText
-                        android:id="@+id/eventDateEditText"
-                        android:layout_width="289dp"
-                        android:layout_height="58dp"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="15dp"
-                        android:layout_marginBottom="15dp"
-                        android:background="@drawable/dark_round_button"
-                        android:inputType="textAutoCorrect"
-                        android:paddingLeft="15dp"
-                        android:text="Date"
-                        android:textColor="@color/colorPrimaryLight"
-                        tools:text="Date" />
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/eventStartTimeButton"
+                    android:layout_width="289dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/dark_round_button"
+                    android:inputType="datetime"
+                    android:paddingLeft="15dp"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:textSize="18sp"
+                    android:hint="Start Time"
+                    android:textColorHint="@color/colorPrimaryLight" />
 
-                    <EditText
-                        android:id="@+id/eventAddressEditText"
-                        android:layout_width="289dp"
-                        android:layout_height="58dp"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="15dp"
-                        android:layout_marginBottom="15dp"
-                        android:background="@drawable/dark_round_button"
-                        android:inputType="textAutoCorrect"
-                        android:paddingLeft="15dp"
-                        android:text="Address"
-                        android:textColor="@color/colorPrimaryLight"
-                        tools:text="Address" />
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/eventEndDateButton"
+                    android:layout_width="289dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/dark_round_button"
+                    android:inputType="datetime"
+                    android:paddingLeft="15dp"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:textSize="18sp"
+                    android:hint="End Date"
+                    android:textColorHint="@color/colorPrimaryLight"/>
 
-                    <EditText
-                        android:id="@+id/eventDetailsEditText"
-                        android:layout_width="289dp"
-                        android:layout_height="58dp"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="15dp"
-                        android:layout_marginBottom="15dp"
-                        android:background="@drawable/dark_round_button"
-                        android:inputType="textAutoCorrect"
-                        android:paddingLeft="15dp"
-                        android:text="Event Details"
-                        android:textColor="@color/colorPrimaryLight"
-                        tools:text="Event Details" />
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/eventEndTimeButton"
+                    android:layout_width="289dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/dark_round_button"
+                    android:inputType="datetime"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:textSize="18sp"
+                    android:paddingLeft="15dp"
+                    android:hint="End Time"
+                    android:textColorHint="@color/colorPrimaryLight" />
 
-                    <Switch
-                        android:id="@+id/switchAttendeeLimit"
-                        android:layout_width="289dp"
-                        android:layout_height="58dp"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="15dp"
-                        android:layout_marginBottom="15dp"
-                        android:background="@drawable/dark_round_button"
-                        android:padding="16dp"
-                        android:paddingLeft="15dp"
-                        android:text="Set Attendee Limit"
-                        android:textColor="@color/colorPrimaryLight" />
+
+                <EditText
+                    android:id="@+id/eventAddressEditText"
+                    android:layout_width="289dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/dark_round_button"
+                    android:inputType="text|textAutoCorrect"
+                    android:paddingLeft="15dp"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:hint="Address"
+                    android:textColorHint="@color/colorPrimaryLight" />
+
+                <EditText
+                    android:id="@+id/eventDetailsEditText"
+                    android:layout_width="289dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/dark_round_button"
+                    android:inputType="text|textAutoCorrect|textMultiLine"
+                    android:paddingLeft="15dp"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:hint="Event Details"
+                    android:textColorHint="@color/colorPrimaryLight" />
+
+                <Switch
+                    android:id="@+id/switchAttendeeLimit"
+                    android:layout_width="289dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/dark_round_button"
+                    android:padding="16dp"
+                    android:paddingLeft="15dp"
+                    android:text="Set Check-in Limit"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:textSize="18sp" />
+
+                <Switch
+                    android:id="@+id/switchSignUpLimit"
+                    android:layout_width="289dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/dark_round_button"
+                    android:padding="16dp"
+                    android:paddingLeft="15dp"
+                    android:text="Set Sign-up Limit"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:textSize="18sp" />
 
                     <EditText
                         android:id="@+id/editTextNumberAttendeeLimit"
@@ -136,7 +203,8 @@
                         android:hint="Enter limit number"
                         android:inputType="number"
                         android:padding="16dp"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/buttonUploadPoster"
