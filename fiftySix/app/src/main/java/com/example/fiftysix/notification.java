@@ -23,18 +23,18 @@ public class notification {
     public void sendNotificationToEventAttendees(String eventId, String eventName, String message, Context context) {
         Log.d("even_id",eventId);
         Map<String,String> data = new HashMap<>();
-        data.put("notification",message);
+        data.put("announcements",message);
         db.collection("Events").document(eventId).get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if (documentSnapshot.exists()) {
-                            if (documentSnapshot.contains("notification")) {
+                            if (documentSnapshot.contains("announcements")) {
                                 // Field exists
-                                List<String> currentNotifications = (List<String>) documentSnapshot.get("notification");
+                                List<String> currentNotifications = (List<String>) documentSnapshot.get("announcements");
                                 // Add the new notification to the list
                                 currentNotifications.add(message);
-                                db.collection("Events").document(eventId).update("notification", currentNotifications)
+                                db.collection("Events").document(eventId).update("announcements", currentNotifications)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
@@ -56,7 +56,7 @@ public class notification {
                                 List<String> notifications = new ArrayList<>();
                                 notifications.add(message);
                                 // Add the new field with the list of notifications
-                                db.collection("Events").document(eventId).update("notification", notifications)
+                                db.collection("Events").document(eventId).update("announcements", notifications)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
