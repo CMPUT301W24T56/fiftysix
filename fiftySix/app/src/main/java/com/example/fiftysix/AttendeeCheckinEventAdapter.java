@@ -1,5 +1,7 @@
 package com.example.fiftysix;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,10 +11,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -67,8 +71,6 @@ public class AttendeeCheckinEventAdapter extends RecyclerView.Adapter<AttendeeCh
 
 
 
-
-
         boolean isExpandable = eventList.get(position).getExpandable();
         holder.expandableLayout.setVisibility(isExpandable ? View.VISIBLE : View.GONE);
 
@@ -87,7 +89,7 @@ public class AttendeeCheckinEventAdapter extends RecyclerView.Adapter<AttendeeCh
         LinearLayout linearLayout;
         RelativeLayout expandableLayout;
         ImageView eventImage;
-        Button cancelSignupButton, checkinButton;
+        Button cancelSignupButton, checkinButton, viewAnnouncementsButton;
 
         public EventVH(@NonNull View itemView) {
             super(itemView);
@@ -108,9 +110,7 @@ public class AttendeeCheckinEventAdapter extends RecyclerView.Adapter<AttendeeCh
             eventImage = itemView.findViewById(R.id.event_poster_image);
             cancelSignupButton = itemView.findViewById(R.id.cancel_signup);
             checkinButton = itemView.findViewById(R.id.checkin_from_signup);
-
-
-
+            viewAnnouncementsButton = itemView.findViewById(R.id.view_announcements);
 
             linearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -121,11 +121,6 @@ public class AttendeeCheckinEventAdapter extends RecyclerView.Adapter<AttendeeCh
                     notifyItemChanged(getAdapterPosition());
                 }
             });
-
-
-
-
-
 
             cancelSignupButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -148,15 +143,50 @@ public class AttendeeCheckinEventAdapter extends RecyclerView.Adapter<AttendeeCh
                     attendee.checkInToEventID(event.getEventID());
                 }
             });
-
-
-
-
-
-
-
+            viewAnnouncementsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Event event = eventList.get(getAdapterPosition());
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    db.collection("Events").document(event.getEventID())
+                            .get()
+                            .addOnSuccessListener(documentSnapshot -> {
+                                if (documentSnapshot.exists() && documentSnapshot.contains("announcements")) {
+                                    List<String> announcements = (List<String>) documentSnapshot.get("announcements");
+                                    assert announcements != null;
+                                    if (!announcements.isEmpty()) {
+                                        Context context = itemView.getContext(); // Obtain context from itemView
+                                        if (context instanceof Activity && !((Activity) context).isFinishing()) {
+                                            displayAnnouncements(context, announcements);
+                                        }
+                                    } else {
+                                        Toast.makeText(itemView.getContext(), "No announcements available.", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                                else {
+                                    Toast.makeText(itemView.getContext(), "No announcements made yet.", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(itemView.getContext(), "Error fetching announcements.", Toast.LENGTH_SHORT).show();
+                            });
+                }
+            });
         }
     }
 
+    private void displayAnnouncements(Context context, @NonNull List<String> announcements) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Announcements");
+
+        // Convert the announcements list to an array for the dialog
+        CharSequence[] items = announcements.toArray(new CharSequence[0]);
+
+        builder.setItems(items, null);
+        builder.setPositiveButton("Close", (dialog, which) -> dialog.dismiss());
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 }
 
