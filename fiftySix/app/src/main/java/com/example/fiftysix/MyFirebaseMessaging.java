@@ -8,10 +8,21 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class MyFirebaseMessaging extends FirebaseMessagingService {
+
+    private String id;
+    private FirebaseFirestore db;
+
+    public MyFirebaseMessaging(String attendeeid) {
+        this.id = attendeeid;
+    }
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -23,12 +34,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
             String message = remoteMessage.getData().get("message");
             Log.d("message_received","message_receiver" + message);
             // Display notification
-            Notification notification = new Notification.Builder(this)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentTitle(title)
-                    .setContentText(message)
-                    .build();
-            nm.notify(100,notification);
+
         }
     }
     @Override
@@ -37,5 +43,10 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         // Handle the new token here
         Log.d("New Token", token);
         // You can send the token to your server or perform any other action.
+        // update the token to the users document.
+        Map<String,String> token_object = new HashMap<>();
+        token_object.put("token",token);
+        db.collection("Users").document(id).set(token_object);
     }
+
 }

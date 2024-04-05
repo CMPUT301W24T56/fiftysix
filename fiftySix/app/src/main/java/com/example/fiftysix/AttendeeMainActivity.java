@@ -46,6 +46,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -151,9 +152,10 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private String[] permissions;
     private int[] grantResults;
 
-
+    private  MyFirebaseMessaging announcements;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         // View flipper, used to avoid opening new activities and keep the app running fast, Stores all of the layouts for attendee inside it.
@@ -166,7 +168,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
         // Sets buttons and edit text for all of attendees layouts
         setButtons();
         setEditText();
-
         // Creates/Gets attendee
         getLocation();
         //Log.d("LOCATION", "onCreate: " + location.getLongitude());
@@ -224,11 +225,18 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
         locationMangaer = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-
+        // update token of device
+        // updatetoken(attendeeID);
     }
 
 
     //________________________________________Methods________________________________________
+
+//    public void updatetoken(String attendeeid){
+//        announcements = new MyFirebaseMessaging(attendeeid);
+//
+//        announcements.
+//    }
 
     // Source "How to Get Current Location in Android Studio||Get user's current Location||Location App 2022" - by "Coding with Aiman" - Youtube.com
     private void getLocation() {
@@ -976,7 +984,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
         allEventSpinner.setAdapter(adapter);
         myEventsSignUpSpinner.setAdapter(adapter);
     }
-
 
 
 }
