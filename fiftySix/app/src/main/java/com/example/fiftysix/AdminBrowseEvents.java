@@ -2,11 +2,10 @@ package com.example.fiftysix;
 
 import static android.content.ContentValues.TAG;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.*;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -37,36 +36,34 @@ public class AdminBrowseEvents extends AppCompatActivity {
         fetchEvents();
 
         ImageButton backButton = findViewById(R.id.backButton);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        backButton.setOnClickListener(v -> finish());
     }
 
     private void fetchEvents() {
         db.collection("Events")
                 .get()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, "Number of events fetched: " + task.getResult().size());
-                        eventList.clear();
-
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            String eventID = document.getId();
-                            String eventName = document.getString("eventName");
-                            String eventLocation = document.getString("location");
-                            String eventDate = document.getString("date");
-                            String posterURL = document.getString("posterURL");
-                            String details = document.getString("details");
-
-                            eventList.add(new Event(eventID, eventName, eventLocation, eventDate, details, 100, 1000,1000, posterURL));
-                            eventAdapter.notifyDataSetChanged();
-                        }
-                    } else {
+                    if (!task.isSuccessful()) {
                         Log.d(TAG, "Error getting documents: ", task.getException());
+                        return;
                     }
+
+                    Log.d(TAG, "Number of events fetched: " + task.getResult().size());
+                    eventList.clear();
+
+                    for (QueryDocumentSnapshot d : task.getResult())
+                        eventList.add(new Event(
+                                d.getId(),
+                                d.getString("eventName"),
+                                d.getString("location"),
+                                d.getString("date"),
+                                d.getString("details"),
+                                100,
+                                1000,
+                                1000,
+                                d.getString("posterURL")
+                        ));
+                    eventAdapter.notifyDataSetChanged();
                 });
     }
 }
