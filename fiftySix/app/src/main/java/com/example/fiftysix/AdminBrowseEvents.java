@@ -4,39 +4,53 @@ import static android.content.ContentValues.TAG;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.*;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.*;
 
 import java.util.ArrayList;
 
 public class AdminBrowseEvents extends AppCompatActivity {
 
-    private EventAdapter eventAdapter;
+    private EventAdapter adapter;
     private ArrayList<Event> eventList = new ArrayList<>();
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse_events);
 
-        RecyclerView recyclerView = findViewById(R.id.eventsRecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        eventList = new ArrayList<>();
-        eventAdapter = new EventAdapter(eventList, false);
-        recyclerView.setAdapter(eventAdapter);
-
+        ListView ls = findViewById(R.id.abe_list);
+        adapter = new EventAdapter(this, eventList);
+        ls.setAdapter(adapter);
+        // TODO: possibly enable view evt info
+        ls.setOnItemClickListener((par, v, i, id) -> rm(i));
         fetchEvents();
 
         ImageButton backButton = findViewById(R.id.backButton);
         backButton.setOnClickListener(v -> finish());
+    }
+
+    private void rm(int i) {
+        // TODO: mk confirm dialog
+        db.collection("Events").document(eventList.remove(i).getEventID()).delete();
+        adapter.notifyDataSetChanged();
+    }
+
+    private Event doc2event(DocumentSnapshot d) {
+        return new Event(
+                d.getId(),
+                d.getString("eventName"),
+                d.getString("location"),
+                d.getString("date"),
+                d.getString("details"),
+                100,
+                1000,
+                1000,
+                d.getString("posterURL"));
     }
 
     private void fetchEvents() {
@@ -47,23 +61,12 @@ public class AdminBrowseEvents extends AppCompatActivity {
                         Log.d(TAG, "Error getting documents: ", task.getException());
                         return;
                     }
-
-                    Log.d(TAG, "Number of events fetched: " + task.getResult().size());
+                    QuerySnapshot res = task.getResult();
+                    Log.d(TAG, "Number of events fetched: " + res.size());
                     eventList.clear();
-
-                    for (QueryDocumentSnapshot d : task.getResult())
-                        eventList.add(new Event(
-                                d.getId(),
-                                d.getString("eventName"),
-                                d.getString("location"),
-                                d.getString("date"),
-                                d.getString("details"),
-                                100,
-                                1000,
-                                1000,
-                                d.getString("posterURL")
-                        ));
-                    eventAdapter.notifyDataSetChanged();
+                    for (DocumentSnapshot d : res)
+                        eventList.add(doc2event(d));
+                    adapter.notifyDataSetChanged();
                 });
     }
 }
