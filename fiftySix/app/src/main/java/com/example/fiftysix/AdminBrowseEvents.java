@@ -15,21 +15,28 @@ import java.util.ArrayList;
 
 public class AdminBrowseEvents extends AppCompatActivity {
 
-    private EventAdapter adapter = new EventAdapter(this, eventList);
+    private EventAdapter adapter;
     private ArrayList<Event> eventList = new ArrayList<>();
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse_events);
 
         ListView ls = findViewById(R.id.abe_list);
+        adapter = new EventAdapter(this, eventList);
         ls.setAdapter(adapter);
-
+        ls.setOnItemClickListener((par, v, i, id) -> rm(i));
         fetchEvents();
 
         ImageButton backButton = findViewById(R.id.backButton);
         backButton.setOnClickListener(v -> finish());
+    }
+
+    private void rm(int i) {
+        db.collection("Events").document(eventList.remove(i).getEventID()).delete();
+        adapter.notifyDataSetChanged();
     }
 
     private void fetchEvents() {
