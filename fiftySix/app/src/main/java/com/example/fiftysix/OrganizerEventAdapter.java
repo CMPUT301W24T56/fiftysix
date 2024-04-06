@@ -19,6 +19,9 @@ import android.widget.TextView;
 import android.widget.ImageView;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -176,7 +179,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         LinearLayout linearLayout;
         RelativeLayout expandableLayout;
         ImageView eventImage;
-        Button send_notification, edit_event,Download_qr_code, location;
+        Button send_notification, edit_event,Download_qr_code, location, sharePromoQrCode;
         ImageButton attendees, signUps;
         Event event;
         String eventID;
@@ -210,6 +213,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             signUpPieChart = itemView.findViewById(R.id.piechartSignUp);
             checkinPieChart = itemView.findViewById(R.id.piechartCheckIn);
             Download_qr_code = itemView.findViewById(R.id.share_qr_code);
+            sharePromoQrCode = itemView.findViewById(R.id.share_promo_qr_code);
             linearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -221,6 +225,8 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                     }
                 }
             });
+
+
 
             send_notification.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -282,47 +288,130 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                      event = eventList.get(getAdapterPosition());
                      eventID = event.getEventID();
 
-                    //  now we need to get the event qrcode
-                    //  we don't have to promotional qrcode for now so I am using check in qr code to test for now.
-                    // facing error in the function getCheckInQrCodeID();
-                    String qr_code = "-Nt4abMIseYLp_n31B3S"; //event.getPromoQRCodeID();
-                    Log.d("qr_code","qrcode string: " + qr_code);
-                    // now we need to convert this qr code into  bit map image
-                    MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
-                    // reference of data transfer to other apps.
-                    // https://www.youtube.com/watch?v=qbtlrGHOVjg
+                    FirebaseFirestore.getInstance().collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                    try {
-                        BitMatrix bitMatrix = multiFormatWriter.encode(qr_code, BarcodeFormat.QR_CODE,300,300);
+                            if(documentSnapshot.exists()) {
+                                String qr_code = documentSnapshot.getString("checkInQRCode");
+                                MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+                                try {
+                                    BitMatrix bitMatrix = multiFormatWriter.encode(qr_code, BarcodeFormat.QR_CODE,300,300);
 
-                        BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-                        Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
-                        Log.d("qr_code", "converting string to bitmap is working ");
+                                    BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                                    Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+                                    Log.d("qr_code", "converting string to bitmap is working ");
 
-                        Intent intent = new Intent();
-                        intent.setAction(Intent.ACTION_SEND);
-                        File qrCodeFile = saveBitmapToFile(bitmap);
-                        Log.d("file","converted  image bitmap to file");
-                        // Get content URI using FileProvider
+                                    Intent intent = new Intent();
+                                    intent.setAction(Intent.ACTION_SEND);
+                                    File qrCodeFile = saveBitmapToFile(bitmap);
+                                    Log.d("file","converted  image bitmap to file");
+                                    // Get content URI using FileProvider
 
-                        Uri contentUri = FileProvider.getUriForFile(context, "com.example.fiftysix.provider", qrCodeFile);
+                                    Uri contentUri = FileProvider.getUriForFile(context, "com.example.fiftysix.provider", qrCodeFile);
 
 
-                        Log.d("file_share","converted  file to uri  for sharing purpose");
+                                    Log.d("file_share","converted  file to uri  for sharing purpose");
 
-                        intent.putExtra(Intent.EXTRA_STREAM, contentUri);
-                        intent.setType("image/png");
+                                    intent.putExtra(Intent.EXTRA_STREAM, contentUri);
+                                    intent.setType("image/png");
 
-                        if (intent.resolveActivity(context.getPackageManager())!= null ){
-                            startActivity(intent);
+                                    if (intent.resolveActivity(context.getPackageManager())!= null ){
+                                        startActivity(intent);
+                                    }
+                                }catch (WriterException e){
+                                    throw  new RuntimeException(e);
+                                }
+                            }
                         }
-                    }catch (WriterException e){
-                        throw  new RuntimeException(e);
-                    }
+                    });
                 }
             });
 
+
+            sharePromoQrCode.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    event = eventList.get(getAdapterPosition());
+                    eventID = event.getEventID();
+
+                    FirebaseFirestore.getInstance().collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                            if(documentSnapshot.exists()) {
+                                String qr_code = documentSnapshot.getString("promoQRCode");
+                                if (qr_code != null){
+                                    MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+                                    try {
+                                        BitMatrix bitMatrix = multiFormatWriter.encode(qr_code, BarcodeFormat.QR_CODE,300,300);
+
+                                        BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                                        Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+                                        Log.d("qr_code", "converting string to bitmap is working ");
+
+                                        Intent intent = new Intent();
+                                        intent.setAction(Intent.ACTION_SEND);
+                                        File qrCodeFile = saveBitmapToFile(bitmap);
+                                        Log.d("file","converted  image bitmap to file");
+                                        // Get content URI using FileProvider
+
+                                        Uri contentUri = FileProvider.getUriForFile(context, "com.example.fiftysix.provider", qrCodeFile);
+
+
+                                        Log.d("file_share","converted  file to uri  for sharing purpose");
+
+                                        intent.putExtra(Intent.EXTRA_STREAM, contentUri);
+                                        intent.setType("image/png");
+
+                                        if (intent.resolveActivity(context.getPackageManager())!= null ){
+                                            startActivity(intent);
+                                        }
+                                    }catch (WriterException e){
+                                        throw  new RuntimeException(e);
+                                    }
+                                }else{
+                                    // PROMO QR Does not exist. One is Made
+                                    PromoQRCode promoQRCode = new PromoQRCode(context);
+                                    qr_code = promoQRCode.getQRCodeID();
+                                    event.setPromoQR(qr_code);
+                                    MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+                                    try {
+                                        BitMatrix bitMatrix = multiFormatWriter.encode(qr_code, BarcodeFormat.QR_CODE,300,300);
+
+                                        BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                                        Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+                                        Log.d("qr_code", "converting string to bitmap is working ");
+
+                                        Intent intent = new Intent();
+                                        intent.setAction(Intent.ACTION_SEND);
+                                        File qrCodeFile = saveBitmapToFile(bitmap);
+                                        Log.d("file","converted  image bitmap to file");
+                                        // Get content URI using FileProvider
+
+                                        Uri contentUri = FileProvider.getUriForFile(context, "com.example.fiftysix.provider", qrCodeFile);
+
+
+                                        Log.d("file_share","converted  file to uri  for sharing purpose");
+
+                                        intent.putExtra(Intent.EXTRA_STREAM, contentUri);
+                                        intent.setType("image/png");
+
+                                        if (intent.resolveActivity(context.getPackageManager())!= null ){
+                                            startActivity(intent);
+                                        }
+                                    }catch (WriterException e){
+                                        throw  new RuntimeException(e);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            });
         }
+
+
 
         // storing the bitmap image in a file to share it to different apps
         public File saveBitmapToFile(Bitmap bitmap){
