@@ -77,12 +77,11 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginEnd="320dp"
-        android:background="@drawable/transparent_background_button"
+        android:background="@drawable/user__1_"
         app:layout_constraintBottom_toTopOf="@+id/settingsLinearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/user_ic_launcher_foreground" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <ImageButton
         android:id="@+id/buttonSettingsEventSignUp"
@@ -97,17 +96,15 @@
 
     <ImageButton
         android:id="@+id/buttonSettingsNotificationBell"
-        android:layout_width="77dp"
-        android:layout_height="63dp"
+        android:layout_width="70dp"
+        android:layout_height="72dp"
         android:layout_marginStart="320dp"
-        android:layout_marginTop="4dp"
         android:layout_marginEnd="15dp"
-        android:background="@drawable/transparent_background_button"
+        android:background="@drawable/notification_bell__1_"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/settingsLinearLayout"
-        app:srcCompat="@mipmap/notif_ic_launcher_foreground" />
+        app:layout_constraintTop_toBottomOf="@+id/settingsLinearLayout" />
 
     <Spinner
         android:id="@+id/menuButtonSettings"
