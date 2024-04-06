@@ -12,28 +12,30 @@
         android:id="@+id/imagesRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="12dp"
         android:background="#FFFFFF"
-        app:layout_constraintTop_toBottomOf="@id/backButton"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/backButton" />
 <!--        app:spanCount="3" /> &lt;!&ndash; The spanCount can be changed based on your requirement &ndash;&gt;-->
 
     <!-- Back Button -->
     <ImageButton
         android:id="@+id/backButton"
-        android:layout_width="61dp"
-        android:layout_height="79dp"
+        android:layout_width="64dp"
+        android:layout_height="48dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="30dp"
-        android:background="@drawable/transparent_background_button"
+        android:background="@drawable/arrow_123"
         android:scaleType="fitCenter"
+
+
         app:layout_constraintEnd_toEndOf="parent"
 
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@drawable/arrow_123" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
