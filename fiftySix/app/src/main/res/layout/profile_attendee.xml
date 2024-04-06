@@ -14,11 +14,11 @@
 
         <ImageButton
             android:id="@+id/profile_image"
-            android:layout_width="220dp"
-            android:layout_height="220dp"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
             android:layout_gravity="center"
 
-            android:layout_marginTop="45dp"
+            android:layout_marginTop="35dp"
             android:background="@color/zxing_transparent"
             android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -98,6 +98,7 @@
             android:layout_width="125dp"
             android:layout_height="43dp"
 
+            android:layout_marginTop="30dp"
             android:background="@drawable/light_round_button"
             android:text="Back"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -111,11 +112,12 @@
             android:layout_height="43dp"
 
 
+            android:layout_marginTop="30dp"
             android:background="@drawable/light_round_button"
             android:text="Save"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
 
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profile_home" />
 
@@ -124,6 +126,7 @@
             android:layout_width="125dp"
             android:layout_height="43dp"
 
+            android:layout_marginTop="30dp"
             android:background="@drawable/light_round_button"
             android:text="Remove Pic"
             app:layout_constraintBottom_toBottomOf="parent"

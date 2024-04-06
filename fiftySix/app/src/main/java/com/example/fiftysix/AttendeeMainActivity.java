@@ -965,15 +965,29 @@ public class AttendeeMainActivity extends AppCompatActivity {
                     String phone = value.getString("phone");
                     String bio = value.getString("bio");
 
-                    profileName.setText(name);
-                    profileEmail.setText(email);
-                    profilePhoneNumber.setText(phone);
-                    profileBio.setText(bio);
+                    if (name != null && !name.equals("unknown")){
+                        profileName.setText(name);
+                    }
+                    if (email != null && !email.equals("unknown")){
+                        profileEmail.setText(email);
+                    }
+                    if (phone != null && !phone.equals("unknown")){
+                        profilePhoneNumber.setText(phone);
+                    }
+                    if (email != null && !email.equals("unknown")){
+                        profileBio.setText(bio);
+                    }
+                    if (imageURL != null && imageURL.equals("unknown")){
+                        imageURL = "https://firebasestorage.googleapis.com/v0/b/fiftysix-a4bcf.appspot.com/o/images%2FDoNotDeleteStockProfilePic%2Fprofile.png?alt=media&token=19c78f81-176c-4d93-817d-4a789d5c8cd2";
+                    }
+
 
                     Picasso.get()
                             .load(imageURL)
                             .fit().transform(new CropCircleTransformation())
                             .into(profileImage);
+
+
                 }
             }
         });
