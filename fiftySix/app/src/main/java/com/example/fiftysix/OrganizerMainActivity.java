@@ -464,7 +464,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 Log.e(TAG, "Error occurred while creating the file", ex);
                 return;
             }
-            Uri photoURI = FileProvider.getUriForFile(OrganizerMainActivity.this, "com.example.fiftysix.fileProvider", photoFile);
+            Uri photoURI = FileProvider.getUriForFile(OrganizerMainActivity.this, "com.example.fiftysix.provider", photoFile);
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
             cameraLauncher.launch(photoURI);
         } else {

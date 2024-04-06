@@ -2,7 +2,9 @@ package com.example.fiftysix;
 
 import static android.content.ContentValues.TAG;
 
+import static androidx.core.content.FileProvider.getUriForFile;
 import static java.lang.Thread.sleep;
+import static java.security.AccessController.getContext;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -161,6 +163,13 @@ public class AttendeeMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+
+
+
+
+
+
         // View flipper, used to avoid opening new activities and keep the app running fast, Stores all of the layouts for attendee inside it.
         setContentView(R.layout.attendee_flipper);
 
@@ -171,6 +180,9 @@ public class AttendeeMainActivity extends AppCompatActivity {
         // Sets buttons and edit text for all of attendees layouts
         setButtons();
         setEditText();
+
+
+
 
 
 
@@ -205,29 +217,11 @@ public class AttendeeMainActivity extends AppCompatActivity {
         //______________________________________Sign in to event Page_______________________________________
         initializeEventSignIn();
 
+
+
+
+
         //________________________________________Profile________________________________________
-        displayProfileData(); // Gets profile data and displays it from the data base.
-        initializeProfileLayout(); // Adds onclick listeners and what should happen on click.
-
-
-        // IDK what to name these two
-        galleryLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == AppCompatActivity.RESULT_OK && result.getData() != null) {
-                        selectedImageUri = result.getData().getData();
-                    }
-                }
-        );
-        cameraLauncher = registerForActivityResult(
-                new ActivityResultContracts.TakePicture(),
-                result -> {
-                    if (result && cameraImageUri != null) {
-                        selectedImageUri = cameraImageUri;
-                        // Now the selectedImageUri contains the URI of the captured image
-                    }
-                }
-        );
 
 
         // Geolocation stuff
@@ -242,11 +236,46 @@ public class AttendeeMainActivity extends AppCompatActivity {
         setupLocationSwitch();
 
 
+        profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showImageSourceDialog();
+            }
+        });
+
+
+        // IDK what to name these two
+        galleryLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == AppCompatActivity.RESULT_OK && result.getData() != null) {
+                        selectedImageUri = result.getData().getData();
+                    }
+                }
+        );
+
+
+        cameraLauncher = registerForActivityResult(
+                new ActivityResultContracts.TakePicture(),
+                result -> {
+                    if (result && cameraImageUri != null) {
+                        selectedImageUri = cameraImageUri;
+                        // Now the selectedImageUri contains the URI of the captured image
+                    }
+                }
+        );
+
+
+        //cameraLauncher.launch(selectedImageUri);
 
 
 
 
 
+
+
+        displayProfileData(); // Gets profile data and displays it from the data base.
+        initializeProfileLayout(); // Adds onclick listeners and what should happen on click.
 
 
 
@@ -256,6 +285,34 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
 
     //________________________________________Methods________________________________________
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission was granted, open camera
+                openCamera();
+            } else {
+                // Permission was denied
+                Toast.makeText(this, "Camera permission is required to use the camera", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else{
+            if (requestCode == REQUEST_CODE) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getLocation();
+                }
+            } else {
+                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
+                attendee.setLocation(null);
+            }
+
+        }
+
+    }
+
+
 
     private void setupLocationSwitch()  {
         db.collection("Users").document(attendeeID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -387,29 +444,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_CAMERA_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission was granted, open camera
-                openCamera();
-            } else {
-                // Permission was denied
-                Toast.makeText(this, "Camera permission is required to use the camera", Toast.LENGTH_SHORT).show();
-            }
-        }
 
-        if (requestCode == REQUEST_CODE){
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                getLocation();
-            }
-        }
-        else{
-            Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
-            attendee.setLocation(null);
-        }
-    }
 
 
     /**
@@ -464,13 +499,14 @@ public class AttendeeMainActivity extends AppCompatActivity {
                         break;
                     case 1: // Upload from Camera
                         Log.d(TAG, "Attempting to launch camera.");
-                        if (ContextCompat.checkSelfPermission(AttendeeMainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                            Log.d(TAG, "RequestCameraPermissionCalled");
+                       // if (ContextCompat.checkSelfPermission(AttendeeMainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        //    Log.d(TAG, "RequestCameraPermissionCalled");
                             requestCameraPermission();
-                        } else {
-                            Log.d(TAG, "Permission is already granted");
-                            openCamera();
-                        }
+                       // }
+                        //else {
+                         //   Log.d(TAG, "Permission is already granted");
+                        //    openCamera();
+                       // }
                         break;
                 }
             }
@@ -482,7 +518,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
      * requests camera premission for when the camera is required
      */
     private void requestCameraPermission() {
-        ActivityCompat.requestPermissions(AttendeeMainActivity.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
     }
 
     /**
@@ -498,8 +534,8 @@ public class AttendeeMainActivity extends AppCompatActivity {
                 Log.e(TAG, "Error occurred while creating the file", ex);
                 return;
             }
-            Uri photoURI = FileProvider.getUriForFile(AttendeeMainActivity.this, "com.example.fiftysix.fileProvider", photoFile);
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+            Uri photoURI = getUriForFile(AttendeeMainActivity.this, "com.example.fiftysix.provider", photoFile);
+            //takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
             cameraLauncher.launch(photoURI);
         } else {
             Log.d(TAG, "No app can handle the camera intent.");
@@ -682,10 +718,11 @@ public class AttendeeMainActivity extends AppCompatActivity {
                         FirebaseFirestore.getInstance().collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+
+
                                 if (documentSnapshot != null) {
                                     String eventName = documentSnapshot.getString("eventName");
-                                    Integer inAttendeeCount = documentSnapshot.getLong("attendeeCount").intValue();
-                                    Integer signUpCount = documentSnapshot.getLong("attendeeSignUpCount").intValue();
                                     String location = documentSnapshot.getString("location");
                                     String details = documentSnapshot.getString("details");
                                     String posterID = documentSnapshot.getString("posterID");
@@ -693,19 +730,27 @@ public class AttendeeMainActivity extends AppCompatActivity {
                                     String startTime = documentSnapshot.getString("startTime");
                                     String endDate = documentSnapshot.getString("endDate");
                                     String endTime = documentSnapshot.getString("endTime");
-                                    Integer attendeeCheckinLimitIn = documentSnapshot.getLong("attendeeLimit").intValue();
-                                    Integer attendeeSignUpLimitIn = documentSnapshot.getLong("attendeeSignUpLimit").intValue();
 
-                                    db.collection("PosterImages").document(posterID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onSuccess(DocumentSnapshot documentSnapshot2) {
-                                            if (documentSnapshot2 != null) {
-                                                String imageUrl = documentSnapshot2.getString("image");
-                                                myEventDataList.add(new Event(eventID, eventName, location, startDate, endDate, startTime, endTime, details, inAttendeeCount, signUpCount, attendeeCheckinLimitIn, attendeeSignUpLimitIn, imageUrl));
-                                                attendeeMyEventAdapter.notifyDataSetChanged();
+
+                                    if (documentSnapshot.getLong("attendeeSignUpCount") != null) {
+
+                                        Integer attendeeCheckinLimitIn = documentSnapshot.getLong("attendeeLimit").intValue();
+                                        Integer attendeeSignUpLimitIn = documentSnapshot.getLong("attendeeSignUpLimit").intValue();
+                                        Integer inAttendeeCount = documentSnapshot.getLong("attendeeCount").intValue();
+                                        Integer signUpCount = documentSnapshot.getLong("attendeeSignUpCount").intValue();
+
+
+                                        db.collection("PosterImages").document(posterID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onSuccess(DocumentSnapshot documentSnapshot2) {
+                                                if (documentSnapshot2 != null) {
+                                                    String imageUrl = documentSnapshot2.getString("image");
+                                                    myEventDataList.add(new Event(eventID, eventName, location, startDate, endDate, startTime, endTime, details, inAttendeeCount, signUpCount, attendeeCheckinLimitIn, attendeeSignUpLimitIn, imageUrl));
+                                                    attendeeMyEventAdapter.notifyDataSetChanged();
+                                                }
                                             }
-                                        }
-                                    });
+                                        });
+                                    }
                                 }
                             }
                         });
@@ -745,11 +790,10 @@ public class AttendeeMainActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                 if (documentSnapshot != null) {
+
+
                                     String eventName = documentSnapshot.getString("eventName");
-                                    Integer inAttendeeCount = documentSnapshot.getLong("attendeeCount").intValue();
-                                    Integer attendeeCheckinLimitIn = documentSnapshot.getLong("attendeeLimit").intValue();
-                                    Integer attendeeSignUpLimitIn = documentSnapshot.getLong("attendeeSignUpLimit").intValue();
-                                    Integer signUpCount = documentSnapshot.getLong("attendeeSignUpCount").intValue();
+
                                     String location = documentSnapshot.getString("location");
                                     String details = documentSnapshot.getString("details");
                                     String posterID = documentSnapshot.getString("posterID");
@@ -758,39 +802,47 @@ public class AttendeeMainActivity extends AppCompatActivity {
                                     String endDate = documentSnapshot.getString("endDate");
                                     String endTime = documentSnapshot.getString("endTime");
 
+                                    if (documentSnapshot.getLong("attendeeSignUpCount") != null) {
 
-                                    db.collection("PosterImages").document(posterID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onSuccess(DocumentSnapshot documentSnapshot2) {
-                                            if (documentSnapshot2 != null) {
-                                                if (endDate != null){
-                                                    // TODO: Finish this/ test
-                                                    // From https://stackoverflow.com/questions/10774871/best-way-to-compare-dates-in-android
-                                                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
-                                                    Date strDate = null;
-                                                    try {
-                                                        strDate = sdf.parse(endDate);
-                                                    } catch (ParseException e) {
-                                                        throw new RuntimeException(e);
-                                                    }
-                                                    if (new Date().after(strDate)) {
-                                                        //Event is old
-                                                    }
-                                                    else{
-                                                        String imageUrl = documentSnapshot2.getString("image");
-                                                        signUpEventDataList.add(new Event(eventID, eventName, location, startDate, endDate, startTime, endTime, details, inAttendeeCount, signUpCount, attendeeCheckinLimitIn, attendeeSignUpLimitIn, imageUrl));
-                                                        attendeeSignUpEventAdapter.notifyDataSetChanged();
+
+                                        Integer attendeeCheckinLimitIn = documentSnapshot.getLong("attendeeLimit").intValue();
+                                        Integer attendeeSignUpLimitIn = documentSnapshot.getLong("attendeeSignUpLimit").intValue();
+                                        Integer inAttendeeCount = documentSnapshot.getLong("attendeeCount").intValue();
+                                        Integer signUpCount = documentSnapshot.getLong("attendeeSignUpCount").intValue();
+
+
+                                        db.collection("PosterImages").document(posterID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onSuccess(DocumentSnapshot documentSnapshot2) {
+                                                if (documentSnapshot2 != null) {
+                                                    if (endDate != null) {
+                                                        // TODO: Finish this/ test
+                                                        // From https://stackoverflow.com/questions/10774871/best-way-to-compare-dates-in-android
+                                                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+                                                        Date strDate = null;
+                                                        try {
+                                                            strDate = sdf.parse(endDate);
+                                                        } catch (ParseException e) {
+                                                            throw new RuntimeException(e);
+                                                        }
+                                                        if (new Date().after(strDate)) {
+                                                            //Event is old
+                                                        } else {
+                                                            String imageUrl = documentSnapshot2.getString("image");
+                                                            signUpEventDataList.add(new Event(eventID, eventName, location, startDate, endDate, startTime, endTime, details, inAttendeeCount, signUpCount, attendeeCheckinLimitIn, attendeeSignUpLimitIn, imageUrl));
+                                                            attendeeSignUpEventAdapter.notifyDataSetChanged();
+
+                                                        }
 
                                                     }
-
                                                 }
                                             }
-                                        }
-                                    });
+                                        });
 
+
+                                    }
 
                                 }
-
                             }
 
                         });
@@ -819,14 +871,11 @@ public class AttendeeMainActivity extends AppCompatActivity {
                 if (value != null) {
                     allEventDataList.clear();
 
-
                     for (QueryDocumentSnapshot doc : value) {
                         if (doc.getId() != "temp") {
                             String eventID = doc.getId();
                             String eventName = doc.getString("eventName");
-                            Integer inAttendeeCount = doc.getLong("attendeeCount").intValue();
                             String imageUrl = doc.getString("posterURL");
-                            Integer signUpCount = doc.getLong("attendeeSignUpCount").intValue();
                             String location = doc.getString("location");
                             String details = doc.getString("details");
                             String posterID = doc.getString("posterID");
@@ -834,41 +883,49 @@ public class AttendeeMainActivity extends AppCompatActivity {
                             String startTime = doc.getString("startTime");
                             String endDate = doc.getString("endDate");
                             String endTime = doc.getString("endTime");
-                            Integer attendeeCheckinLimitIn = doc.getLong("attendeeLimit").intValue();
-                            Integer attendeeSignUpLimitIn = doc.getLong("attendeeSignUpLimit").intValue();
 
-                            db.collection("PosterImages").document(posterID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                @Override
-                                public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                            if (doc.getLong("attendeeSignUpCount") != null) {
 
-                                    if (value != null) {
-                                        if (endDate != null) {
-                                            // TODO: Finish this/ test
-                                            // From https://stackoverflow.com/questions/10774871/best-way-to-compare-dates-in-android
-                                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
-                                            Date strDate = null;
-                                            try {
-                                                strDate = sdf.parse(endDate);
-                                            } catch (ParseException e) {
-                                                throw new RuntimeException(e);
+
+                                Integer attendeeCheckinLimitIn = doc.getLong("attendeeLimit").intValue();
+                                Integer attendeeSignUpLimitIn = doc.getLong("attendeeSignUpLimit").intValue();
+                                Integer inAttendeeCount = doc.getLong("attendeeCount").intValue();
+                                Integer signUpCount = doc.getLong("attendeeSignUpCount").intValue();
+
+
+                                db.collection("PosterImages").document(posterID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+
+                                        if (value != null) {
+                                            if (endDate != null) {
+                                                // TODO: Finish this/ test
+                                                // From https://stackoverflow.com/questions/10774871/best-way-to-compare-dates-in-android
+                                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+                                                Date strDate = null;
+                                                try {
+                                                    strDate = sdf.parse(endDate);
+                                                } catch (ParseException e) {
+                                                    throw new RuntimeException(e);
+                                                }
+                                                if (new Date().after(strDate)) {
+                                                    //Event is old
+                                                } else {
+                                                    String imageUrl = value.getString("image");
+                                                    allEventDataList.add(new Event(eventID, eventName, location, startDate, endDate, startTime, endTime, details, inAttendeeCount, signUpCount, attendeeCheckinLimitIn, attendeeSignUpLimitIn, imageUrl));
+                                                    attendeeAllEventAdapter.notifyDataSetChanged();
+                                                }
+
                                             }
-                                            if (new Date().after(strDate)) {
-                                                //Event is old
-                                            } else {
-                                                String imageUrl = value.getString("image");
-                                                allEventDataList.add(new Event(eventID, eventName, location, startDate, endDate, startTime, endTime, details, inAttendeeCount, signUpCount, attendeeCheckinLimitIn, attendeeSignUpLimitIn, imageUrl));
-                                                attendeeAllEventAdapter.notifyDataSetChanged();
-                                            }
-
                                         }
                                     }
-                                }
-                            });
-                            //if (allEventDataList.isEmpty()) {
+                                });
+                                //if (allEventDataList.isEmpty()) {
                                 //String hardCode = "No Upcoming Events :(";
-                               // allEventDataList.add(new Event(null, hardCode, hardCode, hardCode, hardCode, hardCode, hardCode, hardCode, 0, 0, 0, 0, hardCode));
-                               // attendeeAllEventAdapter.notifyDataSetChanged();
-                           // }
+                                // allEventDataList.add(new Event(null, hardCode, hardCode, hardCode, hardCode, hardCode, hardCode, hardCode, 0, 0, 0, 0, hardCode));
+                                // attendeeAllEventAdapter.notifyDataSetChanged();
+                                // }
+                            }
                         }
                     }
 
@@ -921,12 +978,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
 
         posterHandler = new Profile(attendee.getDeviceId());
-        profileImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showImageSourceDialog();
-            }
-        });
+
 
         profileBack.setOnClickListener(new View.OnClickListener() {
             @Override

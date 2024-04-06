@@ -26,7 +26,7 @@
         <RelativeLayout
             android:id="@+id/expandable_layout"
             android:layout_width="match_parent"
-            android:layout_height="1080dp">
+            android:layout_height="1150dp">
 
 
             <LinearLayout

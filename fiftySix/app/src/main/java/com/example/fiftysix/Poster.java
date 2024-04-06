@@ -13,7 +13,7 @@ import java.util.Map;
 public class Poster {
     private static final String TAG = "Poster";
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private static final String DEFAULT_IMAGE_URL = "https://firebasestorage.googleapis.com/v0/b/fiftysix-a4bcf.appspot.com/o/images%2FPosters%2Fno-photos.png?alt=media";
+    private static final String DEFAULT_IMAGE_URL = "https://firebasestorage.googleapis.com/v0/b/fiftysix-a4bcf.appspot.com/o/images%2FDoNotDeleteStockProfilePic%2Fno-photos.png?alt=media&token=52497ae1-5e13-49cb-a43b-379f85849c73";
 
 
     public interface PosterUploadCallback {
