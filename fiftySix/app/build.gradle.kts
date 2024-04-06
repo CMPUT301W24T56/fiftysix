@@ -42,6 +42,7 @@ dependencies {
     //implementation("com.amulyakhare:com.amulyakhare.textdrawable:1.0.1")
 
     implementation("jp.wasabeef:picasso-transformations:2.4.0")
+    implementation("androidx.datastore:datastore-core-android:1.1.0-beta02")
 
 
     // Aggregator dependency on JUnit api, engine, and params
@@ -62,7 +63,6 @@ dependencies {
     implementation("com.squareup.picasso:picasso:2.71828")
 
     // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:32.7.3"))
     // TODO: Add the dependencies for Firebase products you want to use
     // When using the BoM, don't specify versions in Firebase dependencies
     implementation("com.google.firebase:firebase-analytics")
@@ -110,6 +110,8 @@ dependencies {
     implementation("com.google.firebase:firebase-storage:20.3.0")
     implementation("androidx.navigation:navigation-fragment:2.7.6")
     implementation("androidx.navigation:navigation-ui:2.7.6")
+    implementation("com.google.firebase:firebase-messaging:23.0.0")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test:runner:1.1.1")

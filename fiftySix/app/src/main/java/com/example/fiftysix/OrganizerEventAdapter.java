@@ -231,7 +231,14 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             send_notification.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    event = eventList.get(getAdapterPosition());
+                    eventID = event.getEventID();
+                    String eventName = event.getEventName();
+
                     Intent intent = new Intent(context, send_notification.class); // Assuming SendNotificationActivity is your activity name
+                    intent.putExtra("eventID", eventID);
+                    intent.putExtra("eventName",eventName);
+                    Log.d("TAG", "onClick: working now ");
                     context.startActivity(intent);
                 }
             });

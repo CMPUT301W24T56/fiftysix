@@ -53,6 +53,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -158,9 +159,10 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private String[] permissions;
     private int[] grantResults;
 
-
+    private  MyFirebaseMessaging announcements;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
 
@@ -280,7 +282,8 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
 
 
-
+        // update token of device
+        // updatetoken(attendeeID);
     }
 
 
@@ -415,6 +418,11 @@ public class AttendeeMainActivity extends AppCompatActivity {
     }
 
 
+//    public void updatetoken(String attendeeid){
+//        announcements = new MyFirebaseMessaging(attendeeid);
+//
+//        announcements.
+//    }
 
     // Source "How to Get Current Location in Android Studio||Get user's current Location||Location App 2022" - by "Coding with Aiman" - Youtube.com
     private void getLocation() {
@@ -1379,9 +1387,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
         myEventsSignUpSpinner.setAdapter(adapter);
         settingsSpinner.setAdapter(adapter);
     }
-
-
-
 
 
 }
