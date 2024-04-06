@@ -4,12 +4,9 @@ import static android.content.ContentValues.TAG;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.*;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -18,7 +15,7 @@ import java.util.ArrayList;
 
 public class AdminBrowseEvents extends AppCompatActivity {
 
-    private EventAdapter eventAdapter;
+    private EventAdapter adapter = new EventAdapter(this, eventList);
     private ArrayList<Event> eventList = new ArrayList<>();
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     @Override
@@ -26,12 +23,8 @@ public class AdminBrowseEvents extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse_events);
 
-        RecyclerView recyclerView = findViewById(R.id.eventsRecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        eventList = new ArrayList<>();
-        eventAdapter = new EventAdapter(eventList, false);
-        recyclerView.setAdapter(eventAdapter);
+        ListView ls = findViewById(R.id.abe_list);
+        ls.setAdapter(adapter);
 
         fetchEvents();
 
@@ -63,7 +56,7 @@ public class AdminBrowseEvents extends AppCompatActivity {
                                 1000,
                                 d.getString("posterURL")
                         ));
-                    eventAdapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
                 });
     }
 }

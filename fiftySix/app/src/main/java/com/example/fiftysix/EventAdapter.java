@@ -1,23 +1,26 @@
 package com.example.fiftysix;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.ImageView;
-import com.squareup.picasso.Picasso;
+import android.content.Context;
+import android.view.*;
+import android.widget.*;
 
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.ArrayList;
 import java.util.List;
 
-public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventVH> {
+public class EventAdapter extends ArrayAdapter<Event> {
+    public EventAdapter(Context ctx, List<Event> ls) {
+        super(ctx, 0, ls);
+    }
+    public View getView(int i, View v, ViewGroup par) {
+        if (v == null)
+            v = LayoutInflater.from(getContext()).inflate(R.layout.admin_evt, par, false);
+        Event e = getItem(i);
+        ((TextView) v.findViewById(R.id.admin_evt_name)).setText(e.getEventName());
+        return v;
+    }
+}
 
+/*
+public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventVH> {
     private List<Event> eventList;
     private boolean isExpandableOnClick;
 
@@ -94,3 +97,4 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventVH> {
         }
     }
 }
+*/
