@@ -232,7 +232,6 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(context, send_notification.class); // Assuming SendNotificationActivity is your activity name
-                    Log.d("TAG", "onClick: working now ");
                     context.startActivity(intent);
                 }
             });
@@ -241,19 +240,22 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                 @Override
                 public void onClick(View v) {
                     // TODO: Let organizer edit event Details
+                    event = eventList.get(getAdapterPosition());
+                    eventID = event.getEventID();
+                    Intent intent2 = new Intent(context, EditEventActivity.class);
+                    intent2.putExtra("eventID", eventID);
+                    context.startActivity(intent2);
                 }
             });
 
             attendees.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // TODO: Let organizer edit event Details
                     event = eventList.get(getAdapterPosition());
                     eventID = event.getEventID();
-                    Log.d("attendees", "EventID =  "+ eventID);
-                    Intent intent2 = new Intent(context, OrganizerCheckInDataActivity.class);
-                    intent2.putExtra("eventID", eventID);
-                    context.startActivity(intent2);
+                    Intent intent = new Intent(context, OrganizerCheckInDataActivity.class);
+                    intent.putExtra("eventID", eventID);
+                    context.startActivity(intent);
                 }
             });
 

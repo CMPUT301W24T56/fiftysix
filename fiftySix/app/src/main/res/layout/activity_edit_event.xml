@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/create_event_details"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    android:weightSum="5"
+    android:orientation="vertical">
+
+
+    <ImageButton
+        android:id="@+id/buttonBackCreateEvent"
+        android:layout_width="64dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/arrow_123"
+        android:scaleType="fitCenter"
+
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_gravity="center_vertical"
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="0dp"
+        android:layout_weight="4"
+        android:background="#FFFFFF"
+        android:orientation="vertical">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:id="@+id/textViewTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="25dp"
+                    android:fontFamily="@font/inter"
+                    android:text="Event Details"
+                    android:textSize="28sp"/>
+
+
+                <EditText
+                    android:id="@+id/eventNameEditText"
+                    android:layout_width="289dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/dark_round_button"
+                    android:textAlignment="viewStart"
+                    android:inputType="textAutoCorrect"
+                    android:paddingLeft="15dp"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:hint="Event Name"
+                    android:textColorHint="@color/colorPrimaryLight"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/eventStartDateButton"
+                    android:layout_width="289dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/dark_round_button"
+                    android:inputType="datetime"
+                    android:paddingLeft="15dp"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:textSize="18sp"
+                    android:hint="Start Date"
+                    android:textColorHint="@color/colorPrimaryLight"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/eventStartTimeButton"
+                    android:layout_width="289dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/dark_round_button"
+                    android:inputType="datetime"
+                    android:paddingLeft="15dp"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:textSize="18sp"
+                    android:hint="Start Time"
+                    android:textColorHint="@color/colorPrimaryLight" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/eventEndDateButton"
+                    android:layout_width="289dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/dark_round_button"
+                    android:inputType="datetime"
+                    android:paddingLeft="15dp"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:textSize="18sp"
+                    android:hint="End Date"
+                    android:textColorHint="@color/colorPrimaryLight"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/eventEndTimeButton"
+                    android:layout_width="289dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/dark_round_button"
+                    android:inputType="datetime"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:textSize="18sp"
+                    android:paddingLeft="15dp"
+                    android:hint="End Time"
+                    android:textColorHint="@color/colorPrimaryLight" />
+
+
+                <EditText
+                    android:id="@+id/eventAddressEditText"
+                    android:layout_width="289dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/dark_round_button"
+                    android:inputType="text|textAutoCorrect"
+                    android:paddingLeft="15dp"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:hint="Address"
+                    android:textColorHint="@color/colorPrimaryLight" />
+
+                <EditText
+                    android:id="@+id/eventDetailsEditText"
+                    android:layout_width="289dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/dark_round_button"
+                    android:inputType="text|textAutoCorrect|textMultiLine"
+                    android:paddingLeft="15dp"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:hint="Event Details"
+                    android:textColorHint="@color/colorPrimaryLight" />
+
+                <Switch
+                    android:id="@+id/switchAttendeeLimit"
+                    android:layout_width="289dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/dark_round_button"
+                    android:padding="16dp"
+                    android:paddingLeft="15dp"
+                    android:text="Set Check-in Limit"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:textSize="18sp" />
+
+                <Switch
+                    android:id="@+id/switchSignUpLimit"
+                    android:layout_width="289dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/dark_round_button"
+                    android:padding="16dp"
+                    android:paddingLeft="15dp"
+                    android:text="Set Sign-up Limit"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/editTextNumberAttendeeLimit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:ems="10"
+                    android:hint="Enter limit number"
+                    android:inputType="number"
+                    android:padding="16dp"
+                    android:visibility="gone"
+                    />
+
+
+            </LinearLayout>
+
+
+
+
+        </ScrollView>
+
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/buttonCreateEvent"
+
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="52dp"
+        android:background="@drawable/light_round_button"
+        android:fontFamily="@font/inter_medium"
+        android:text="Save Changes"
+        android:textColor="@color/black"
+        android:textSize="20sp" />
+
+</LinearLayout>
