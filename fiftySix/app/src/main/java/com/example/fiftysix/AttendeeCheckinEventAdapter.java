@@ -102,7 +102,7 @@ public class AttendeeCheckinEventAdapter extends RecyclerView.Adapter<AttendeeCh
         LinearLayout linearLayout;
         RelativeLayout expandableLayout;
         ImageView eventImage;
-        Button cancelSignupButton, checkinButton, viewAnnouncementsButton;
+        Button cancelSignupButton, viewAnnouncementsButton;
 
         public EventVH(@NonNull View itemView) {
             super(itemView);
@@ -125,7 +125,6 @@ public class AttendeeCheckinEventAdapter extends RecyclerView.Adapter<AttendeeCh
 
             eventImage = itemView.findViewById(R.id.event_poster_image);
             cancelSignupButton = itemView.findViewById(R.id.cancel_signup);
-            checkinButton = itemView.findViewById(R.id.checkin_from_signup);
             viewAnnouncementsButton = itemView.findViewById(R.id.view_announcements);
 
             linearLayout.setOnClickListener(new View.OnClickListener() {
@@ -159,15 +158,6 @@ public class AttendeeCheckinEventAdapter extends RecyclerView.Adapter<AttendeeCh
 
 
 
-            checkinButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    Attendee attendee = new Attendee(mContext);
-                    Event event = eventList.get(getAdapterPosition());
-                    attendee.checkInToEventID(event.getEventID());
-                }
-            });
             viewAnnouncementsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
