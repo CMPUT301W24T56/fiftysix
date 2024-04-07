@@ -196,57 +196,19 @@
                     android:textColor="@color/colorPrimaryLight"
                     android:textSize="18sp" />
 
-                    <EditText
-                        android:id="@+id/editTextNumberAttendeeLimit"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="15dp"
-                        android:layout_marginBottom="15dp"
-                        android:ems="10"
-                        android:hint="Enter limit number"
-                        android:inputType="number"
-                        android:padding="16dp"
-                        android:visibility="gone"
-                        />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/buttonUploadPoster"
-                    android:layout_width="300dp"
-                    android:layout_height="60dp"
+                <EditText
+                    android:id="@+id/editTextNumberAttendeeLimit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="15dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/dark_round_button"
-                    android:text="Upload Poster"
-                    android:textSize="20sp"
-                    android:textColor="@color/colorPrimaryLight" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/generatePromoQR"
-                    android:layout_width="300dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/dark_round_button"
-                    android:fontFamily="@font/inter_medium"
-                    android:text="Create PROMO QR Code"
-                    android:textColor="@color/colorPrimaryLight"
-                    android:textSize="20sp" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/reuseCheckinQR"
-                    android:layout_width="300dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="10dp"
                     android:layout_marginBottom="15dp"
-                    android:background="@drawable/dark_round_button"
-                    android:fontFamily="@font/inter_medium"
-                    android:text="Reuse check-in QR Code"
-                    android:textColor="@color/colorPrimaryLight"
-                    android:textSize="20sp" />
+                    android:ems="10"
+                    android:hint="Enter limit number"
+                    android:inputType="number"
+                    android:padding="16dp"
+                    android:visibility="gone"
+                    />
 
 
             </LinearLayout>
@@ -259,17 +221,17 @@
     </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatButton
-        android:layout_gravity="center_horizontal"
-
         android:id="@+id/buttonCreateEvent"
+
         android:layout_width="300dp"
         android:layout_height="60dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="52dp"
         android:background="@drawable/light_round_button"
         android:fontFamily="@font/inter_medium"
-        android:text="Create Event"
+        android:text="Save Changes"
         android:textColor="@color/black"
-        android:textSize="20sp"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="52dp"/>
+        android:textSize="20sp" />
 
 </LinearLayout>

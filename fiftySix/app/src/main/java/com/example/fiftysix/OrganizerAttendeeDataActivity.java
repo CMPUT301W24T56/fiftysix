@@ -29,7 +29,7 @@ public class OrganizerAttendeeDataActivity extends AppCompatActivity {
     private Organizer organizer;
     private String organizerID;
     private OrganizerAttendeesEventAdapter organizerAttendeesEventAdapter;
-    private ArrayList<Event> eventAttendeeDataList;
+    private ArrayList<Profile> profileDataList;
     private RecyclerView recyclerView;
     private String eventID;
 
@@ -56,8 +56,8 @@ public class OrganizerAttendeeDataActivity extends AppCompatActivity {
         organizer = new Organizer(context);
         organizerID = organizer.getOrganizerID();
 
-        eventAttendeeDataList = new ArrayList<>();
-        organizerAttendeesEventAdapter = new OrganizerAttendeesEventAdapter(eventAttendeeDataList, this);
+        profileDataList = new ArrayList<>();
+        organizerAttendeesEventAdapter = new OrganizerAttendeesEventAdapter(profileDataList, this);
         recyclerView.setAdapter(organizerAttendeesEventAdapter);
         recyclerView.setHasFixedSize(false);
 
@@ -124,7 +124,7 @@ public class OrganizerAttendeeDataActivity extends AppCompatActivity {
                                                     String attendeePhoneNumber = documentSnapshot.getString("phone");
                                                     String attendeeEmail = documentSnapshot.getString("email");
                                                     String profileURL = documentSnapshot.getString("profileImageURL");
-                                                    eventAttendeeDataList.add(new Event(eventID, attendeeName, attendeePhoneNumber, attendeeEmail, "temp hard coded for testing", 0, 0,0, profileURL));
+                                                    profileDataList.add(new Profile(attendeeName, attendeePhoneNumber, "NA", attendeeEmail, profileURL, "NA"));;
                                                     organizerAttendeesEventAdapter.notifyDataSetChanged();
                                                 }
                                             }

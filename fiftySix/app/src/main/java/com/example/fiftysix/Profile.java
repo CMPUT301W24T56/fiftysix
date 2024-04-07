@@ -37,6 +37,8 @@ public class Profile {
     private String currentImageID;
     private String imageUrl;
     private String checkInTime;
+    private String timesCheckedIn;
+
     private Boolean expandable;
 
 
@@ -57,6 +59,17 @@ public class Profile {
         this.checkInTime = checkInTime;
         this.email = email;
         this.imageUrl = imageUrl;
+
+        this.expandable = false;
+    }
+
+    public Profile(String name, String phoneNumber, String checkInTime, String email, String imageUrl, String timesCheckedIn){
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.checkInTime = checkInTime;
+        this.email = email;
+        this.imageUrl = imageUrl;
+        this.timesCheckedIn = timesCheckedIn;
 
         this.expandable = false;
     }
@@ -271,4 +284,6 @@ public class Profile {
     public String getCheckInTime() {
         return checkInTime;
     }
+
+    public String getTimesCheckedIn(){ return timesCheckedIn; }
 }

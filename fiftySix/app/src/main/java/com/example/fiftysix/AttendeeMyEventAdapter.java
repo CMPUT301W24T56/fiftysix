@@ -45,18 +45,33 @@ public class AttendeeMyEventAdapter extends RecyclerView.Adapter<AttendeeMyEvent
 
         Event event = eventList.get(position);
         holder.eventName.setText(event.getEventName());
-        holder.eventDate.setText(event.getLocation());
-        holder.eventLocation.setText(event.getDate());
+        holder.eventLocation.setText(event.getLocation());
         holder.descriptionTxt.setText(event.getDetails());
 
-        if(event.getAttendeeLimit() == 2147483647){
-            holder.descriptionEvent.setText("Capacity: Unlimited");
-        }
-        else{
-            holder.descriptionEvent.setText("Capacity: " + event.getAttendeeLimit().toString());
+        String endDay = event.getEndDate();
+        String endTime = event.getEndTime();
+        String startDay = event.getStartDate();
+        String startTime = event.getStartTime();
+
+        if (endDay != null){
+            String start = "Event Start: " + startTime.toString() + ",  " + startDay.toString();
+            String end =   "Event End:  " + endTime.toString() + ",  " + endDay.toString();
+            holder.startDate.setText(start);
+            holder.endDate.setText(end);
+
         }
 
-        holder.attendeeCount.setText("Current Attendees: " + event.getAttendeeCount().toString());
+
+
+
+        if(event.getCheckInLimit() == 2147483647){
+            holder.currentAttendees.setText("Check-in Limit: Unlimited");
+        }
+        else{
+            holder.currentAttendees.setText("Check-in Limit: " + event.getCheckInLimit().toString());
+        }
+
+        holder.attendeeCapacity.setText("Check-ins: " + event.getAttendeeCount().toString());
 
 
         String imageUrl = event.getPosterURL();
@@ -80,7 +95,7 @@ public class AttendeeMyEventAdapter extends RecyclerView.Adapter<AttendeeMyEvent
 
     public class EventVH extends RecyclerView.ViewHolder {
 
-        TextView eventName, eventDate, eventLocation, descriptionTxt, attendeeCount, descriptionEvent;
+        TextView eventName, startDate, endDate, eventLocation, descriptionTxt, attendeeCapacity, currentAttendees;
         LinearLayout linearLayout;
         RelativeLayout expandableLayout;
         ImageView eventImage;
@@ -90,11 +105,13 @@ public class AttendeeMyEventAdapter extends RecyclerView.Adapter<AttendeeMyEvent
             super(itemView);
 
             eventName = itemView.findViewById(R.id.event_name);
-            eventDate = itemView.findViewById(R.id.event_date);
-            eventLocation = itemView.findViewById(R.id.event_location);
+            startDate = itemView.findViewById(R.id.startDate);
+            endDate = itemView.findViewById(R.id.endDate);
+
+            eventLocation = itemView.findViewById(R.id.locationOfEvent);
             descriptionTxt = itemView.findViewById(R.id.description);
-            attendeeCount = itemView.findViewById(R.id.attendeeCapacity);
-            descriptionEvent = itemView.findViewById(R.id.currentAttendees);
+            currentAttendees = itemView.findViewById(R.id.attendeeCapacity);
+            attendeeCapacity = itemView.findViewById(R.id.currentAttendees);
 
             linearLayout = itemView.findViewById(R.id.linear_layout);
             expandableLayout = itemView.findViewById(R.id.expandable_layout);
@@ -109,8 +126,14 @@ public class AttendeeMyEventAdapter extends RecyclerView.Adapter<AttendeeMyEvent
                 public void onClick(View v) {
 
                     Event event = eventList.get(getAdapterPosition());
-                    event.setExpandable(!event.getExpandable());
-                    notifyItemChanged(getAdapterPosition());
+                    if (event.getEventID() == null){
+                        event.setExpandable(false);
+                        notifyItemChanged(getAdapterPosition());
+                   }
+                    else{
+                        event.setExpandable(!event.getExpandable());
+                        notifyItemChanged(getAdapterPosition());
+                    }
                 }
             });
 

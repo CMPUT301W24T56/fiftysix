@@ -26,7 +26,7 @@ public class OrganizerCheckInDataActivity extends AppCompatActivity {
     private Organizer organizer;
     private String organizerID;
     private OrganizerCheckInEventAdapter organizerCheckInEventAdapter;
-    private ArrayList<Event> eventAttendeeDataList;
+    private ArrayList<Profile> profileDataList;
     private RecyclerView recyclerView;
     private String eventID;
 
@@ -53,8 +53,8 @@ public class OrganizerCheckInDataActivity extends AppCompatActivity {
         organizer = new Organizer(context);
         organizerID = organizer.getOrganizerID();
 
-        eventAttendeeDataList = new ArrayList<>();
-        organizerCheckInEventAdapter = new OrganizerCheckInEventAdapter(eventAttendeeDataList, this);
+        profileDataList = new ArrayList<>();
+        organizerCheckInEventAdapter = new OrganizerCheckInEventAdapter(profileDataList, this);
         recyclerView.setAdapter(organizerCheckInEventAdapter);
         recyclerView.setHasFixedSize(false);
 
@@ -82,7 +82,6 @@ public class OrganizerCheckInDataActivity extends AppCompatActivity {
 
         // Checks for updates in Events collection in firebase
 
-        Log.d("ORGATTENDEES", "eventID = " + eventID);
         db.collection("Events").document(eventID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -92,13 +91,7 @@ public class OrganizerCheckInDataActivity extends AppCompatActivity {
                 }
                 if (value != null) {
                     String eventID = value.getId();
-                    String eventName = value.getString("eventName");
-                    String posterID = value.getString("posterID");
-                    Integer inAttendeeLimit = value.getLong("attendeeLimit").intValue();
                     Integer inAttendeeCount = value.getLong("attendeeCount").intValue();
-                    String inDate = value.getString("date");
-                    String location = value.getString("location");
-                    String details = value.getString("details");
 
                     if (inAttendeeCount > 0) {
 
@@ -111,21 +104,26 @@ public class OrganizerCheckInDataActivity extends AppCompatActivity {
                                     // Loops through all attendees at the event and adds them to eventAttendeeDataList to be displayed to the organizer
                                     for (QueryDocumentSnapshot attendeeDoc : querySnapshot) {
                                         String attendeeID = attendeeDoc.getId();
+                                        String timesCheckedIn = attendeeDoc.getLong("timesCheckedIn").toString();
+                                        String currentlyAtEvent = attendeeDoc.getString("currentlyAtEvent");
+                                        String checkInTime =  attendeeDoc.getString("checkInTime");
 
-                                        // Gets the profile matching the attendee at the event, used to display the attendees info to the organizer.
-                                        db.collection("Profiles").document(attendeeID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                if (documentSnapshot != null) {
-                                                    String attendeeName = documentSnapshot.getString("name");
-                                                    String attendeePhoneNumber = documentSnapshot.getString("phone");
-                                                    String attendeeEmail = documentSnapshot.getString("email");
-                                                    String profileURL = documentSnapshot.getString("profileImageURL");
-                                                    eventAttendeeDataList.add(new Event(eventID, attendeeName, attendeePhoneNumber, attendeeEmail, "temp hard coded for testing", 0, 0, 0,profileURL));
-                                                    organizerCheckInEventAdapter.notifyDataSetChanged();
+                                        if (currentlyAtEvent.equals("yes")){
+                                            // Gets the profile matching the attendee at the event, used to display the attendees info to the organizer.
+                                            db.collection("Profiles").document(attendeeID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                    if (documentSnapshot != null) {
+                                                        String attendeeName = documentSnapshot.getString("name");
+                                                        String attendeePhoneNumber = documentSnapshot.getString("phone");
+                                                        String attendeeEmail = documentSnapshot.getString("email");
+                                                        String profileURL = documentSnapshot.getString("profileImageURL");
+                                                        profileDataList.add(new Profile(attendeeName, attendeePhoneNumber, checkInTime, attendeeEmail, profileURL, timesCheckedIn));
+                                                        organizerCheckInEventAdapter.notifyDataSetChanged();
+                                                    }
                                                 }
-                                            }
-                                        });
+                                            });
+                                        }
                                     }
                                 }
                             }

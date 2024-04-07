@@ -1,18 +1,13 @@
 package com.example.fiftysix;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.util.Log;
+
 import androidx.annotation.NonNull;
 
-import com.blankj.utilcode.util.FileUtils;
-import com.blankj.utilcode.util.ImageUtils;
-import com.blankj.utilcode.util.UriUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.FirebaseDatabase;
@@ -26,27 +21,23 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
+
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-// This class Creates and Stores a QRCode for attendees to check into an event with.
-// Requires a (String) eventID to instantiate this class.
-// QRCode is uploaded to Firebase.
-
-public class CheckInQRCode{
+public class PromoQRCode {
 
     // MIGHT need to add an organizer ID
 
     // Change values to edit QR code width and height.
     private Integer qrWidth = 400;
     private Integer qrHeight = 400;
+    private String type;
     private String eventID;
     private Bitmap qrCode;
     private String qrCodeID;
-    private String type = "checkIn";
     private FirebaseFirestore db;
     private CollectionReference qrRef;
     private FirebaseStorage storage;
@@ -59,7 +50,7 @@ public class CheckInQRCode{
 
 
     // Constructor: requires eventID to instantiate.
-    public CheckInQRCode(String eventID, Context contextIN) {
+    public PromoQRCode( Context contextIN ) {
 
         this.eventID = eventID;
 
@@ -70,12 +61,12 @@ public class CheckInQRCode{
         this.qrRef = db.collection("CheckInQRCode");
         this.storage = FirebaseStorage.getInstance();
         this.storageRef = storage.getReference();
-        this.imagePath = "images/checkInQRCode/" + qrCodeID;
+        this.imagePath = "images/promoQRCode/" + qrCodeID;
         this.mContext = contextIN;
-        this.eventID = eventID;
+        this.eventID = null;
         this.uriToBitMap = null;
+        this.type = "promo";
 
-        this.generateQR();
 
     }
 
@@ -91,6 +82,11 @@ public class CheckInQRCode{
         return qrCode;
     }
     public String getQRCodeID(){ return qrCodeID; }
+
+    public void setEvent(String eventID){
+        this.eventID = eventID;
+        this.generateQR();
+    }
 
 
     // Generates a QR code (Bitmap) containing a string of the eventID. Adds image of qr code and event data to firebase.
@@ -169,12 +165,12 @@ public class CheckInQRCode{
         qrImagesRef.putFile(image).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Log.d("Cloud", "Check-in QR Code Image successfully uploaded!");
+                Log.d("Cloud", "Promo QR Code Image successfully uploaded!");
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.d("Cloud", "ERROR: Check-in QR Code Image did not upload.");
+                Log.d("Cloud", "ERROR: Promo QR Code Image did not upload.");
             }
         });
 
@@ -191,6 +187,5 @@ public class CheckInQRCode{
         return Uri.parse(path);
 
     }
-
 
 }

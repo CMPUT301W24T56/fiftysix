@@ -77,9 +77,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventVH> {
         public EventVH(@NonNull View itemView, boolean isExpandableOnClick) {
             super(itemView);
 
-            codeName = itemView.findViewById(R.id.code_name);
-            versionTxt = itemView.findViewById(R.id.version);
-            apiLevelTxt = itemView.findViewById(R.id.apiLevel);
+            codeName = itemView.findViewById(R.id.eventName);
+            versionTxt = itemView.findViewById(R.id.startDate);
+            apiLevelTxt = itemView.findViewById(R.id.locationOfEvent);
             descriptionTxt = itemView.findViewById(R.id.description);
 
             linearLayout = itemView.findViewById(R.id.linear_layout);

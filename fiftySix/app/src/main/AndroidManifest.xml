@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission
@@ -10,7 +12,8 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
@@ -26,10 +29,11 @@
         <!-- Specific query for camera capture intent -->
         <intent>
             <action android:name="android.media.action.IMAGE_CAPTURE" />
+
         </intent>
     </queries>
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
 
     <application
         android:allowBackup="true"
@@ -41,6 +45,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FiftySix"
         tools:targetApi="31">
+        <activity
+            android:name=".EditEventActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PromoScanActivity"
+            android:exported="false" />
         <activity
             android:name=".OrganizerSignUpDataActivity"
             android:exported="false" />
@@ -70,10 +80,10 @@
         <activity
             android:name=".profile_attendee_edit"
             android:exported="true" />
-
         <activity android:name=".AdminBrowseEvents" />
-        <activity android:name=".location"
-            android:exported="true"/>
+        <activity
+            android:name=".location"
+            android:exported="true" />
         <activity
             android:name="send_notification"
             android:exported="true" />
@@ -91,10 +101,10 @@
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
             android:theme="@style/zxing_CaptureTheme" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDSj9p36UoSfFU990ZQrkib_CzFg5fPQk0"/>
-
+            android:value="AIzaSyDSj9p36UoSfFU990ZQrkib_CzFg5fPQk0" />
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
@@ -102,11 +112,11 @@
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.fiftysix.provider"
-            android:grantUriPermissions="true"
-            android:exported="false">
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
+                android:resource="@xml/file_paths" />
         </provider>
 
         <service android:name=".MyFirebaseMessaging"

@@ -45,18 +45,31 @@ public class AttendeeCheckinEventAdapter extends RecyclerView.Adapter<AttendeeCh
 
         Event event = eventList.get(position);
         holder.eventName.setText(event.getEventName());
-        holder.eventDate.setText(event.getLocation());
-        holder.eventLocation.setText(event.getDate());
+
+        holder.eventLocation.setText(event.getLocation());
         holder.descriptionTxt.setText(event.getDetails());
 
-        if(event.getAttendeeLimit() == 2147483647){
-            holder.descriptionEvent.setText("Capacity: Unlimited");
-        }
-        else{
-            holder.descriptionEvent.setText("Sign-Up Limit: " + event.getAttendeeLimit().toString());
+        String endDay = event.getEndDate();
+        String endTime = event.getEndTime();
+        String startDay = event.getStartDate();
+        String startTime = event.getStartTime();
+
+        if (endDay != null){
+            String start = "Event Start: " + startTime.toString() + ",  " + startDay.toString();
+            String end =   "Event End:  " + endTime.toString() + ",  " + endDay.toString();
+            holder.startDate.setText(start);
+            holder.endDate.setText(end);
+
         }
 
-        holder.attendeeCount.setText("People Signed-Up: " + event.getSignUpCount().toString());
+        if(event.getCheckInLimit() == 2147483647){
+            holder.attendeeCapacity.setText("Check-in Limit: Unlimited");
+        }
+        else{
+            holder.attendeeCapacity.setText("Check-in Limit: " + event.getCheckInLimit().toString());
+        }
+
+        holder.currentAttendees.setText("Check-ins: " + event.getAttendeeCount().toString());
 
 
 
@@ -85,22 +98,25 @@ public class AttendeeCheckinEventAdapter extends RecyclerView.Adapter<AttendeeCh
 
     public class EventVH extends RecyclerView.ViewHolder {
 
-        TextView eventName, eventDate, eventLocation, descriptionTxt, attendeeCount, descriptionEvent;
+        TextView eventName, endDate, startDate, eventLocation, descriptionTxt, attendeeCapacity, currentAttendees;
         LinearLayout linearLayout;
         RelativeLayout expandableLayout;
         ImageView eventImage;
-        Button cancelSignupButton, checkinButton, viewAnnouncementsButton;
+        Button cancelSignupButton, viewAnnouncementsButton;
 
         public EventVH(@NonNull View itemView) {
             super(itemView);
 
 
             eventName = itemView.findViewById(R.id.event_name);
-            eventDate = itemView.findViewById(R.id.event_date);
-            eventLocation = itemView.findViewById(R.id.event_location);
+            startDate = itemView.findViewById(R.id.startDate);
+            endDate = itemView.findViewById(R.id.endDate);
+
+            eventLocation = itemView.findViewById(R.id.locationOfEvent);
             descriptionTxt = itemView.findViewById(R.id.description);
-            attendeeCount = itemView.findViewById(R.id.attendeeCapacity);
-            descriptionEvent = itemView.findViewById(R.id.currentAttendees);
+
+            attendeeCapacity = itemView.findViewById(R.id.attendeeCapacity);
+            currentAttendees = itemView.findViewById(R.id.currentAttendees);
 
             linearLayout = itemView.findViewById(R.id.linear_layout);
             expandableLayout = itemView.findViewById(R.id.expandable_layout);
@@ -109,16 +125,24 @@ public class AttendeeCheckinEventAdapter extends RecyclerView.Adapter<AttendeeCh
 
             eventImage = itemView.findViewById(R.id.event_poster_image);
             cancelSignupButton = itemView.findViewById(R.id.cancel_signup);
-            checkinButton = itemView.findViewById(R.id.checkin_from_signup);
             viewAnnouncementsButton = itemView.findViewById(R.id.view_announcements);
 
             linearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
+
+
                     Event event = eventList.get(getAdapterPosition());
-                    event.setExpandable(!event.getExpandable());
-                    notifyItemChanged(getAdapterPosition());
+
+                    if (event.getEventID() == null){
+                        event.setExpandable(false);
+                        notifyItemChanged(getAdapterPosition());
+                    }
+                    else{
+                        event.setExpandable(!event.getExpandable());
+                        notifyItemChanged(getAdapterPosition());
+                    }
                 }
             });
 
@@ -134,15 +158,6 @@ public class AttendeeCheckinEventAdapter extends RecyclerView.Adapter<AttendeeCh
 
 
 
-            checkinButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    Attendee attendee = new Attendee(mContext);
-                    Event event = eventList.get(getAdapterPosition());
-                    attendee.checkInToEventID(event.getEventID());
-                }
-            });
             viewAnnouncementsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

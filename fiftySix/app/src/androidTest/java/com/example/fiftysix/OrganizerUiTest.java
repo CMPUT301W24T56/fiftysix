@@ -1,6 +1,5 @@
 package com.example.fiftysix;
 
-import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -11,22 +10,15 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withInputType;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static java.lang.Thread.sleep;
 
-import android.content.Context;
-import android.content.Intent;
-import android.provider.MediaStore;
-import android.provider.Settings;
 import android.text.InputType;
-import android.widget.EditText;
 
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -69,7 +61,7 @@ public class OrganizerUiTest {
         onView(withId(R.id.eventAddressEditText)).perform(clearText(), typeText(address), closeSoftKeyboard());
 
         // Perform action: Clear existing text and type new text into the date section
-        onView(withId(R.id.eventDateEditText)).perform(clearText(), typeText(date), closeSoftKeyboard());
+        onView(withId(R.id.eventStartDateButton)).perform(clearText(), typeText(date), closeSoftKeyboard());
         // perform action creating the event .
         onView(withId(R.id.buttonBackCreateEvent)).perform(click());
     }

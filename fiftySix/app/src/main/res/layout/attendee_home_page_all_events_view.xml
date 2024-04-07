@@ -55,39 +55,36 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginEnd="320dp"
-        android:background="@drawable/transparent_background_button"
+        android:background="@drawable/user__1_"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/user_ic_launcher_foreground" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <ImageButton
         android:id="@+id/buttonAttendeeSignInEventAllEvents"
         android:layout_width="73dp"
         android:layout_height="81dp"
         android:background="@drawable/transparent_background_button"
-        android:scaleType="center"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/buttonAttendeeNotificationBelAllEvents"
-        app:layout_constraintStart_toEndOf="@+id/buttonAttendeeHomeAllEvents"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:srcCompat="@drawable/icons8_qr_50" />
+        app:srcCompat="@drawable/icons8_qr_50"  />
 
     <ImageButton
         android:id="@+id/buttonAttendeeNotificationBelAllEvents"
-        android:layout_width="77dp"
-        android:layout_height="63dp"
+        android:layout_width="70dp"
+        android:layout_height="72dp"
         android:layout_marginStart="320dp"
-        android:layout_marginTop="4dp"
         android:layout_marginEnd="15dp"
-        android:background="@drawable/transparent_background_button"
+        android:background="@drawable/notification_bell__1_"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.512"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:srcCompat="@mipmap/notif_ic_launcher_foreground" />
+ />
 
     <Spinner
         android:id="@+id/menuButtonAllEvents"

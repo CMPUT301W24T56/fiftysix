@@ -76,14 +76,15 @@
 
     <ImageButton
         android:id="@+id/buttonBackUploadQR"
-        android:layout_width="70dp"
-        android:layout_height="56dp"
+        android:layout_width="60dp"
+        android:layout_height="41dp"
         android:layout_marginEnd="300dp"
-        android:background="@drawable/transparent_background_button"
+        android:background="@drawable/arrow_123"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.313"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/back_ic_launcher_foreground" />
+        app:layout_constraintVertical_bias="0.457" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
