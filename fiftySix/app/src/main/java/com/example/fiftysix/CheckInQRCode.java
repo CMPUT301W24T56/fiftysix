@@ -113,16 +113,20 @@ public class CheckInQRCode{
      * @param callback Used as a function point to store a boolean, true if QR can be reused, false if not.
      */
     public void checkValidReuseQR(String reuseQRId, CheckInQRCodeCallback callback){
-        qrRef.document(reuseQRId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        FirebaseFirestore.getInstance().collection("CheckInQRCode").document(reuseQRId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if ( (documentSnapshot.exists()) && (documentSnapshot != null) && (documentSnapshot.getString("event") != null) ){
                     String oldEventId = documentSnapshot.getString("event");
 
-                    db.collection("Events").document(oldEventId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+
+
+                    FirebaseFirestore.getInstance().collection("Events").document(oldEventId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot dSnapshot) {
                             if ( (dSnapshot.exists()) && (dSnapshot != null) && (dSnapshot.getString("endDate") != null) ){
+
+
                                 String endDate = dSnapshot.getString("endDate");
                                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
                                 Date strDate = null;
@@ -149,6 +153,8 @@ public class CheckInQRCode{
                 }
                 else{
                     callback.onSuccess(false);
+
+
                 }
             }
         });

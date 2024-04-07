@@ -709,7 +709,10 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
     /**
      *  Reference - "youtube - Implement Barcode QR Scanner in Android studio barcode reader | Cambo Tutorial" - youtube channel = Cambo Tutorial
-     *  Scans QR code, gets the string. This string returned as a unique QRCode id.
+     *  Scans QR code, gets the string. This string returned as a unique QRCode id. It then checks if the QR code is elidible for reuse as a checckin QR Code.
+     *  Criteria for eligibility is:
+     *  1. Belongs to an INACTIVE event.
+     *  2. Was a CHECK-IN QR code on this app.
      */
     private void scanCode () {
             ScanOptions options = new ScanOptions();
@@ -722,35 +725,58 @@ public class OrganizerMainActivity extends AppCompatActivity {
         ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
 
             if (result.getContents() != null) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(OrganizerMainActivity.this);
-                builder.setTitle("Result");
-                builder.setMessage(result.getContents());
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+
                         scanQRID = result.getContents().toString();
                         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
                         Date strDate = null;
+
+
+
 
                         new CheckInQRCode().checkValidReuseQR(scanQRID, new CheckInQRCode.CheckInQRCodeCallback() {
                             @Override
                             public void onSuccess(Boolean validQR) {
                                 if (validQR){
                                     reuseQRID = scanQRID;
+
+
+                                    new AlertDialog.Builder(OrganizerMainActivity.this)
+                                            .setTitle("QR Code Set")
+                                            .setMessage("Your QR code was successfully set.")
+                                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                }
+                                            })
+                                            .show();
+
+
+                                }else{
+                                    new AlertDialog.Builder(OrganizerMainActivity.this)
+                                            .setTitle("QR Code Not Eligible")
+                                            .setMessage("A QR code is not eligible if:\n1. Belongs to an active or upcoming event.\n2. Was never used as a CHECK-IN QR code on this app, ALL Promo QR Codes are ineligible.")
+                                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                }
+                                            })
+                                            .show();
                                 }
                             }
 
                             @Override
                             public void onFailure(Exception e) {
 
+
+
+
                             }
                         });
 
 
-                        dialog.dismiss();
                     }
-                }).show();
-            }
+
+
 
         });
 
