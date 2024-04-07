@@ -24,6 +24,9 @@ public class notification {
         Log.d("even_id",eventId);
         Map<String,String> data = new HashMap<>();
         data.put("announcements",message);
+
+
+
         db.collection("Events").document(eventId).get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override

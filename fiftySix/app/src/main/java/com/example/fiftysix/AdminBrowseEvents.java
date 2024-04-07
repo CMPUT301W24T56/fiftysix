@@ -45,8 +45,12 @@ public class AdminBrowseEvents extends AppCompatActivity {
                 d.getId(),
                 d.getString("eventName"),
                 d.getString("location"),
-                d.getString("date"),
+                d.getString("startDate"),
+                d.getString("endDate"),
+                d.getString("startTime"),
+                d.getString("endTime"),
                 d.getString("details"),
+                100,
                 100,
                 1000,
                 1000,
@@ -57,27 +61,6 @@ public class AdminBrowseEvents extends AppCompatActivity {
         db.collection("Events")
                 .get()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, "Number of events fetched: " + task.getResult().size());
-                        eventList.clear();
-
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            String eventID = document.getId();
-                            String eventName = document.getString("eventName");
-                            String eventLocation = document.getString("location");
-
-                            String posterURL = document.getString("posterURL");
-                            String details = document.getString("details");
-
-                            String startDate = document.getString("startDate");
-                            String startTime = document.getString("startTime");
-                            String endDate = document.getString("endDate");
-                            String endTime = document.getString("endTime");
-
-                            eventList.add(new Event(eventID, eventName, eventLocation, startDate, endDate, startTime, endTime, details, 100, 100,1000, 1000, posterURL));
-                            eventAdapter.notifyDataSetChanged();
-                        }
-                    } else {
                     if (!task.isSuccessful()) {
                         Log.d(TAG, "Error getting documents: ", task.getException());
                         return;
@@ -89,5 +72,6 @@ public class AdminBrowseEvents extends AppCompatActivity {
                         eventList.add(doc2event(d));
                     adapter.notifyDataSetChanged();
                 });
+
     }
 }

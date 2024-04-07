@@ -172,6 +172,9 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
 
 
+
+
+
         // View flipper, used to avoid opening new activities and keep the app running fast, Stores all of the layouts for attendee inside it.
         setContentView(R.layout.attendee_flipper);
 
@@ -284,10 +287,13 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
         // update token of device
         // updatetoken(attendeeID);
+
     }
 
 
     //________________________________________Methods________________________________________
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
