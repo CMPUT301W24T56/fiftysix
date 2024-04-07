@@ -1,26 +1,43 @@
 package com.example.fiftysix;
 
+import static android.content.ContentValues.TAG;
+
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import org.json.JSONArray;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class notification {
+    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    public void sendNotificationToEventAttendees(String eventId, String eventName, String message, Context context) {
+    public void sendNotificationToEventAttendees(String eventId, String eventName, String message, Context context) throws JSONException {
         Log.d("even_id",eventId);
         Map<String,String> data = new HashMap<>();
         data.put("announcements",message);
@@ -90,9 +107,22 @@ public class notification {
                         // Handle failures
                     }
                 });
-        sendNotification(context, eventId,eventName, message);
+        // sendNotification(context, eventId,eventName, message);
+        // need to store notifications in side the collection of events  event document
+        Map<String, Object> notificationData = new HashMap<>();
+        List<String> attendeesIds = new ArrayList<>(); // Empty for now, to be filled later
+        notificationData.put("attendees", attendeesIds);
+        notificationData.put("event_name",eventName);
+        notificationData.put("notification",message);
+        db.collection("Events").document(eventId).collection("Notifications").add(notificationData)
+                .addOnSuccessListener(documentReference -> Log.d("Firestore", "Notification added with ID: " + documentReference.getId()))
+                .addOnFailureListener(e -> Log.w("Firestore", "Error adding notification", e));
 
     }
+
+
+
+//    //  public void
     private void sendNotification(Context context, String eventId, String eventName, String message) {
         createNotificationChannel(context,eventId);
 
@@ -121,4 +151,7 @@ public class notification {
             notificationManager.createNotificationChannel(channel);
         }
     }
+
+//
+
 }
