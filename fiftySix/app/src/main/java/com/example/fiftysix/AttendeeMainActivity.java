@@ -1,11 +1,7 @@
 package com.example.fiftysix;
 
 import static android.content.ContentValues.TAG;
-
 import static androidx.core.content.FileProvider.getUriForFile;
-import static java.lang.Thread.sleep;
-import static java.security.AccessController.getContext;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -13,9 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -35,7 +29,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -49,13 +42,10 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -68,21 +58,15 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 import com.squareup.picasso.Picasso;
-
-import org.checkerframework.checker.units.qual.A;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+
 
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
@@ -173,15 +157,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
 
-
-
-
-
-
-
-
-
-
         // View flipper, used to avoid opening new activities and keep the app running fast, Stores all of the layouts for attendee inside it.
         setContentView(R.layout.attendee_flipper);
 
@@ -194,15 +169,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
         setEditText();
 
 
-
-
-
-
         locationSwitch = findViewById(R.id.locationSwitch);
-
-
-
-
 
         // Creates/Gets attendee
         getLocation();
@@ -220,32 +187,28 @@ public class AttendeeMainActivity extends AppCompatActivity {
         setupEventAdapters();
 
         //________________________________________HomePage_______________________________________
-
         displayMyCheckins(); // updates users my events and all events recylcer views with live event data
         displayAllEvents();
         displayMySignUps();
         initializeHomePage(); // Sets up button functions on home page
         checkAnnouncements();
+
         //______________________________________Sign in to event Page_______________________________________
         initializeEventSignIn();
 
 
 
+        // Geolocation stuff
+        LocationManager locationMangaer = null;
+        LocationListener locationListener = null;
+        locationMangaer = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        setupLocationSwitch();
 
 
         //________________________________________Profile________________________________________
 
-
-        // Geolocation stuff
-
-        LocationManager locationMangaer = null;
-        LocationListener locationListener = null;
-
-        locationMangaer = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-
-
-        setupLocationSwitch();
+        displayProfileData(); // Gets profile data and displays it from the data base.
+        initializeProfileLayout(); // Adds onclick listeners and what should happen on click.
 
 
         profileImage.setOnClickListener(new View.OnClickListener() {
@@ -276,31 +239,11 @@ public class AttendeeMainActivity extends AppCompatActivity {
                     }
                 }
         );
-
-
-        //cameraLauncher.launch(selectedImageUri);
-
-
-
-
-
-
-
-        displayProfileData(); // Gets profile data and displays it from the data base.
-        initializeProfileLayout(); // Adds onclick listeners and what should happen on click.
-
-
-
-
-        // update token of device
-        // updatetoken(attendeeID);
-
     }
 
 
     //________________________________________Methods________________________________________
-    private void checkAnnouncements(){
-        Log.d("checking announcements", " inside announcements function attendee");
+
 
 
 
@@ -432,8 +375,10 @@ public class AttendeeMainActivity extends AppCompatActivity {
         });
     }
 
+    private void checkAnnouncements() {
 
-//    public void updatetoken(String attendeeid){
+        Log.d("checking announcements", " inside announcements function attendee");
+        //    public void updatetoken(String attendeeid){
 //        announcements = new MyFirebaseMessaging(attendeeid);
 //
 //        announcements.
@@ -443,49 +388,65 @@ public class AttendeeMainActivity extends AppCompatActivity {
             @Override
             public void onCallback(List<String> eventIds) {
                 // Handle the retrieved event IDs here
-                if (eventIds.size() > 0){
-                    for (String id : eventIds) {
-                        CollectionReference collectionRef  = db.collection("Events").document(id).collection("Notifications");
-                        collectionRef.get().addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) { // Check if the fetch was successful
-                                for (QueryDocumentSnapshot document : task.getResult()) { // Iterate through each document
-                                    // getting the data stored in the attendees field which is a list of strigs
-                                    String document_id = (String) document.getId();
-                                    List<String> attendees = (List<String>) document.get("attendees");
-                                    if (attendees != null) {
-                                        // Process the list of attendees. This is a placeholder for whatever processing you need to do.
-                                        // int size = attendees.size();
-                                        if (attendees.contains(attendeeID)) {
-                                            // Found a matching ID
-                                            Log.d("attendeeId_announcement", " inside announcements function attendee");
-                                            continue;
-                                        }
-                                        else {
-                                            String notification = (String) document.get("notification");
-                                            String event_name = (String) document.get("event_name");
-                                            notify_client(document_id,notification,id,event_name);
-                                        }
 
+                db.collection("Events").addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if (eventIds.size() > 0){
+
+                            for (String id : eventIds) {
+
+                                CollectionReference collectionRef  = db.collection("Events").document(id).collection("Notifications");
+                                collectionRef.get().addOnCompleteListener(task -> {
+
+
+
+                                    if (task.isSuccessful()) { // Check if the fetch was successful
+                                        for (QueryDocumentSnapshot document : task.getResult()) { // Iterate through each document
+                                            // getting the data stored in the attendees field which is a list of strigs
+                                            String document_id = (String) document.getId();
+                                            List<String> attendees = (List<String>) document.get("attendees");
+                                            if (attendees != null) {
+                                                // Process the list of attendees. This is a placeholder for whatever processing you need to do.
+                                                // int size = attendees.size();
+                                                if (attendees.contains(attendeeID)) {
+                                                    // Found a matching ID
+                                                    Log.d("attendeeId_announcement", " inside announcements function attendee");
+                                                    continue;
+                                                }
+                                                else {
+                                                    String notification = (String) document.get("notification");
+                                                    String event_name = (String) document.get("event_name");
+                                                    notify_client(document_id,notification,id,event_name);
+                                                }
+
+                                            }
+                                            else {
+                                                Log.d("new_notification","empty attendee list");
+                                                String notification = (String) document.get("notification");
+                                                String event_name = (String) document.get("event_name");
+                                                notify_client(document_id,notification,id,event_name);
+                                            }
+                                        }
+                                    } else { // Handle failures
+                                        Log.w("Notification", "Error getting documents.", task.getException());
                                     }
-                                    else {
-                                        Log.d("new_notification","empty attendee list");
-                                        String notification = (String) document.get("notification");
-                                        String event_name = (String) document.get("event_name");
-                                        notify_client(document_id,notification,id,event_name);
-                                    }
-                                }
-                            } else { // Handle failures
-                                Log.w("Notification", "Error getting documents.", task.getException());
+                                });
                             }
-                        });
+                        }
                     }
-                }
-
-
+                });
             }
         });
     }
-        //  no signedup events
+
+
+
+
+
+
+
+    //  no signedup events
 
     private void notify_client(String id, String notify_message,String event_id,String event) {
         Log.d("checking notification", " inside announcements function attendee");
@@ -972,11 +933,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
      */
     private void displayAllEvents(){
         // Displays all events
-
-
-
-
-
         eventRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {

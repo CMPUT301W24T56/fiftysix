@@ -60,7 +60,7 @@ public class EditEventActivity extends AppCompatActivity {
 
     private EditText eventAddressEditText;
     private EditText eventDetailsEditText;
-    private Switch switchAttendeeLimit, switchSignUpLimit;
+
     private int mYear, mMonth, mDay;
 
 
@@ -79,8 +79,7 @@ public class EditEventActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
 
-        switchAttendeeLimit = findViewById(R.id.switchAttendeeLimit);
-        switchSignUpLimit = findViewById(R.id.switchSignUpLimit);
+
 
         eventTitleEditText = (EditText) findViewById(R.id.eventNameEditText);
         eventAddressEditText = (EditText) findViewById(R.id.eventAddressEditText);
@@ -95,9 +94,6 @@ public class EditEventActivity extends AppCompatActivity {
 
         createEvent = (Button) findViewById(R.id.buttonCreateEvent);
         eventDetailsBack = (ImageButton) findViewById(R.id.buttonBackCreateEvent);
-
-        switchAttendeeLimit = findViewById(R.id.switchAttendeeLimit);
-        switchSignUpLimit = findViewById(R.id.switchSignUpLimit);
 
 
         eventDateButton = (Button) findViewById(R.id.eventStartDateButton);
@@ -232,7 +228,16 @@ public class EditEventActivity extends AppCompatActivity {
                 mTimePicker = new TimePickerDialog(EditEventActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        eventStartTimeButton.setText( "Start Time: " + selectedHour + ":" + selectedMinute);
+                        String min = "00";
+                        if (selectedMinute == 0){
+                        }
+                        else if(selectedMinute < 10){
+                            min = "0" + String.valueOf(selectedMinute);
+                        }
+                        else{
+                            min = String.valueOf(selectedMinute);
+                        }
+                        eventStartTimeButton.setText( "Start Time: " + selectedHour + ":" + min);
                     }
                 }, hour, minute, true);//Yes 24 hour time
                 mTimePicker.setTitle("Select Start Time");
@@ -253,7 +258,16 @@ public class EditEventActivity extends AppCompatActivity {
                 mTimePicker = new TimePickerDialog(EditEventActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        eventEndTimeButton.setText("End Time: " + selectedHour + ":" + selectedMinute);
+                        String min = "00";
+                        if (selectedMinute == 0){
+                        }
+                        else if(selectedMinute < 10){
+                            min = "0" + String.valueOf(selectedMinute);
+                        }
+                        else{
+                            min = String.valueOf(selectedMinute);
+                        }
+                        eventEndTimeButton.setText("End Time: " + selectedHour + ":" + min);
                     }
                 }, hour, minute, true);//Yes 24 hour time
                 mTimePicker.setTitle("Select End Time");
@@ -320,135 +334,12 @@ public class EditEventActivity extends AppCompatActivity {
                     FirebaseFirestore.getInstance().collection("Events").document(eventID).update("location", eventAddress);
                     FirebaseFirestore.getInstance().collection("Events").document(eventID).update("eventName", eventTitle);
 
-
-                    // resets text displayed
-
-
-
-                    //finish();
+                    finish();
                 }
             }
         });
     }
 
-    // Wanted to add these but ran out of time.
-    /*
-
-    private void setupAttendeeLimitSwitch(){
-        switchAttendeeLimit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
-                if (isChecked) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(EditEventActivity.this);
-                    builder.setTitle("Set Attendee Check-in Limit");
-
-                    // Set up the input
-                    final EditText input = new EditText(EditEventActivity.this);
-                    input.setInputType(InputType.TYPE_CLASS_NUMBER);
-                    builder.setView(input);
-
-                    // Set up the buttons
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            try {
-                                int limit = Integer.parseInt(input.getText().toString());
-                                if (limit > 0) {
-                                    attendeeLimit = limit;
-                                } else {
-                                    // Invalid input, revert the switch to unchecked
-                                    switchAttendeeLimit.setChecked(false);
-                                    attendeeLimit = Integer.MAX_VALUE;
-                                }
-                            } catch (NumberFormatException e) {
-                                switchAttendeeLimit.setChecked(false);
-                                attendeeLimit = Integer.MAX_VALUE;
-                            }
-                        }
-                    });
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                            // Revert the switch to unchecked since canceled
-                            switchAttendeeLimit.setChecked(false);
-                        }
-                    });
-
-                    builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialogInterface) {
-                            // Handle the case where the user cancels the dialog (e.g., by pressing the back button)
-                            switchAttendeeLimit.setChecked(false);
-                        }
-                    });
-
-                    builder.show();
-                } else {
-                    attendeeLimit = Integer.MAX_VALUE;
-                }
-            }
-        });
-    }
-
-    private void setupSignUpLimitSwitch(){
-        switchSignUpLimit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
-                if (isChecked) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(EditEventActivity.this);
-                    builder.setTitle("Set Attendee Sign-up Limit");
-
-                    // Set up the input
-                    final EditText input = new EditText(EditEventActivity.this);
-                    input.setInputType(InputType.TYPE_CLASS_NUMBER);
-                    builder.setView(input);
-
-                    // Set up the buttons
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            try {
-                                int limit = Integer.parseInt(input.getText().toString());
-                                if (limit > 0) {
-                                    attendeeSignUpLimit = limit;
-                                } else {
-                                    // Invalid input, revert the switch to unchecked
-                                    switchSignUpLimit.setChecked(false);
-                                    attendeeSignUpLimit = Integer.MAX_VALUE;
-                                }
-                            } catch (NumberFormatException e) {
-                                switchSignUpLimit.setChecked(false);
-                                attendeeSignUpLimit = Integer.MAX_VALUE;
-                            }
-                        }
-                    });
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                            // Revert the switch to unchecked since canceled
-                            switchSignUpLimit.setChecked(false);
-                        }
-                    });
-
-                    builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialogInterface) {
-                            // Handle the case where the user cancels the dialog (e.g., by pressing the back button)
-                            switchSignUpLimit.setChecked(false);
-                        }
-                    });
-
-                    builder.show();
-                } else {
-                    attendeeSignUpLimit = Integer.MAX_VALUE;
-                }
-            }
-        });
-    }
-
-     */
 }
 
 

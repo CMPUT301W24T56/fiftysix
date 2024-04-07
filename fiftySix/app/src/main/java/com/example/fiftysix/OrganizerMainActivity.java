@@ -355,7 +355,18 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 mTimePicker = new TimePickerDialog(OrganizerMainActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        eventStartTimeButton.setText( "Start Time: " + selectedHour + ":" + selectedMinute);
+
+                        String min = "00";
+                        if (selectedMinute == 0){
+                        }
+                        else if(selectedMinute < 10){
+                            min = "0" + String.valueOf(selectedMinute);
+                        }
+                        else{
+                            min = String.valueOf(selectedMinute);
+                        }
+
+                        eventStartTimeButton.setText( "Start Time: " + selectedHour + ":" + min);
                     }
                 }, hour, minute, true);//Yes 24 hour time
                 mTimePicker.setTitle("Select Start Time");
@@ -377,7 +388,18 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 mTimePicker = new TimePickerDialog(OrganizerMainActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        eventEndTimeButton.setText("End Time: " + selectedHour + ":" + selectedMinute);
+
+                        String min = "00";
+                        if (selectedMinute == 0){
+                        }
+                        else if(selectedMinute < 10){
+                            min = "0" + String.valueOf(selectedMinute);
+                        }
+                        else{
+                            min = String.valueOf(selectedMinute);
+                        }
+
+                        eventEndTimeButton.setText("End Time: " + selectedHour + ":" + min);
                     }
                 }, hour, minute, true);//Yes 24 hour time
                 mTimePicker.setTitle("Select End Time");
