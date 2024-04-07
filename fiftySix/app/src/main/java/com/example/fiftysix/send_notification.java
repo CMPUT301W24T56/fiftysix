@@ -15,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import org.json.JSONException;
+
 public class send_notification extends AppCompatActivity {
     private ImageButton cancel, send;
     private EditText message;
@@ -46,17 +48,21 @@ public class send_notification extends AppCompatActivity {
 
         }
 
-        send.setOnClickListener(new View.OnClickListener() {
+       send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String sending_message = message.getText().toString();
-                notify_attendee(sending_message);
+                try {
+                    notify_attendee(sending_message);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
                 finish();
             }
-        });
+       });
     }
 
-    public void notify_attendee(String message) {
+    public void notify_attendee(String message) throws JSONException {
         Bundle extras = getIntent().getExtras();
         String eventID, eventName;
 
@@ -71,6 +77,8 @@ public class send_notification extends AppCompatActivity {
         }
         finish();
     }
+
+
 
 
 }

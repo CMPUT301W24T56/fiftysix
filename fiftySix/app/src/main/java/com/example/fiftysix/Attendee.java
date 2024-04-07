@@ -26,6 +26,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
+import static android.provider.Settings.System.getString;
 
 import android.util.Log;
 
@@ -144,8 +145,6 @@ public class Attendee {
         db.collection("Users").document(attendeeID).collection("UpcomingEvents").document(eventID).delete();
         db.collection("Events").document(eventID).update("attendeeCount", FieldValue.increment(-1));
 
-        String topic = eventID;
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(topic);
 
     }
 
@@ -154,24 +153,10 @@ public class Attendee {
         db.collection("Events").document(eventID).collection("attendeeSignUps").document(attendeeID).delete();
         db.collection("Users").document(attendeeID).collection("SignedUpEvents").document(eventID).delete();
         db.collection("Events").document(eventID).update("attendeeSignUpCount", FieldValue.increment(-1));
-        String topic = eventID;
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(topic);
 
     }
 
     public void signUpForEvent(String eventID){
-        FirebaseMessaging.getInstance().subscribeToTopic(eventID)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        String msg = "Subscribed";
-                        if (!task.isSuccessful()) {
-                            msg = "Subscribe failed";
-                        }
-                        Log.d(TAG, msg);
-                    }
-                });
-        Log.d("FCM-notification","attendee successfully signed in to the event");
         db.collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -222,6 +207,7 @@ public class Attendee {
                                                 ref.document(attendeeID).collection("SignedUpEvents").document(eventID).set(attendeeCheckedInEventsData);
                                                 db.collection("Events").document(eventID).collection("attendeeSignUps").document(attendeeID).set(attendeeCheckedInCount);
                                                 db.collection("Events").document(eventID).update("attendeeSignUpCount", FieldValue.increment(1));
+
                                             }
                                         });
                                     }
@@ -239,17 +225,6 @@ public class Attendee {
 
 
     public void checkInToEventID(String eventID, AttendeeCallBack attendeeCallBack) {
-        FirebaseMessaging.getInstance().subscribeToTopic(eventID)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        String msg = "Subscribed";
-                        if (!task.isSuccessful()) {
-                            msg = "Subscribe failed";
-                        }
-                        Log.d(TAG, msg);
-                    }
-                });
         db.collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -313,17 +288,6 @@ public class Attendee {
 
     // No Callback
     public void checkInToEventID(String eventID) {
-        FirebaseMessaging.getInstance().subscribeToTopic(eventID)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        String msg = "Subscribed";
-                        if (!task.isSuccessful()) {
-                            msg = "Subscribe failed";
-                        }
-                        Log.d(TAG, msg);
-                    }
-                });
         db.collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -517,4 +481,41 @@ public class Attendee {
 
         void onError(String errorMessage);
     }
+    public interface EventIdsCallback {
+        void onCallback(List<String> eventIds);
+    }
+    public void event_ids(String attendeeID, EventIdsCallback callback){
+        List<String> eventIds = new ArrayList<>();
+        db.collection("Users").document(attendeeID).collection("SignedUpEvents").get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments()) {
+                        eventIds.add(snapshot.getId()); // Assuming you want to store the document IDs
+                    }
+                    callback.onCallback(eventIds); // Use the callback to return the list
+                })
+                .addOnFailureListener(e -> {
+                    // Handle any errors here
+                    Log.w("Firestore", "Error getting documents: ", e);
+                });
+    }
+    public List<String> return_events(){
+        List<String> events_list = new ArrayList<>();
+        event_ids(attendeeID, new EventIdsCallback() {
+            @Override
+            public void onCallback(List<String> eventIds) {
+                // Handle the retrieved event IDs here
+                if (eventIds.size() > 0){
+                    for (String id : eventIds) {
+                        events_list.add(id);
+                        Log.d("Firestore", "Retrieved event ID: " + id);
+                    }
+                }
+
+
+            }
+        });
+        Log.d("returned_events", " returning events " + events_list.size());
+        return events_list;
+    }
+
 }
