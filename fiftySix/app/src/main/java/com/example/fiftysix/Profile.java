@@ -147,14 +147,6 @@ public class Profile {
 
 
 
-    private boolean profileInDataBase(){
-        return (FirebaseDatabase.getInstance().getReference("Users/"+userID+"/name") != null );
-
-    }
-
-
-
-
     private void addProfileToDatabase(){
         Map<String,Object> profileData = new HashMap<>();
         profileData.put("userID","unknown");

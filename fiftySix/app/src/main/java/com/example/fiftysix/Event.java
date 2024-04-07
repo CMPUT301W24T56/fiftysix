@@ -17,6 +17,8 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -118,8 +120,8 @@ public class Event {
         // TODO: check the the event that we are reusing the qrcode from is still active.
 
         // Switches data
-        FirebaseFirestore.getInstance().collection("Events").document(this.eventID).update("checkInQRCode", checkInQRCodeID);
-        FirebaseFirestore.getInstance().collection("CheckInQRCode").document(this.checkInQRCodeID).update("event", this.eventID);
+        db.collection("Events").document(this.eventID).update("checkInQRCode", checkInQRCodeID);
+        db.collection("CheckInQRCode").document(this.checkInQRCodeID).update("event", this.eventID);
 
     }
 
@@ -127,7 +129,16 @@ public class Event {
     // ________________________________METHODS_____________________________________
 
     public void setPromoQR(String promoQRCodeID){
-        FirebaseFirestore.getInstance().collection("Events").document(this.eventID).update("promoQRCode", promoQRCodeID);
+        db.collection("Events").document(this.eventID).update("promoQRCode", promoQRCodeID);
+    }
+
+    public void reuseCheckInQR(String reuseQRCodeID){
+        db.collection("Events").document(this.eventID).update("checkInQRCode", reuseQRCodeID);
+        db.collection("CheckInQRCode").document(reuseQRCodeID).update("event", this.eventID);
+
+        // Delets new checkin QRCode created
+        db.collection("CheckInQRCode").document(this.checkInQRCodeID).delete();
+        FirebaseStorage.getInstance().getReference().child("images/checkInQRCode/" + this.checkInQRCodeID).delete();
     }
 
 

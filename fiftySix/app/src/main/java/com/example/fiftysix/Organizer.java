@@ -80,7 +80,35 @@ public class Organizer {
      *
      * @return String posterID key
      */
-    public String createEventNewQRCode( String details, String location, Integer attendeeCheckInLimit, Integer attendeeSignUpLimit, String eventName, String startDate, String endDate, String startTime, String endTime, PromoQRCode promoQRCode){
+    public String createEventNewQRCode( String details, String location, Integer attendeeCheckInLimit, Integer attendeeSignUpLimit, String eventName, String startDate, String endDate, String startTime, String endTime, PromoQRCode promoQRCode, String reuseQRID){
+        Event event = new Event(this.organizerID, details, location, attendeeCheckInLimit, attendeeSignUpLimit, eventName, startDate, endDate, startTime, endTime, mContext);
+        addEventToOrganizerDataBase(event.getEventID());
+
+        String eventID = event.getEventID();
+
+        if (promoQRCode != null){
+            promoQRCode.setEvent(eventID);
+            event.setPromoQR(promoQRCode.getQRCodeID());
+        }
+        if (reuseQRID != null){
+            event.reuseCheckInQR(reuseQRID);
+        }
+
+        return event.getPosterID();
+    }
+
+
+    /**
+     * Creates a new event and switches the event that the oldQRID points to, it now points to the new event in the firebase database.
+     * The event is then added to EventsByOrganizer collection inside the organizers document in firebase.
+     * @param details String of the event details
+     * @param location String of the event location
+     *
+     * @param eventName String of the event name
+     * @param oldQRID String of the old QR code id to be reused
+     */
+    /*
+    public String createEventReuseQRCode( String details, String location, Integer attendeeCheckInLimit, Integer attendeeSignUpLimit, String eventName, String startDate, String endDate, String startTime, String endTime, PromoQRCode promoQRCode, String reuseQRID){
         Event event = new Event(this.organizerID, details, location, attendeeCheckInLimit, attendeeSignUpLimit, eventName, startDate, endDate, startTime, endTime, mContext);
         addEventToOrganizerDataBase(event.getEventID());
 
@@ -94,20 +122,8 @@ public class Organizer {
         return event.getPosterID();
     }
 
-    /**
-     * Creates a new event and switches the event that the oldQRID points to, it now points to the new event in the firebase database.
-     * The event is then added to EventsByOrganizer collection inside the organizers document in firebase.
-     * @param details String of the event details
-     * @param location String of the event location
-     *
-     * @param eventName String of the event name
-     * @param oldQRID String of the old QR code id to be reused
      */
-    public void createEventReuseQRCode(String details, String location, Integer attendeeCheckInLimit, Integer attendeeSignUpLimit, String eventName, String oldQRID){
-        Event event = new Event(this.organizerID, details, location, attendeeCheckInLimit, attendeeSignUpLimit, eventName, mContext, oldQRID);
 
-        addEventToOrganizerDataBase(event.getEventID());
-    }
 
 
     public void createPromoQRCode(){}

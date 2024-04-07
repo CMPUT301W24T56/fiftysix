@@ -5,16 +5,12 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
-import static android.app.PendingIntent.getActivity;
 import static android.content.ContentValues.TAG;
-
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -41,9 +37,7 @@ import android.widget.Switch;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
-
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -52,18 +46,17 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import java.util.ArrayList;
 
+import java.text.ParseException;
+import java.util.ArrayList;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-
 import ru.nikartm.support.ImageBadgeView;
 
 
@@ -89,13 +82,8 @@ public class OrganizerMainActivity extends AppCompatActivity {
     private OrganizerEventAdapter organizerEventAdapter;
 
 
-
-
     private MilestoneAdapter milestoneAdapter;
     private ArrayList<MileStone> mileStoneDataList;
-
-
-
 
 
     private ArrayList<Event> eventDataList;
@@ -125,24 +113,21 @@ public class OrganizerMainActivity extends AppCompatActivity {
     private ImageButton eventDetailsBack;
     private Button reuseCheckInQR;
     private EditText eventTitleEditText;
-
-    private PromoQRCode promoQRCode;
-
     private EditText eventAddressEditText;
     private EditText eventDetailsEditText;
     private Switch switchAttendeeLimit, switchSignUpLimit;
-    private int mYear, mMonth, mDay, mHour, mMinute;
+    private int mYear, mMonth, mDay;
+    private PromoQRCode promoQRCode;
+    private String reuseQRID;
+    String scanQRID;
 
 
     // Create event Buttons
     private Button eventDateButton, eventStartTimeButton, eventEndDateButton, eventEndTimeButton;
 
 
-
     // Buttons on Upload QR page
     private Button uploadQRFromScan;
-
-
 
 
     @Override
@@ -159,6 +144,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
         organizerID = organizer.getOrganizerID();
 
         promoQRCode = null;
+        reuseQRID = null;
 
         // Firebase
         db = FirebaseFirestore.getInstance();
@@ -273,14 +259,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
         buttonOrgHomeBack.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-
-
-
-
-
-                finish();
-            }
+            public void onClick(View v) { finish(); }
         });
 
         eventDateButton.setOnClickListener(new View.OnClickListener() {
@@ -406,25 +385,18 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 mTimePicker.show();
             }
         });
-
-
-
-
-
-
-
     }
 
 
 
     //________________________________________Methods________________________________________
 
-
-
-
-
-
-        private void showImageSourceDialog() {
+    /**
+     * Shows dialog to select either camera role or gallery as a method to upload images.  Used for adding event poster.
+     * If user selects camera it checks the permissions, either calls open camera or requestCameraPermission().
+     * If user selects galley it opens gallery using galleryLauncher.
+     */
+    private void showImageSourceDialog() {
         CharSequence[] items = {"Upload from Gallery", "Upload from Camera"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Upload Poster");
@@ -454,16 +426,23 @@ public class OrganizerMainActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
-        private void requestCameraPermission() {
+    /**
+     * Requests camera permission, called by showImageSourceDialog() if device has not given permission
+     */
+    private void requestCameraPermission() {
         ActivityCompat.requestPermissions(OrganizerMainActivity.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
     }
 
-        @Override
-        public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    /**
+     * Checks if the user has just given camera permission, If so then calls openCamera().
+     * @param requestCode The request code passed in
+     * @param permissions The requested permissions. Never null.
+     * @param grantResults The grant results for the corresponding permissions
+     *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
+     *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -476,7 +455,11 @@ public class OrganizerMainActivity extends AppCompatActivity {
         }
     }
 
-        private void openCamera() {
+    /**
+     * Opens camera and saves the Uri image in the class attribute photoURI.
+     * Called by the methods onRequestPermissionsResult() and showImageSourceDialog().
+     */
+    private void openCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             File photoFile = null;
@@ -495,7 +478,12 @@ public class OrganizerMainActivity extends AppCompatActivity {
     }
 
 
-        private File createImageFile() throws IOException {
+    /**
+     * Creates a file/location for images captured by the camera to be stored temporarily.
+     * @return File image
+     * @throws IOException
+     */
+    private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
@@ -506,39 +494,60 @@ public class OrganizerMainActivity extends AppCompatActivity {
         }
 
 
-        public void homeView(View v){
-            viewFlipper.setDisplayedChild(0);;
-        }
+    /**
+     * Sets view flipper to display Organizer home layout.
+      * @param v View
+     */
+    private void homeView(View v){
+        viewFlipper.setDisplayedChild(0);;
+    }
 
-        public void createEventView(View v){
-            viewFlipper.setDisplayedChild(1);;
-        }
+    /**
+     * Sets view flipper to display the create event layout.
+     * @param v View
+     */
+    private void createEventView(View v){
+        viewFlipper.setDisplayedChild(1);;
+    }
 
-        public void reuseQRView(View v){
-            viewFlipper.setDisplayedChild(2);;
-        }
+    /**
+     * Sets view flipper to display the reuse QR layout.
+     * @param v View
+     */
+    private void reuseQRView(View v){
+        viewFlipper.setDisplayedChild(2);;
+    }
 
-        public void notificationView(View v){
-            viewFlipper.setDisplayedChild(3);;
-        }
-
-
-
-
-        public void previousView(View v){
+    /**
+     * Sets view flipper to display the milestones/notifications layout.
+     * @param v View
+     */
+    private void notificationView(View v){
+        viewFlipper.setDisplayedChild(3);;
+    }
+    /**
+     * Sets view flipper to display the previous layout.
+     * @param v View
+     */
+    private void previousView(View v){
         //viewFlipper.setInAnimation(this, android.R.anim.slide_in_left);
         //viewFlipper.setOutAnimation(this, android.R.anim.slide_out_right);
         viewFlipper.showPrevious();
         }
-
-        private void nextView(View v){
+    /**
+     * Sets view flipper to display the next layout.
+     * @param v View
+     */
+    private void nextView(View v){
         //viewFlipper.setInAnimation(this, R.anim.slide_in_right);
         //viewFlipper.setOutAnimation(this, R.anim.slide_out_left);
         viewFlipper.showNext();
         }
 
-
-        private void setButtons() {
+    /**
+     * initializes all button attributes, button = (Button) findViewById...
+     */
+    private void setButtons() {
             // Home page buttons
             addEventButton = (ImageButton) findViewById(R.id.buttonAddEvent);
             orgProfileButton = (ImageButton) findViewById(R.id.buttonOrganizerProfile);
@@ -564,16 +573,21 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
         }
 
-
-        private void setEditText() {
+    /**
+     * initializes all editText attributes, editText = (EditText) findViewById...
+     */
+    private void setEditText() {
             eventTitleEditText = (EditText) findViewById(R.id.eventNameEditText);
             eventAddressEditText = (EditText) findViewById(R.id.eventAddressEditText);
             eventDetailsEditText = (EditText) findViewById(R.id.eventDetailsEditText);
         }
 
-
-
-        private void setupAttendeeLimitSwitch() {
+    /**
+     * Sets up the checkin limit switch for when the organizer wants to limit checkins to the event.
+     * Builds alert dialog when switch is flipped on and gets input number.
+     * If switch is not flipped checkin limit = max int value.
+     */
+    private void setupAttendeeLimitSwitch() {
             switchAttendeeLimit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
@@ -630,8 +644,11 @@ public class OrganizerMainActivity extends AppCompatActivity {
             });
         }
 
-
-
+    /**
+     * Sets up the signup limit switch for when the organizer wants to limit signups to the event.
+     * Builds alert dialog when switch is flipped on and gets input number.
+     * If switch is not flipped checkin limit = max int value.
+     */
     private void setupSignUpLimitSwitch() {
         switchSignUpLimit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -690,8 +707,11 @@ public class OrganizerMainActivity extends AppCompatActivity {
     }
 
 
-        // "youtube - Implement Barcode QR Scanner in Android studio barcode reader | Cambo Tutorial" - youtube channel = Cambo Tutorial
-        private void scanCode () {
+    /**
+     *  Reference - "youtube - Implement Barcode QR Scanner in Android studio barcode reader | Cambo Tutorial" - youtube channel = Cambo Tutorial
+     *  Scans QR code, gets the string. This string returned as a unique QRCode id.
+     */
+    private void scanCode () {
             ScanOptions options = new ScanOptions();
             options.setPrompt("Volume up to turn on flash");
             options.setBeepEnabled(true);
@@ -708,16 +728,24 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        reUseQRID = result.getContents().toString();
-                        String eventTitle = eventTitleEditText.getText().toString();
+                        scanQRID = result.getContents().toString();
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+                        Date strDate = null;
 
-                        // TODO: fix this date
-                        //String eventDate = eventDateEditText.getText().toString();
-                        String eventAddress = eventAddressEditText.getText().toString();
-                        String eventDetails = eventDetailsEditText.getText().toString();
+                        new CheckInQRCode().checkValidReuseQR(scanQRID, new CheckInQRCode.CheckInQRCodeCallback() {
+                            @Override
+                            public void onSuccess(Boolean validQR) {
+                                if (validQR){
+                                    reuseQRID = scanQRID;
+                                }
+                            }
 
-                        //Integer eventAttendeeLimit = Integer.parseInt(eventAttendeeLimitEditText.getText().toString());
-                        organizer.createEventReuseQRCode(eventDetails, eventAddress, 100, 100, eventTitle, reUseQRID);
+                            @Override
+                            public void onFailure(Exception e) {
+
+                            }
+                        });
+
 
                         dialog.dismiss();
                     }
@@ -727,7 +755,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
         });
 
 
-        private void loadOrganizerEvents(){
+    private void loadOrganizerEvents(){
 
             eventRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
@@ -791,9 +819,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
         }
 
-
-
-        private void addAtttendanceMilestoneUpdates(String eventID, String eventName, Integer checkIns, Integer attendeeLimit){
+    private void addAtttendanceMilestoneUpdates(String eventID, String eventName, Integer checkIns, Integer attendeeLimit){
             notifBadge.setVisibility(View.VISIBLE);
             String message;
 
@@ -897,10 +923,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
             }
         }
 
-
-
-        
-        private void initializeCreateEvent(){
+    private void initializeCreateEvent(){
             createEvent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -955,8 +978,9 @@ public class OrganizerMainActivity extends AppCompatActivity {
                         eventStartTime = eventStartTime.split(" ")[2];
                         eventEndTime = eventEndTime.split(" ")[2];
 
+
                         // Creates Event
-                        String posterID = organizer.createEventNewQRCode( eventDetails, eventAddress, attendeeLimit, attendeeSignUpLimit, eventTitle, eventStartDate, eventEndDate, eventStartTime, eventEndTime, promoQRCode);
+                        String posterID = organizer.createEventNewQRCode( eventDetails, eventAddress, attendeeLimit, attendeeSignUpLimit, eventTitle, eventStartDate, eventEndDate, eventStartTime, eventEndTime, promoQRCode, reuseQRID);
                         // Adds poster image
                         posterHandler.uploadImageAndStoreReference(selectedImageUri, posterID, "Event", new Poster.PosterUploadCallback() {
                             @Override
@@ -967,6 +991,8 @@ public class OrganizerMainActivity extends AppCompatActivity {
                                 // Handle failure, e.g., show a toast or alert dialog
                             }
                         });
+
+
                         previousView(v);
 
                         // resets text displayed
@@ -982,6 +1008,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
 
                         promoQRCode = null;
+                        reuseQRID = null;
 
                     }
                 }
@@ -991,7 +1018,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
             reuseCheckInQR.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    nextView(v);
+                    scanCode();
                 }
             });
 
@@ -1009,6 +1036,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     scanCode();
+
 
                     previousView(v);
                 }
@@ -1030,6 +1058,8 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 }
             });
         }
+
+
 }
 
 
