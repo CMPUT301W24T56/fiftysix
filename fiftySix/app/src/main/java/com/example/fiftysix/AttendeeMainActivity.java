@@ -15,6 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,6 +27,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -49,6 +53,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -64,8 +69,11 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
@@ -152,7 +160,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private String[] permissions;
     private int[] grantResults;
 
-    private  MyFirebaseMessaging announcements;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -189,7 +196,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
         displayAllEvents();
         displayMySignUps();
         initializeHomePage(); // Sets up button functions on home page
-
+        checkAnnouncements();
         //______________________________________Sign in to event Page_______________________________________
         initializeEventSignIn();
 
@@ -227,17 +234,104 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
         // update token of device
         // updatetoken(attendeeID);
+
     }
 
 
     //________________________________________Methods________________________________________
+    private void checkAnnouncements(){
+        Log.d("checking announcements", " inside announcements function attendee");
 
-//    public void updatetoken(String attendeeid){
-//        announcements = new MyFirebaseMessaging(attendeeid);
-//
-//        announcements.
-//    }
+        List<String> eventIds;
+        attendee.event_ids(attendeeID, new Attendee.EventIdsCallback() {
+            @Override
+            public void onCallback(List<String> eventIds) {
+                // Handle the retrieved event IDs here
+                if (eventIds.size() > 0){
+                    for (String id : eventIds) {
+                        CollectionReference collectionRef  = db.collection("Events").document(id).collection("Notifications");
+                        collectionRef.get().addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) { // Check if the fetch was successful
+                                for (QueryDocumentSnapshot document : task.getResult()) { // Iterate through each document
+                                    // getting the data stored in the attendees field which is a list of strigs
+                                    String document_id = (String) document.getId();
+                                    List<String> attendees = (List<String>) document.get("attendees");
+                                    if (attendees != null) {
+                                        // Process the list of attendees. This is a placeholder for whatever processing you need to do.
+                                        // int size = attendees.size();
+                                        if (attendees.contains(attendeeID)) {
+                                            // Found a matching ID
+                                            Log.d("attendeeId_announcement", " inside announcements function attendee");
+                                            continue;
+                                        }
+                                        else {
+                                            String notification = (String) document.get("notification");
+                                            String event_name = (String) document.get("event_name");
+                                            notify_client(document_id,notification,id,event_name);
+                                        }
 
+                                    }
+                                    else {
+                                        Log.d("new_notification","empty attendee list");
+                                        String notification = (String) document.get("notification");
+                                        String event_name = (String) document.get("event_name");
+                                        notify_client(document_id,notification,id,event_name);
+                                    }
+                                }
+                            } else { // Handle failures
+                                Log.w("Notification", "Error getting documents.", task.getException());
+                            }
+                        });
+                    }
+                }
+
+
+            }
+        });
+    }
+        //  no signedup events
+
+    private void notify_client(String id, String notify_message,String event_id,String event) {
+        Log.d("checking notification", " inside announcements function attendee");
+
+        Context context = getApplicationContext();
+        sendNotification(context,event_id,event,notify_message);
+        DocumentReference docRef = db.collection("Events").document(event_id).collection("Notifications").document(id);
+
+        // Add attendee_id to the attendees list using arrayUnion to avoid duplicates
+        docRef.update("attendees", FieldValue.arrayUnion(attendeeID))
+                .addOnSuccessListener(aVoid -> Log.d("Firestore", "Attendee added successfully to the document"))
+                .addOnFailureListener(e -> Log.w("Firestore", "Error adding attendee to the document", e));
+    }
+
+    private void sendNotification(Context context, String eventId, String eventName, String message) {
+        createNotificationChannel(context,eventId);
+
+        // Get the notification manager
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // Build the notification
+        Notification.Builder builder = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            builder = new Notification.Builder(context,eventId)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle(eventName)
+                    .setContentText(message)
+                    .setPriority(Notification.PRIORITY_HIGH);
+        }
+
+        // Show the notification
+        notificationManager.notify(100, builder.build());
+    }
+    private void createNotificationChannel(Context context,String eventId) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(eventId, "Channel Name", NotificationManager.IMPORTANCE_HIGH);
+            channel.setDescription("Channel Description");
+
+            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
     // Source "How to Get Current Location in Android Studio||Get user's current Location||Location App 2022" - by "Coding with Aiman" - Youtube.com
     private void getLocation() {
         List<Address> addresses;
