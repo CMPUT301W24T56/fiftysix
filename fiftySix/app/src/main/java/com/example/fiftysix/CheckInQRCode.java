@@ -17,6 +17,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -28,7 +29,10 @@ import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,6 +83,14 @@ public class CheckInQRCode{
 
     }
 
+    public CheckInQRCode() {
+    }
+
+    public interface CheckInQRCodeCallback {
+        void onSuccess(Boolean validQR);
+        void onFailure(Exception e);
+    }
+
 
     // Basic Getters & Setters.
     public String getEventID() {
@@ -91,6 +103,65 @@ public class CheckInQRCode{
         return qrCode;
     }
     public String getQRCodeID(){ return qrCodeID; }
+
+
+    /**
+     * Checks if the QRCode is eligible for reuse. To be allowed it must belong to a previous event created in our app (exists in the database),
+     * and the event must be atleast one of an event that isw finished (finish date has past by 1 day) or event was deleted by the admin.
+     * Not allowed to reuse QRCode from active events.
+     * @param reuseQRId String of the QR code id that we would like to check if it can be reviewed
+     * @param callback Used as a function point to store a boolean, true if QR can be reused, false if not.
+     */
+    public void checkValidReuseQR(String reuseQRId, CheckInQRCodeCallback callback){
+        FirebaseFirestore.getInstance().collection("CheckInQRCode").document(reuseQRId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if ( (documentSnapshot.exists()) && (documentSnapshot != null) && (documentSnapshot.getString("event") != null) ){
+                    String oldEventId = documentSnapshot.getString("event");
+
+
+
+                    FirebaseFirestore.getInstance().collection("Events").document(oldEventId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot dSnapshot) {
+                            if ( (dSnapshot.exists()) && (dSnapshot != null) && (dSnapshot.getString("endDate") != null) ){
+
+
+                                String endDate = dSnapshot.getString("endDate");
+                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+                                Date strDate = null;
+                                try {
+                                    strDate = sdf.parse(endDate);
+                                } catch (ParseException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                if (new Date().after(strDate)) {
+                                    //Event is old and in our database. can be reused.
+                                    callback.onSuccess(true);
+                                } else {
+                                    callback.onSuccess(false);
+                                }
+                            }
+
+                            // Event was deletds by admin and can use QR code again
+                            else{
+                                callback.onSuccess(true);
+                            }
+                        }
+                    });
+
+                }
+                else{
+                    callback.onSuccess(false);
+
+
+                }
+            }
+        });
+
+
+    }
+
 
 
     // Generates a QR code (Bitmap) containing a string of the eventID. Adds image of qr code and event data to firebase.

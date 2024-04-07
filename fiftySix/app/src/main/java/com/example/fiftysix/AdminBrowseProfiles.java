@@ -14,7 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdminBrowseProfiles extends AppCompatActivity {
+public class  AdminBrowseProfiles extends AppCompatActivity {
     private RecyclerView recyclerView;
     private AdminProfileAdapter adapter;
     private FirebaseFirestore db;
