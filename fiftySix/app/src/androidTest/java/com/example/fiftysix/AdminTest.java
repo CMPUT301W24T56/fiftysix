@@ -33,25 +33,27 @@ public class AdminTest {
     @Test
     public void check_admin_navigation_buttons() throws InterruptedException {
         // checking all the navigation buttons for admin whether the admin can navigate through all its activities or not.
-        // onView(withId(R.id.buttonAdmin)).perform((click()));
-        // onView(withId(R.id.browseEvents)).perform(click());
-        // onView(withId(R.id.backButton)).perform(click());
+         onView(withId(R.id.buttonAdmin)).perform((click()));
+        // browsing profile
+        sleep(1000);
+        onView(withId(R.id.browseImages)).perform(click());
+        sleep(2000);
+        onView(withId(R.id.event_poster_image)).perform(click());
 
-        // browsing profiles
-//        onView(withId(R.id.browseImages)).perform(click());
-//        onView(withId(R.id.profile_image)).perform(click());
 
 
     }
     @Test
-    public void browse_events(){
+    public void browse_events() throws InterruptedException {
+
         // going to admin panel
-//         onView(withId(R.id.buttonAdmin)).perform((click()));
-//         // going to browse events
-//         onView(withId(R.id.browseEvents)).perform(click());
-//
-//        //  showing list of events
-//        onData(allOf(is(instanceOf(String.class)), is("Brady's Event"))).perform(click());
+         onView(withId(R.id.buttonAdmin)).perform((click()));
+         // going to browse events
+         sleep(1000);
+         onView(withId(R.id.browseEvents)).perform(click());
+         sleep(2000);
+        //  showing list of events
+         onData(allOf(is(instanceOf(String.class)), is("Arsh_Arora"))).perform(click());
 
 
     }

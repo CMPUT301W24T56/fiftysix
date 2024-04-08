@@ -63,7 +63,7 @@ public class OrganizerUiTest {
         // Perform action: Clear existing text and type new text into the date section
         onView(withId(R.id.eventStartDateButton)).perform(clearText(), typeText(date), closeSoftKeyboard());
         // perform action creating the event .
-        onView(withId(R.id.buttonBackCreateEvent)).perform(click());
+        onView(withId(R.id.buttonCreateEvent)).perform(click());
     }
 
     @Test
