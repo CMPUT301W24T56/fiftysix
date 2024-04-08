@@ -49,6 +49,8 @@ public class  AdminBrowseProfiles extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         List<Profile> profiles = new ArrayList<>();
                         for (DocumentSnapshot document : task.getResult()) {
+
+
                             Profile profile = new Profile(
                                     document.getString("userID"),
                                     document.getString("name"),
