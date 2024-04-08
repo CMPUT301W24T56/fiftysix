@@ -496,6 +496,7 @@ public class Attendee {
         attendeeData.put("bio","unknown");
         attendeeData.put("profileImageURL","unknown");
         attendeeData.put("profileID", "unknown");
+        attendeeData.put("locationAllowed", "no");
 
         new Profile(attendeeID);
 

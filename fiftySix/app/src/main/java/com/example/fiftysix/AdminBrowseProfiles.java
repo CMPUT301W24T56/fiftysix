@@ -27,6 +27,7 @@ public class  AdminBrowseProfiles extends AppCompatActivity {
         updates.put("bio", "unknown");
         updates.put("email", "unknown");
         updates.put("phone", "unknown");
+        updates.put("name", "unknown");
         updates.put("profileImageURL", "unknown");
         updates.put("userID", "unknown");
         db.collection("Profiles").document(profile.getProfileID())
@@ -36,6 +37,8 @@ public class  AdminBrowseProfiles extends AppCompatActivity {
 
         db.collection("Users").document(profile.getProfileID())
                 .update(updates);
+
+        fetchProfiles();
         adapter.notifyDataSetChanged();
 
     }
@@ -82,6 +85,8 @@ public class  AdminBrowseProfiles extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         List<Profile> profiles = new ArrayList<>();
                         for (DocumentSnapshot document : task.getResult()) {
+
+
                             Profile profile = new Profile(
                                     document.getId(),
                                     document.getString("name"),

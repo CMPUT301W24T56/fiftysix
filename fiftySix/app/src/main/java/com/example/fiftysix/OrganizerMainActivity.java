@@ -790,13 +790,22 @@ public class OrganizerMainActivity extends AppCompatActivity {
                         Log.e("Firestore", error.toString());
                         return;
                     }
-                    if (value != null){
+
+                    if (value.isEmpty()){
+                        if (eventDataList.isEmpty()){
+                            String hardcode = "No Events to Display";
+                            eventDataList.add(new Event(hardcode, "Please make your first event!", hardcode, hardcode, hardcode, hardcode, hardcode, hardcode, 0, 0, 0, 0,hardcode));
+
+                        }
+                    }
+
+                    else{
                         eventRef.whereEqualTo("organizer", organizerID).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                             @Override
                             public void onSuccess(QuerySnapshot querySnapshot) {
                                 if (querySnapshot != null) {
                                     eventDataList.clear();
-                                    //mileStoneDataList.clear();
+                                    mileStoneDataList.clear();
                                     for (QueryDocumentSnapshot doc : querySnapshot) {
 
                                         String eventID = doc.getId();
@@ -837,11 +846,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                     }
                 }
             });
-            if (eventDataList.isEmpty()){
-                String hardcode = "No Events to Display";
-                eventDataList.add(new Event(hardcode, "Please make your first event!", hardcode, hardcode, hardcode, hardcode, hardcode, hardcode, 0, 0, 0, 0,hardcode));
 
-            }
 
         }
 

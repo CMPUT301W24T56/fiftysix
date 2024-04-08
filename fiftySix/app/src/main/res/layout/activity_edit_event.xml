@@ -168,48 +168,6 @@
                     android:hint="Event Details"
                     android:textColorHint="@color/colorPrimaryLight" />
 
-                <Switch
-                    android:id="@+id/switchAttendeeLimit"
-                    android:layout_width="289dp"
-                    android:layout_height="58dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:background="@drawable/dark_round_button"
-                    android:padding="16dp"
-                    android:paddingLeft="15dp"
-                    android:text="Set Check-in Limit"
-                    android:textColor="@color/colorPrimaryLight"
-                    android:textSize="18sp" />
-
-                <Switch
-                    android:id="@+id/switchSignUpLimit"
-                    android:layout_width="289dp"
-                    android:layout_height="58dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:background="@drawable/dark_round_button"
-                    android:padding="16dp"
-                    android:paddingLeft="15dp"
-                    android:text="Set Sign-up Limit"
-                    android:textColor="@color/colorPrimaryLight"
-                    android:textSize="18sp" />
-
-                <EditText
-                    android:id="@+id/editTextNumberAttendeeLimit"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:ems="10"
-                    android:hint="Enter limit number"
-                    android:inputType="number"
-                    android:padding="16dp"
-                    android:visibility="gone"
-                    />
-
 
             </LinearLayout>
 

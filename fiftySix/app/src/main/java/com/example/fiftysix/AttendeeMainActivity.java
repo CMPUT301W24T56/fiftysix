@@ -783,9 +783,14 @@ public class AttendeeMainActivity extends AppCompatActivity {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 myEventDataList.clear();
-                attendeeMyEventAdapter.notifyDataSetChanged();
 
-                if (value != null) {
+                if (value.isEmpty()){
+                    String hardCode = "No Current Checked-Ins";
+                    myEventDataList.add(new Event(null, hardCode, hardCode, hardCode, hardCode, hardCode, hardCode, hardCode, 0, 0, 0, 0, hardCode));
+                    attendeeMyEventAdapter.notifyDataSetChanged();
+                }
+
+                else {
                     for (QueryDocumentSnapshot v : value) {
                         String eventID = v.getId();
                         FirebaseFirestore.getInstance().collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -828,15 +833,8 @@ public class AttendeeMainActivity extends AppCompatActivity {
                             }
                         });
                     }
-                   // if (myEventDataList.isEmpty()){
-                     //   String hardCode = "Not currently checked-in to any events.";
-                     //   myEventDataList.add(new Event(null, hardCode, hardCode, hardCode, hardCode, hardCode, hardCode, hardCode, 0, 0, 0, 0, hardCode));
-                     //   attendeeMyEventAdapter.notifyDataSetChanged();
-                    //}
+
                 }
-
-
-
             }
         });
 
@@ -850,13 +848,13 @@ public class AttendeeMainActivity extends AppCompatActivity {
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 signUpEventDataList.clear();
 
-                //if (signUpEventDataList.isEmpty()) {
-                   // String hardCode = "No Current Sign-up's.";
-                   // signUpEventDataList.add(new Event(null, hardCode, hardCode, hardCode, hardCode, hardCode, hardCode, hardCode, 0, 0, 0, 0, hardCode));
-                   // attendeeSignUpEventAdapter.notifyDataSetChanged();
-                //}
+                if (value.isEmpty()) {
+                    String hardCode = "No Current Sign-Ups";
+                    signUpEventDataList.add(new Event(null, hardCode, hardCode, hardCode, hardCode, hardCode, hardCode, hardCode, 0, 0, 0, 0, hardCode));
+                    attendeeSignUpEventAdapter.notifyDataSetChanged();
+                }
 
-                if (value != null) {
+                else {
                     for (QueryDocumentSnapshot v : value) {
                         String eventID = v.getId();
                         FirebaseFirestore.getInstance().collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -936,7 +934,16 @@ public class AttendeeMainActivity extends AppCompatActivity {
         eventRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (value != null) {
+
+                if (value.isEmpty()){
+                    allEventDataList.clear();
+                    if (allEventDataList.isEmpty()) {
+                        String hardCode = "No Upcoming Events :(";
+                        allEventDataList.add(new Event(null, hardCode, hardCode, hardCode, hardCode, hardCode, hardCode, hardCode, 0, 0, 0, 0, hardCode));
+                        attendeeAllEventAdapter.notifyDataSetChanged();
+                    }
+                }
+                else{
                     allEventDataList.clear();
 
                     for (QueryDocumentSnapshot doc : value) {
@@ -982,17 +989,14 @@ public class AttendeeMainActivity extends AppCompatActivity {
                                                     String imageUrl = value.getString("image");
                                                     allEventDataList.add(new Event(eventID, eventName, location, startDate, endDate, startTime, endTime, details, inAttendeeCount, signUpCount, attendeeCheckinLimitIn, attendeeSignUpLimitIn, imageUrl));
                                                     attendeeAllEventAdapter.notifyDataSetChanged();
+
                                                 }
 
                                             }
                                         }
                                     }
                                 });
-                                //if (allEventDataList.isEmpty()) {
-                                //String hardCode = "No Upcoming Events :(";
-                                // allEventDataList.add(new Event(null, hardCode, hardCode, hardCode, hardCode, hardCode, hardCode, hardCode, 0, 0, 0, 0, hardCode));
-                                // attendeeAllEventAdapter.notifyDataSetChanged();
-                                // }
+
                             }
                         }
                     }
@@ -1173,7 +1177,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
         buttonSettingsNotificationBell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO
+
             }
         });
 

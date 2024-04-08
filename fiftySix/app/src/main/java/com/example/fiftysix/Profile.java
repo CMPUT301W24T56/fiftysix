@@ -151,6 +151,8 @@ public class Profile {
 
 
 
+
+
     private void addProfileToDatabase(){
         Map<String,Object> profileData = new HashMap<>();
         profileData.put("userID","unknown");
@@ -282,4 +284,7 @@ public class Profile {
     }
 
     public String getTimesCheckedIn(){ return timesCheckedIn; }
+
+
+
 }
