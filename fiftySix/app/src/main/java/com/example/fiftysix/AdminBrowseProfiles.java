@@ -6,18 +6,40 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class  AdminBrowseProfiles extends AppCompatActivity {
     private RecyclerView recyclerView;
     private AdminProfileAdapter adapter;
     private FirebaseFirestore db;
+
+    private void deleteProfile(Profile profile) {
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("bio", "unknown");
+        updates.put("email", "unknown");
+        updates.put("phone", "unknown");
+        updates.put("profileImageURL", "unknown");
+        updates.put("userID", "unknown");
+        db.collection("Profiles").document(profile.getProfileID())
+                .update(updates)
+                .addOnSuccessListener(aVoid -> Log.d("UpdateProfile", "Profile successfully updated!"))
+                .addOnFailureListener(e -> Log.w("UpdateProfile", "Error updating profile", e));
+
+        db.collection("Users").document(profile.getProfileID())
+                .update(updates);
+        adapter.notifyDataSetChanged();
+
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,9 +48,19 @@ public class  AdminBrowseProfiles extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.profilesRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new AdminProfileAdapter(new ArrayList<>());
-        recyclerView.setAdapter(adapter);
+        adapter = new AdminProfileAdapter(new ArrayList<>(),new AdminProfileAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Profile profile) {
+                ConfirmDeleteDialogFragment dialogFragment = ConfirmDeleteDialogFragment.newInstance(profile);
+                dialogFragment.setConfirmDeleteListener(profileToDelete -> {
+                    // Call method to delete the profile from Firestore
+                    deleteProfile(profileToDelete);
+                });
+                dialogFragment.show(getSupportFragmentManager(), "confirmDelete");
+            }
 
+        });
+        recyclerView.setAdapter(adapter);
         db = FirebaseFirestore.getInstance();
 
         ImageButton backButton = findViewById(R.id.backButton);
@@ -40,6 +72,7 @@ public class  AdminBrowseProfiles extends AppCompatActivity {
         });
 
         fetchProfiles();
+
     }
 
     private void fetchProfiles() {
@@ -52,7 +85,7 @@ public class  AdminBrowseProfiles extends AppCompatActivity {
 
 
                             Profile profile = new Profile(
-                                    document.getString("userID"),
+                                    document.getId(),
                                     document.getString("name"),
                                     document.getString("email"),
                                     document.getString("phone")

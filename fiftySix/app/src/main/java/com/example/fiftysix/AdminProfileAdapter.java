@@ -11,10 +11,17 @@ import java.util.List;
 
 public class AdminProfileAdapter extends RecyclerView.Adapter<AdminProfileAdapter.ProfileViewHolder> {
     private final List<Profile> profileList;
+    private OnItemClickListener onItemClickListener;
 
-    public AdminProfileAdapter(List<Profile> profileList) {
+    public AdminProfileAdapter(List<Profile> profileList, OnItemClickListener onItemClickListener) {
         this.profileList = profileList;
+        this.onItemClickListener = onItemClickListener; // Set the listener
     }
+
+    public interface OnItemClickListener {
+        void onItemClick(Profile profile);
+    }
+
 
     public static class ProfileViewHolder extends RecyclerView.ViewHolder {
         TextView nameView, emailView, phoneView;
@@ -37,10 +44,12 @@ public class AdminProfileAdapter extends RecyclerView.Adapter<AdminProfileAdapte
     @Override
     public void onBindViewHolder(@NonNull ProfileViewHolder holder, int position) {
         Profile profile = profileList.get(position);
+        Log.d("profilesid", profile.getProfileID());
         Log.d("AdminProfileAdapter", "Binding profile: " + profile.getName());
         holder.nameView.setText(profile.getName());
         holder.emailView.setText(profile.getEmail());
         holder.phoneView.setText(profile.getPhoneNumber());
+        holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(profile));
     }
 
     @Override
