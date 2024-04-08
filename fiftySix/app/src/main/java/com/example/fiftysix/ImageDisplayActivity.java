@@ -69,12 +69,15 @@ public class ImageDisplayActivity extends AppCompatActivity {
 
                 if (!value.isEmpty()){
                     for (DocumentSnapshot d : value){
-                        String posterID = d.getId();
-                        String imageURL = d.getString("image");
 
-                        if (!imageURL.equals(defaultURL)){
-                            posterImages.add(new AdminImage(posterID, imageURL, defaultURL));
-                            //Log.d("ITEMADDEDD", "onEvent: ");
+                        if (d.getString("image") != null){
+                            String posterID = d.getId();
+                            String imageURL = d.getString("image");
+
+                            if (!imageURL.equals(defaultURL)){
+                                posterImages.add(new AdminImage(posterID, imageURL, defaultURL));
+                                //Log.d("ITEMADDEDD", "onEvent: ");
+                            }
                         }
                     }
                 }
@@ -87,7 +90,6 @@ public class ImageDisplayActivity extends AppCompatActivity {
 
     public void createProfileImages(){
 
-
         db.collection("Users").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -96,21 +98,22 @@ public class ImageDisplayActivity extends AppCompatActivity {
                 if (!value.isEmpty()){
                     for (DocumentSnapshot d : value){
                         String name = d.getString("name");
-                        String imageURL = d.getString("profileImageURL");
-                        String profileID = d.getId();
+                        if (name != null){
+                            String imageURL = d.getString("profileImageURL");
+                            String profileID = d.getId();
 
-                        String defaultURL1 = "https://ui-avatars.com/api/?rounded=true&name="+ name +"&background=random&size=512";
-                        String defaultURL2 = "https://ui-avatars.com/api/?rounded=true&name=NA&background=random&size=512";
+                            String defaultURL1 = "https://ui-avatars.com/api/?rounded=true&name="+ name +"&background=random&size=512";
+                            String defaultURL2 = "https://ui-avatars.com/api/?rounded=true&name=NA&background=random&size=512";
 
-                        if (!imageURL.equals(defaultURL1) && !imageURL.equals(defaultURL2)){
+                            if (!imageURL.equals(defaultURL1) && !imageURL.equals(defaultURL2)){
 
-                            if (name.equals("unknown")){
-                                posterImages.add(new AdminImage(profileID, imageURL, defaultURL2));
+                                if (name.equals("unknown")){
+                                    posterImages.add(new AdminImage(profileID, imageURL, defaultURL2));
+                                }
+                                else{
+                                    posterImages.add(new AdminImage(profileID, imageURL, defaultURL1));
+                                }
                             }
-                            else{
-                                posterImages.add(new AdminImage(profileID, imageURL, defaultURL1));
-                            }
-
                         }
                     }
                 }
