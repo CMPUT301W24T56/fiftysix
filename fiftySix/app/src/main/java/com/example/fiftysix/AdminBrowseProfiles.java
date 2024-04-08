@@ -36,6 +36,8 @@ public class  AdminBrowseProfiles extends AppCompatActivity {
 
         db.collection("Users").document(profile.getProfileID())
                 .update(updates);
+        adapter.notifyDataSetChanged();
+
     }
 
 
@@ -81,7 +83,7 @@ public class  AdminBrowseProfiles extends AppCompatActivity {
                         List<Profile> profiles = new ArrayList<>();
                         for (DocumentSnapshot document : task.getResult()) {
                             Profile profile = new Profile(
-                                    document.getString("userID"),
+                                    document.getId(),
                                     document.getString("name"),
                                     document.getString("email"),
                                     document.getString("phone")

@@ -49,7 +49,7 @@ public class AdminProfileAdapter extends RecyclerView.Adapter<AdminProfileAdapte
         holder.nameView.setText(profile.getName());
         holder.emailView.setText(profile.getEmail());
         holder.phoneView.setText(profile.getPhoneNumber());
-        // holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(profile));
+        holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(profile));
     }
 
     @Override
