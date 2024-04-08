@@ -45,10 +45,6 @@ public class  AdminBrowseProfiles extends AppCompatActivity {
                 dialogFragment.show(getSupportFragmentManager(), "confirmDelete");
             }
 
-            @Override
-            public void onRemoveProfile(Profile profile) {
-                // This can be left empty or used for other purposes
-            }
         });
         recyclerView.setAdapter(adapter);
         db = FirebaseFirestore.getInstance();

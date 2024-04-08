@@ -11,14 +11,15 @@ import java.util.List;
 
 public class AdminProfileAdapter extends RecyclerView.Adapter<AdminProfileAdapter.ProfileViewHolder> {
     private final List<Profile> profileList;
+    private OnItemClickListener onItemClickListener;
 
-    public AdminProfileAdapter(List<Profile> profileList) {
+    public AdminProfileAdapter(List<Profile> profileList, OnItemClickListener onItemClickListener) {
         this.profileList = profileList;
+        this.onItemClickListener = onItemClickListener; // Set the listener
     }
 
     public interface OnItemClickListener {
         void onItemClick(Profile profile);
-        void onRemoveProfile(Profile profile);
     }
 
 
