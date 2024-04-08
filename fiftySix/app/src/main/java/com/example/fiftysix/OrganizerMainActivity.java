@@ -805,7 +805,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
                             public void onSuccess(QuerySnapshot querySnapshot) {
                                 if (querySnapshot != null) {
                                     eventDataList.clear();
-                                    //mileStoneDataList.clear();
+                                    mileStoneDataList.clear();
                                     for (QueryDocumentSnapshot doc : querySnapshot) {
 
                                         String eventID = doc.getId();
