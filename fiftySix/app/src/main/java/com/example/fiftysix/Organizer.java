@@ -43,6 +43,7 @@ public class Organizer {
         this.db = FirebaseFirestore.getInstance();
         this.ref = db.collection("Users");
         organizerExists(); // Adds organizer to data base if the organizer doesn't already exist
+        new Attendee(mContext); // Adds feilds for attendee
     }
 
 
