@@ -20,5 +20,7 @@ public class AdminMainActivity extends AppCompatActivity {
             startActivity(new Intent(AdminMainActivity.this, AdminBrowseProfiles.class)));
         findViewById(R.id.browseImages).setOnClickListener(v ->
             startActivity(new Intent(AdminMainActivity.this, AdminBrowseImages.class)));
+        findViewById(R.id.buttonAdminBack).setOnClickListener(v ->
+                finish());
     }
 }

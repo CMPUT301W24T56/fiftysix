@@ -36,17 +36,16 @@
 
     <ImageButton
         android:id="@+id/backButton"
-        android:layout_width="52dp"
-        android:layout_height="35dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="300dp"
-        android:layout_marginBottom="23dp"
-        android:background="@drawable/arrow_123"
+        android:layout_width="73dp"
+        android:layout_height="81dp"
+        android:background="@drawable/transparent_background_button"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toTopOf="@+id/linearLayoutBrowseProfiles"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.271"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/baseline_arrow_back_24" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
