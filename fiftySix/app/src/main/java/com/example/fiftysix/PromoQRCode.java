@@ -5,9 +5,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
-
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.FirebaseDatabase;
@@ -21,18 +19,21 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
-
 import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * PromoQRCode class, creates and stores a promotion QRCode for a given event.
+ *
+ * @author Rakshit, Arsh, Bruce, Brady.
+ * @version 1
+ * @since SDK34
+ */
 public class PromoQRCode {
 
-    // MIGHT need to add an organizer ID
-
-    // Change values to edit QR code width and height.
-    private Integer qrWidth = 400;
+    private Integer qrWidth = 400; // Change values to edit QR code width and height.
     private Integer qrHeight = 400;
     private String type;
     private String eventID;
@@ -47,16 +48,13 @@ public class PromoQRCode {
     private Uri uriToBitMap;
 
 
-
-
-    // Constructor: requires eventID to instantiate.
+    /**
+     * Creates a Promo QRCode
+     * @param contextIN Context application context
+     */
     public PromoQRCode( Context contextIN ) {
-
         this.eventID = eventID;
-
-
-        // Used as the Primary Key in firebase.
-        this.qrCodeID = FirebaseDatabase.getInstance().getReference("CheckInQRCode").push().getKey();
+        this.qrCodeID = FirebaseDatabase.getInstance().getReference("CheckInQRCode").push().getKey(); // Used as the Primary Key in firebase.
         this.db = FirebaseFirestore.getInstance();
         this.qrRef = db.collection("CheckInQRCode");
         this.storage = FirebaseStorage.getInstance();
@@ -66,30 +64,22 @@ public class PromoQRCode {
         this.eventID = null;
         this.uriToBitMap = null;
         this.type = "promo";
-
-
     }
 
 
-    // Basic Getters & Setters.
-    public String getEventID() {
-        return eventID;
-    }
-    public void setEventID(String eventID) {
-        this.eventID = eventID;
-    }
-    public Bitmap getQrCode() {
-        return qrCode;
-    }
-    public String getQRCodeID(){ return qrCodeID; }
-
+    /**
+     * Sets the event used to create the promo QR Code
+     * @param eventID
+     */
     public void setEvent(String eventID){
         this.eventID = eventID;
         this.generateQR();
     }
 
 
-    // Generates a QR code (Bitmap) containing a string of the eventID. Adds image of qr code and event data to firebase.
+    /**
+     * Generates a Promo QR code (Bitmap) containing a string of the eventID. Adds image of qr code and event data to firebase.
+     */
     private void generateQR() {
 
         MultiFormatWriter writer = new MultiFormatWriter();
@@ -136,7 +126,9 @@ public class PromoQRCode {
 
     }
 
-    // Adds QR code data to firebase. Helper function for generateQR().
+    /**
+     * Adds QR code data to firebase. Helper function for generateQR().
+     */
     private void uploadData(){
         Map<String,Object> qrData = new HashMap<>();
         qrData.put("event",this.eventID);
@@ -158,7 +150,11 @@ public class PromoQRCode {
                 });
     }
 
-    // Adds QR code Image to firebase cloud. Helper function for generateQR().
+
+    /**
+     * Adds QR code Image to firebase cloud. Helper function for generateQR().
+     * @param image Uri image of qrcode to be uploaded
+     */
     private void uploadImage(Uri image){
         // Create a reference to 'images/mountains.jpg'
         StorageReference qrImagesRef = storageRef.child(this.imagePath);
@@ -176,10 +172,14 @@ public class PromoQRCode {
 
     }
 
-    // Converts Bitmap to Uri so it can be added to firebase cloud. Helper function for uploadImage().
-    // TA said this was okay to copy, given it was a small function.
-    // FOUND THIS ONLINE: https://stackoverflow.com/questions/8295773/how-can-i-transform-a-bitmap-into-a-uri
-    // Original Source: https://colinyeoh.wordpress.com/2012/05/18/android-getting-image-uri-from-bitmap/
+
+    /**
+     * Converts Bitmap to Uri so it can be added to firebase cloud. Helper function for uploadImage().
+     * Reference: https://colinyeoh.wordpress.com/2012/05/18/android-getting-image-uri-from-bitmap/
+     * @param inContext Context application context
+     * @param inImage Bitmap image to be converted to a Uri
+     * @return Returns Uri of QR Code
+     */
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
@@ -187,5 +187,15 @@ public class PromoQRCode {
         return Uri.parse(path);
 
     }
+
+
+    // Basic Getters & Setters.
+    public String getEventID() {
+        return eventID;
+    }
+    public void setEventID(String eventID) {
+        this.eventID = eventID;
+    }
+    public String getQRCodeID(){ return qrCodeID; }
 
 }

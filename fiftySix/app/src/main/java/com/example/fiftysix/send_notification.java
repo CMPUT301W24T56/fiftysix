@@ -17,6 +17,12 @@ import androidx.core.content.ContextCompat;
 
 import org.json.JSONException;
 
+/**
+ * send_notification, Used to send notification from organizer to attendee.
+ * @author Arsh
+ * @version 1
+ * @since SDK34
+ */
 public class send_notification extends AppCompatActivity {
     private ImageButton cancel, send;
     private EditText message;
@@ -62,6 +68,11 @@ public class send_notification extends AppCompatActivity {
        });
     }
 
+    /**
+     * notifies attendees with the notification
+     * @param message String notification message
+     * @throws JSONException
+     */
     public void notify_attendee(String message) throws JSONException {
         Bundle extras = getIntent().getExtras();
         String eventID, eventName;
@@ -77,9 +88,5 @@ public class send_notification extends AppCompatActivity {
         }
         finish();
     }
-
-
-
-
 }
 
