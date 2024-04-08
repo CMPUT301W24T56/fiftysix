@@ -7,14 +7,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
-
 import java.util.List;
+
+/**
+ * Adapter used to display images in ImageDisplayActivity
+ * @author Rakshit, Brady.
+ * @version 1
+ * @since SDK34
+ */
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHolder> {
 
@@ -46,6 +50,9 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
 
     }
 
+    /**
+     * Adds on click listener to delete the selected image, makes alert dialog to confirm deletion.
+     */
     public class ImageViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
 
@@ -55,9 +62,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     AdminImage image = imageList.get(getAdapterPosition());
-
 
                     new AlertDialog.Builder(mContext)
                             .setTitle("Delete Image")
@@ -70,12 +75,13 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
                                     if (image.getDefaultLink().equals("https://firebasestorage.googleapis.com/v0/b/fiftysix-a4bcf.appspot.com/o/images%2FDoNotDeleteStockProfilePic%2Fno-photos.png?alt=media&token=52497ae1-5e13-49cb-a43b-379f85849c73")) {
                                         FirebaseFirestore.getInstance().collection("PosterImages").document(image.getPosterID()).update("image", image.getDefaultLink());
                                         notifyItemChanged(getAdapterPosition());
-                                    } else {
+                                    }
+                                    // Is a profile image
+                                    else {
                                         FirebaseFirestore.getInstance().collection("Users").document(image.getPosterID()).update("profileImageURL", image.getDefaultLink());
                                         FirebaseFirestore.getInstance().collection("Profiles").document(image.getPosterID()).update("profileImageURL", image.getDefaultLink());
                                         notifyItemChanged(getAdapterPosition());
                                     }
-
                                 }
                             }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                                 @Override
@@ -85,8 +91,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
                             }).show();
                 }
             });
-
         }
     }
-
 }

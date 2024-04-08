@@ -1,18 +1,11 @@
 package com.example.fiftysix;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.util.Log;
 import androidx.annotation.NonNull;
-
-import com.blankj.utilcode.util.FileUtils;
-import com.blankj.utilcode.util.ImageUtils;
-import com.blankj.utilcode.util.UriUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.FirebaseDatabase;
@@ -28,7 +21,6 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -36,16 +28,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-// This class Creates and Stores a QRCode for attendees to check into an event with.
-// Requires a (String) eventID to instantiate this class.
-// QRCode is uploaded to Firebase.
-
+/**
+ * CheckInQRCode class, Used to scan and check-in to an event. This class creates, stores, and uploads checkin QR codes.
+ * Also checks if a check-in QR Code is no longer in use and can be reused.
+ * @author Brady
+ * @version 1
+ * @since SDK34
+ */
 public class CheckInQRCode{
 
-    // MIGHT need to add an organizer ID
-
-    // Change values to edit QR code width and height.
-    private Integer qrWidth = 400;
+    private Integer qrWidth = 400; // Change values to edit QR code width and height.
     private Integer qrHeight = 400;
     private String eventID;
     private Bitmap qrCode;
@@ -60,16 +52,15 @@ public class CheckInQRCode{
     private Uri uriToBitMap;
 
 
-
-
-    // Constructor: requires eventID to instantiate.
+    /**
+     * Constructor: Creates a check-in QR code for a given event and uploads to database.
+     *
+     * @param eventID String event ID of the event the QR code will be used to check into.
+     * @param contextIN Context application context
+     */
     public CheckInQRCode(String eventID, Context contextIN) {
-
         this.eventID = eventID;
-
-
-        // Used as the Primary Key in firebase.
-        this.qrCodeID = FirebaseDatabase.getInstance().getReference("CheckInQRCode").push().getKey();
+        this.qrCodeID = FirebaseDatabase.getInstance().getReference("CheckInQRCode").push().getKey(); // Used as the Primary Key in firebase.
         this.db = FirebaseFirestore.getInstance();
         this.qrRef = db.collection("CheckInQRCode");
         this.storage = FirebaseStorage.getInstance();
@@ -78,14 +69,18 @@ public class CheckInQRCode{
         this.mContext = contextIN;
         this.eventID = eventID;
         this.uriToBitMap = null;
-
         this.generateQR();
-
     }
 
+    /**
+     * Constructor: Used for callback
+     */
     public CheckInQRCode() {
     }
 
+    /**
+     * Callback used to store if a qrcode is valid for reuse as another checkin QR
+     */
     public interface CheckInQRCodeCallback {
         void onSuccess(Boolean validQR);
         void onFailure(Exception e);
@@ -118,15 +113,10 @@ public class CheckInQRCode{
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if ( (documentSnapshot.exists()) && (documentSnapshot != null) && (documentSnapshot.getString("event") != null) ){
                     String oldEventId = documentSnapshot.getString("event");
-
-
-
                     FirebaseFirestore.getInstance().collection("Events").document(oldEventId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot dSnapshot) {
                             if ( (dSnapshot.exists()) && (dSnapshot != null) && (dSnapshot.getString("endDate") != null) ){
-
-
                                 String endDate = dSnapshot.getString("endDate");
                                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
                                 Date strDate = null;
@@ -138,43 +128,30 @@ public class CheckInQRCode{
                                 if (new Date().after(strDate)) {
                                     //Event is old and in our database. can be reused.
                                     callback.onSuccess(true);
-                                } else {
-                                    callback.onSuccess(false);
-                                }
+                                } else {callback.onSuccess(false);}
                             }
-
-                            // Event was deletds by admin and can use QR code again
-                            else{
-                                callback.onSuccess(true);
-                            }
+                            // Event was deleted by admin and can use QR code again
+                            else{callback.onSuccess(true);}
                         }
                     });
-
                 }
-                else{
-                    callback.onSuccess(false);
-
-
-                }
+                else{callback.onSuccess(false);}
             }
         });
-
-
     }
 
 
-
-    // Generates a QR code (Bitmap) containing a string of the eventID. Adds image of qr code and event data to firebase.
+    /**
+     * Generates a QR code (Bitmap) containing a string of the eventID. Adds image of qr code and event data to firebase.
+     */
     private void generateQR() {
 
         MultiFormatWriter writer = new MultiFormatWriter();
         try {
-
             // Generates QRCode Image.
             BitMatrix matrix = writer.encode(qrCodeID, BarcodeFormat.QR_CODE, qrWidth, qrHeight);
             BarcodeEncoder encoder = new BarcodeEncoder();
             this.qrCode = encoder.createBitmap(matrix);
-
 
             // Adds QRcode to firebase.
             Map<String,Object> qrData = new HashMap<>();
@@ -207,11 +184,12 @@ public class CheckInQRCode{
         } catch (WriterException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 
-    // Adds QR code data to firebase. Helper function for generateQR().
+
+    /**
+     * Adds QR code data to firebase. Helper function for generateQR().
+     */
     private void uploadData(){
         Map<String,Object> qrData = new HashMap<>();
         qrData.put("event",this.eventID);
@@ -233,7 +211,11 @@ public class CheckInQRCode{
                 });
     }
 
-    // Adds QR code Image to firebase cloud. Helper function for generateQR().
+
+    /**
+     * Adds QR code Image to firebase cloud. Helper function for generateQR().
+     * @param image Uri image of qrcode to be uploaded
+     */
     private void uploadImage(Uri image){
         // Create a reference to 'images/mountains.jpg'
         StorageReference qrImagesRef = storageRef.child(this.imagePath);
@@ -248,13 +230,16 @@ public class CheckInQRCode{
                 Log.d("Cloud", "ERROR: Check-in QR Code Image did not upload.");
             }
         });
-
     }
 
-    // Converts Bitmap to Uri so it can be added to firebase cloud. Helper function for uploadImage().
-    // TA said this was okay to copy, given it was a small function.
-    // FOUND THIS ONLINE: https://stackoverflow.com/questions/8295773/how-can-i-transform-a-bitmap-into-a-uri
-    // Original Source: https://colinyeoh.wordpress.com/2012/05/18/android-getting-image-uri-from-bitmap/
+
+    /**
+     * Converts Bitmap to Uri so it can be added to firebase cloud. Helper function for uploadImage().
+     * Reference: https://colinyeoh.wordpress.com/2012/05/18/android-getting-image-uri-from-bitmap/
+     * @param inContext Context application context
+     * @param inImage Bitmap image to be converted to a Uri
+     * @return Returns Uri of QR Code
+     */
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 90, bytes);

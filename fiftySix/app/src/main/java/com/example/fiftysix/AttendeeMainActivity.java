@@ -70,6 +70,19 @@ import java.util.Locale;
 
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
+/**
+ * Creates an attendee. Completes attendee tasks such as
+ * 1. Allows attendee flip trough all pages in spinner, and profile.
+ * 2. Allows Attendee to scan checkin QR Code or promo QR Code.
+ * 3. Attendee can check into or signup to events.
+ * 4. Attendee can create profile and upload image.
+ * 5. Attendee can browse all events and view announcements.
+ * 6. Attendee cen enable or disable geolocation.
+ *
+ * @author Rakshit, Brady, Arsh.
+ * @version 1
+ * @since SDK34
+ */
 public class AttendeeMainActivity extends AppCompatActivity {
 
     // Firebase
@@ -90,10 +103,9 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private Attendee attendee;
     private String attendeeID, qrCodeID;
     private ArrayList<Event> myEventDataList, allEventDataList, signUpEventDataList;
-    private AttendeeMyEventAdapter attendeeMyEventAdapter;
-    private AttendeeCheckinEventAdapter attendeeSignUpEventAdapter;
+    private AttendeeCheckInsEventAdapter attendeeCheckInsEventAdapter;
+    private AttendeeSignUpsEventAdapter attendeeSignUpEventAdapter;
     private AttendeeAllEventAdapter attendeeAllEventAdapter;
-
 
     // Openening camera
     private ActivityResultLauncher<Intent> galleryLauncher;
@@ -104,7 +116,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 201;
 
     // Buttons on home pages
-
     private ImageButton attendeeNotificationButton;
 
     // Back Buttons
@@ -129,7 +140,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private Switch locationSwitch;
     private ImageButton   buttonSettingsEventSignUp, buttonSettingsNotificationBell;
 
-
     // Add Event Buttons
     private ImageButton buttonAttendeeSignInEvent;
     private ImageButton buttonAttendeeSignInEventAllEvents;
@@ -137,11 +147,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
     // Profile Buttons
     private ImageButton buttonAttendeeProfile, buttonAttendeeProfileSignUp, buttonAttendeeProfileAllEvents, buttonSettingsProfile;
-
-
-
-
-
 
     // Getting geolocation
     private LocationManager locationManager;
@@ -168,12 +173,8 @@ public class AttendeeMainActivity extends AppCompatActivity {
         setButtons();
         setEditText();
 
-
-        locationSwitch = findViewById(R.id.locationSwitch);
-
         // Creates/Gets attendee
         getLocation();
-        //Log.d("LOCATION", "onCreate: " + location.getLongitude());
         attendee = new Attendee(context);
         attendeeID = attendee.getDeviceId();
 
@@ -196,30 +197,30 @@ public class AttendeeMainActivity extends AppCompatActivity {
         //______________________________________Sign in to event Page_______________________________________
         initializeEventSignIn();
 
-
-
         // Geolocation stuff
         LocationManager locationMangaer = null;
         LocationListener locationListener = null;
         locationMangaer = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         setupLocationSwitch();
 
-
         //________________________________________Profile________________________________________
-
         displayProfileData(); // Gets profile data and displays it from the data base.
         initializeProfileLayout(); // Adds onclick listeners and what should happen on click.
 
 
-        profileImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showImageSourceDialog();
-            }
-        });
+
+        // sets up camera and gallery launchers
+        setUpLaunchers();
+    }
 
 
-        // IDK what to name these two
+    //________________________________________Methods________________________________________
+
+
+    /**
+     * Creates galleryLauncher and cameraLauncher used when opening camera or gallery
+     */
+    public void setUpLaunchers(){
         galleryLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -228,8 +229,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
                     }
                 }
         );
-
-
         cameraLauncher = registerForActivityResult(
                 new ActivityResultContracts.TakePicture(),
                 result -> {
@@ -242,11 +241,16 @@ public class AttendeeMainActivity extends AppCompatActivity {
     }
 
 
-    //________________________________________Methods________________________________________
-
-
-
-
+    /**
+     * Checks if request codes for Camera, and geolocation are given. either opens camera or gets location when the respective permission is given.
+     *
+     * @param requestCode The request code passed in
+     * @param permissions The requested permissions. Never null.
+     * @param grantResults The grant results for the corresponding permissions
+     *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
+     *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
+     *
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -268,20 +272,20 @@ public class AttendeeMainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
                 attendee.setLocation(null);
             }
-
         }
-
     }
 
 
-
+    /**
+     * Sets up geolocation switch in settings page. Store the position in the database when changed and sets the starting position based on database info.
+     * Enables or disables geolocation for event sign ups depending on position and displays alert dialog when the switch is flipped or when the attendee first returns to the app after having location enabled.
+     */
     private void setupLocationSwitch()  {
         db.collection("Users").document(attendeeID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot != null){
                     String locationAllowed = documentSnapshot.getString("locationAllowed");
-
                     if (locationAllowed != null){
                         if (locationAllowed.equals("yes")){
                             locationSwitch.setChecked(true);
@@ -293,9 +297,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
                 }
             }
         });
-
-
-
         locationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
@@ -304,15 +305,11 @@ public class AttendeeMainActivity extends AppCompatActivity {
                     builder.setTitle("Location Enabled");
                     builder.setMessage("Your sign-up location will be shared with event organizer upon sign-up.");
 
-
                     // Set up the buttons
                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-
-                            // TODO: enable location
                             db.collection("Users").document(attendeeID).update("locationAllowed", "yes");
-
                         }
                     });
                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -323,7 +320,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
                             locationSwitch.setChecked(false);
                         }
                     });
-
                     builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialogInterface) {
@@ -331,7 +327,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
                             locationSwitch.setChecked(false);
                         }
                     });
-
                     builder.show();
                 }
                 else{
@@ -339,15 +334,11 @@ public class AttendeeMainActivity extends AppCompatActivity {
                     builder.setTitle("Location Disabled");
                     builder.setMessage("Your sign-up location will no longer shared with event organizer upon sign-up.");
 
-
                     // Set up the buttons
                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-
-                            // TODO: disable location
                             db.collection("Users").document(attendeeID).update("locationAllowed", "no");
-
                         }
                     });
                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -358,7 +349,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
                             locationSwitch.setChecked(true);
                         }
                     });
-
                     builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialogInterface) {
@@ -366,23 +356,18 @@ public class AttendeeMainActivity extends AppCompatActivity {
                             locationSwitch.setChecked(true);
                         }
                     });
-
                     builder.show();
-
                 }
-
             }
         });
     }
 
-    private void checkAnnouncements() {
 
-        Log.d("checking announcements", " inside announcements function attendee");
-        //    public void updatetoken(String attendeeid){
-//        announcements = new MyFirebaseMessaging(attendeeid);
-//
-//        announcements.
-//    }
+    /**
+     * Checks for event announcements or notifications from the event organizer, if the attendee has not received the notification previously then they will receive a push
+     * notification containing the message sent by the organizer. calls notify_client() to make the push notification.
+     */
+    private void checkAnnouncements() {
         List<String> eventIds;
         attendee.event_ids(attendeeID, new Attendee.EventIdsCallback() {
             @Override
@@ -393,13 +378,10 @@ public class AttendeeMainActivity extends AppCompatActivity {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                         if (eventIds.size() > 0){
-
                             for (String id : eventIds) {
 
                                 CollectionReference collectionRef  = db.collection("Events").document(id).collection("Notifications");
                                 collectionRef.get().addOnCompleteListener(task -> {
-
-
 
                                     if (task.isSuccessful()) { // Check if the fetch was successful
                                         for (QueryDocumentSnapshot document : task.getResult()) { // Iterate through each document
@@ -408,18 +390,15 @@ public class AttendeeMainActivity extends AppCompatActivity {
                                             List<String> attendees = (List<String>) document.get("attendees");
                                             if (attendees != null) {
                                                 // Process the list of attendees. This is a placeholder for whatever processing you need to do.
-                                                // int size = attendees.size();
                                                 if (attendees.contains(attendeeID)) {
                                                     // Found a matching ID
                                                     Log.d("attendeeId_announcement", " inside announcements function attendee");
-                                                    continue;
                                                 }
                                                 else {
                                                     String notification = (String) document.get("notification");
                                                     String event_name = (String) document.get("event_name");
                                                     notify_client(document_id,notification,id,event_name);
                                                 }
-
                                             }
                                             else {
                                                 Log.d("new_notification","empty attendee list");
@@ -440,14 +419,14 @@ public class AttendeeMainActivity extends AppCompatActivity {
         });
     }
 
-
-
-
-
-
-
-    //  no signedup events
-
+    /**
+     * Creates a push notification.
+     *
+     * @param id String of the notification ID
+     * @param notify_message String of the message contained in the notification
+     * @param event_id String of the event ID
+     * @param event String of the event Name
+     */
     private void notify_client(String id, String notify_message,String event_id,String event) {
         Log.d("checking notification", " inside announcements function attendee");
 
@@ -461,12 +440,18 @@ public class AttendeeMainActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Log.w("Firestore", "Error adding attendee to the document", e));
     }
 
+    /**
+     * Sends the push notification created
+     *
+     * @param context Context application context
+     * @param eventId String of the event ID
+     * @param eventName String of the event Name
+     * @param message String of the message contained in the notification
+     */
     private void sendNotification(Context context, String eventId, String eventName, String message) {
         createNotificationChannel(context,eventId);
-
         // Get the notification manager
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
         // Build the notification
         Notification.Builder builder = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -476,20 +461,30 @@ public class AttendeeMainActivity extends AppCompatActivity {
                     .setContentText(message)
                     .setPriority(Notification.PRIORITY_HIGH);
         }
-
         // Show the notification
         notificationManager.notify(100, builder.build());
     }
+
+    /**
+     * Creates notification channel
+     * @param context Context application context
+     * @param eventId String of the event ID
+     */
     private void createNotificationChannel(Context context,String eventId) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(eventId, "Channel Name", NotificationManager.IMPORTANCE_HIGH);
             channel.setDescription("Channel Description");
-
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
     }
-    // Source "How to Get Current Location in Android Studio||Get user's current Location||Location App 2022" - by "Coding with Aiman" - Youtube.com
+
+    /**
+     * Checks for permission to get last known location,requests the permission if it is not already give.
+     * Once it get permission it gets the last recorded location of the attendees android device.
+     *
+     * Reference "How to Get Current Location in Android Studio||Get user's current Location||Location App 2022" - by "Coding with Aiman" - Youtube.com
+     */
     private void getLocation() {
         List<Address> addresses;
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(AttendeeMainActivity.this);
@@ -514,10 +509,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
         else {
             ActivityCompat.requestPermissions(AttendeeMainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
         }
-
     }
-
-
 
 
     /**
@@ -534,13 +526,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
     private void allEventsView(View v){
         viewFlipper.setDisplayedChild(1);
     }
-    /**
-     * Sets view flipper to specific index to display the corresponding add event/checkin pages
-     * @param v: View
-     */
-    private void addEventsView(View v){
-        viewFlipper.setDisplayedChild(2);
-    }
+
     /**
      * Sets view flipper to specific index to display the corresponding users profile page
      * @param v: View
@@ -549,8 +535,16 @@ public class AttendeeMainActivity extends AppCompatActivity {
         viewFlipper.setDisplayedChild(3);
     }
 
+    /**
+     * Sets view flipper to specific index to display the corresponding users event Signups page
+     * @param v
+     */
     private void signUpEventsView(View v) {viewFlipper.setDisplayedChild(4);}
 
+    /**
+     * Sets view flipper to specific index to display the corresponding users Settings page
+     * @param v
+     */
     private void settingsView(View v) {viewFlipper.setDisplayedChild(5);}
 
     /**
@@ -572,14 +566,14 @@ public class AttendeeMainActivity extends AppCompatActivity {
                         break;
                     case 1: // Upload from Camera
                         Log.d(TAG, "Attempting to launch camera.");
-                       // if (ContextCompat.checkSelfPermission(AttendeeMainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                        //    Log.d(TAG, "RequestCameraPermissionCalled");
+                        if (ContextCompat.checkSelfPermission(AttendeeMainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                            Log.d(TAG, "RequestCameraPermissionCalled");
                             requestCameraPermission();
-                       // }
-                        //else {
+                        }
+                        else {
                          //   Log.d(TAG, "Permission is already granted");
-                        //    openCamera();
-                       // }
+                            openCamera();
+                        }
                         break;
                 }
             }
@@ -656,7 +650,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
         buttonAttendeeSignInEventAllEvents = (ImageButton) findViewById(R.id.buttonAttendeeSignInEventAllEvents);
         buttonAttendeeSignInEventSignUp = (ImageButton) findViewById(R.id.buttonAttendeeSignInEventSignUp);
 
-
         // Profile Buttons
         buttonAttendeeProfile = (ImageButton) findViewById(R.id.buttonAttendeeProfile);
         buttonAttendeeProfileSignUp = (ImageButton) findViewById(R.id.buttonAttendeeProfileSignUp);
@@ -668,6 +661,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
         buttonSettingsEventSignUp = findViewById(R.id.buttonSettingsEventSignUp);
         buttonSettingsNotificationBell = findViewById(R.id.buttonSettingsNotificationBell);
         buttonAttendeeBackSignUp = findViewById(R.id.buttonAttendeeBack);
+        locationSwitch = findViewById(R.id.locationSwitch);
     }
 
     /**
@@ -693,83 +687,77 @@ public class AttendeeMainActivity extends AppCompatActivity {
         barLauncher.launch(options);
     }
     ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result->{
-
         if(result.getContents() != null){
+            qrCodeID = result.getContents().toString();
+            db.collection("CheckInQRCode").document(qrCodeID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    if (documentSnapshot.exists()){
+                        String qrType = documentSnapshot.getString("type");
+                        String eventID = documentSnapshot.getString("event");
 
-                    qrCodeID = result.getContents().toString();
+                        if (qrType != null){
+                            // Is a Promo QR Code
 
-                    db.collection("CheckInQRCode").document(qrCodeID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            if (documentSnapshot.exists()){
-                                String qrType = documentSnapshot.getString("type");
-                                String eventID = documentSnapshot.getString("event");
-
-                                if (qrType != null){
-                                    // Is a Promo QR Code
-
-                                    if (qrType.equals("promo")){
-                                        //TODO:  Open & Display event
-                                        Context context = getApplicationContext();
-                                        Intent intent = new Intent(AttendeeMainActivity.this, PromoScanActivity.class);
-                                        intent.putExtra("eventID", eventID);
-                                        startActivity(intent);
-                                    }
-
-
-                                    // Is a checkin QR Code
-                                    else{
-                                        attendee.alreadyCheckedIn(eventID, new Attendee.AttendeeCallBack() {
-                                            @Override
-                                            public void checkInSuccess(Boolean checkinSuccess, String eventName) {
-                                                if (checkinSuccess){
-                                                    attendee.checkInToEvent(qrCodeID, new Attendee.AttendeeCallBack() {
-                                                        @Override
-                                                        public void checkInSuccess(Boolean checkinSuccess, String eventName) {
-                                                            if (checkinSuccess){
-                                                                android.app.AlertDialog.Builder builder = new AlertDialog.Builder(AttendeeMainActivity.this);
-                                                                builder.setTitle("Check-in Successful");
-                                                                builder.setMessage(eventName);
-                                                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                                    @Override
-                                                                    public void onClick(DialogInterface dialog, int which) {
-                                                                        dialog.dismiss();
-                                                                    }
-                                                                }).show();
+                            if (qrType.equals("promo")){
+                                //TODO:  Open & Display event
+                                Context context = getApplicationContext();
+                                Intent intent = new Intent(AttendeeMainActivity.this, PromoScanActivity.class);
+                                intent.putExtra("eventID", eventID);
+                                startActivity(intent);
+                            }
+                            // Is a checkin QR Code
+                            else{
+                                attendee.alreadyCheckedIn(eventID, new Attendee.AttendeeCallBack() {
+                                    @Override
+                                    public void checkInSuccess(Boolean checkinSuccess, String eventName) {
+                                        if (checkinSuccess){
+                                            attendee.checkInToEvent(qrCodeID, new Attendee.AttendeeCallBack() {
+                                                @Override
+                                                public void checkInSuccess(Boolean checkinSuccess, String eventName) {
+                                                    if (checkinSuccess){
+                                                        android.app.AlertDialog.Builder builder = new AlertDialog.Builder(AttendeeMainActivity.this);
+                                                        builder.setTitle("Check-in Successful");
+                                                        builder.setMessage(eventName);
+                                                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.dismiss();
                                                             }
-                                                            else {
-                                                                android.app.AlertDialog.Builder builder = new AlertDialog.Builder(AttendeeMainActivity.this);
-                                                                builder.setTitle("Check-in Failed");
-                                                                builder.setMessage(eventName + " is at max capacity");
-                                                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                                    @Override
-                                                                    public void onClick(DialogInterface dialog, int which) {
-                                                                        dialog.dismiss();
-                                                                    }
-                                                                }).show();
+                                                        }).show();
+                                                    }
+                                                    else {
+                                                        android.app.AlertDialog.Builder builder = new AlertDialog.Builder(AttendeeMainActivity.this);
+                                                        builder.setTitle("Check-in Failed");
+                                                        builder.setMessage(eventName + " is at max capacity");
+                                                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.dismiss();
                                                             }
-                                                        }
-                                                    });
+                                                        }).show();
+                                                    }
                                                 }
-                                                else{
-                                                    android.app.AlertDialog.Builder builder = new AlertDialog.Builder(AttendeeMainActivity.this);
-                                                    builder.setTitle("Check-in Failed");
-                                                    builder.setMessage("User already checked into this event.");
-                                                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog, int which) {
-                                                            dialog.dismiss();
-                                                        }
-                                                    }).show();
-
+                                            });
+                                        }
+                                        else{
+                                            android.app.AlertDialog.Builder builder = new AlertDialog.Builder(AttendeeMainActivity.this);
+                                            builder.setTitle("Check-in Failed");
+                                            builder.setMessage("User already checked into this event.");
+                                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
                                                 }
-                                            }
-                                        });
+                                            }).show();
+                                        }
                                     }
-                                }
+                                });
                             }
                         }
-                    });
+                    }
+                }
+            });
         }
     });
 
@@ -778,7 +766,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
      */
     private void displayMyCheckins(){
         // Adds events from database to the attendee home screen. Will only show events the attendee has signed up for.
-
         FirebaseFirestore.getInstance().collection("Users").document(attendeeID).collection("UpcomingEvents").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -787,19 +774,16 @@ public class AttendeeMainActivity extends AppCompatActivity {
                 if (value.isEmpty()){
                     String hardCode = "No Current Checked-Ins";
                     myEventDataList.add(new Event(null, hardCode, hardCode, hardCode, hardCode, hardCode, hardCode, hardCode, 0, 0, 0, 0, hardCode));
-                    attendeeMyEventAdapter.notifyDataSetChanged();
+                    attendeeCheckInsEventAdapter.notifyDataSetChanged();
                 }
-
                 else {
                     for (QueryDocumentSnapshot v : value) {
                         String eventID = v.getId();
                         FirebaseFirestore.getInstance().collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-
-
                                 if (documentSnapshot != null) {
+
                                     String eventName = documentSnapshot.getString("eventName");
                                     String location = documentSnapshot.getString("location");
                                     String details = documentSnapshot.getString("details");
@@ -809,22 +793,19 @@ public class AttendeeMainActivity extends AppCompatActivity {
                                     String endDate = documentSnapshot.getString("endDate");
                                     String endTime = documentSnapshot.getString("endTime");
 
-
                                     if (documentSnapshot.getLong("attendeeSignUpCount") != null) {
 
                                         Integer attendeeCheckinLimitIn = documentSnapshot.getLong("attendeeLimit").intValue();
                                         Integer attendeeSignUpLimitIn = documentSnapshot.getLong("attendeeSignUpLimit").intValue();
                                         Integer inAttendeeCount = documentSnapshot.getLong("attendeeCount").intValue();
                                         Integer signUpCount = documentSnapshot.getLong("attendeeSignUpCount").intValue();
-
-
                                         db.collection("PosterImages").document(posterID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                             @Override
                                             public void onSuccess(DocumentSnapshot documentSnapshot2) {
                                                 if (documentSnapshot2 != null) {
                                                     String imageUrl = documentSnapshot2.getString("image");
                                                     myEventDataList.add(new Event(eventID, eventName, location, startDate, endDate, startTime, endTime, details, inAttendeeCount, signUpCount, attendeeCheckinLimitIn, attendeeSignUpLimitIn, imageUrl));
-                                                    attendeeMyEventAdapter.notifyDataSetChanged();
+                                                    attendeeCheckInsEventAdapter.notifyDataSetChanged();
                                                 }
                                             }
                                         });
@@ -833,16 +814,17 @@ public class AttendeeMainActivity extends AppCompatActivity {
                             }
                         });
                     }
-
                 }
             }
         });
-
     }
 
+    /**
+     * Gets all events that the attendee is signed up for, getting all event details then displaying the events by adding them to signUpEventDataList
+     * and using attendeeSignUpEventAdapter
+     */
     private void displayMySignUps() {
         // Adds events from database to the attendee home screen. Will only show events the attendee has signed up for.
-
         FirebaseFirestore.getInstance().collection("Users").document(attendeeID).collection("SignedUpEvents").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -853,7 +835,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
                     signUpEventDataList.add(new Event(null, hardCode, hardCode, hardCode, hardCode, hardCode, hardCode, hardCode, 0, 0, 0, 0, hardCode));
                     attendeeSignUpEventAdapter.notifyDataSetChanged();
                 }
-
                 else {
                     for (QueryDocumentSnapshot v : value) {
                         String eventID = v.getId();
@@ -862,9 +843,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                 if (documentSnapshot != null) {
 
-
                                     String eventName = documentSnapshot.getString("eventName");
-
                                     String location = documentSnapshot.getString("location");
                                     String details = documentSnapshot.getString("details");
                                     String posterID = documentSnapshot.getString("posterID");
@@ -874,14 +853,10 @@ public class AttendeeMainActivity extends AppCompatActivity {
                                     String endTime = documentSnapshot.getString("endTime");
 
                                     if (documentSnapshot.getLong("attendeeSignUpCount") != null) {
-
-
                                         Integer attendeeCheckinLimitIn = documentSnapshot.getLong("attendeeLimit").intValue();
                                         Integer attendeeSignUpLimitIn = documentSnapshot.getLong("attendeeSignUpLimit").intValue();
                                         Integer inAttendeeCount = documentSnapshot.getLong("attendeeCount").intValue();
                                         Integer signUpCount = documentSnapshot.getLong("attendeeSignUpCount").intValue();
-
-
                                         db.collection("PosterImages").document(posterID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                             @Override
                                             public void onSuccess(DocumentSnapshot documentSnapshot2) {
@@ -902,28 +877,19 @@ public class AttendeeMainActivity extends AppCompatActivity {
                                                             String imageUrl = documentSnapshot2.getString("image");
                                                             signUpEventDataList.add(new Event(eventID, eventName, location, startDate, endDate, startTime, endTime, details, inAttendeeCount, signUpCount, attendeeCheckinLimitIn, attendeeSignUpLimitIn, imageUrl));
                                                             attendeeSignUpEventAdapter.notifyDataSetChanged();
-
                                                         }
-
                                                     }
                                                 }
                                             }
                                         });
-
-
                                     }
-
                                 }
                             }
-
                         });
-
                     }
                 }
-
             }
         });
-
     }
 
     /**
@@ -945,7 +911,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
                 }
                 else{
                     allEventDataList.clear();
-
                     for (QueryDocumentSnapshot doc : value) {
                         if (doc.getId() != "temp") {
                             String eventID = doc.getId();
@@ -960,18 +925,14 @@ public class AttendeeMainActivity extends AppCompatActivity {
                             String endTime = doc.getString("endTime");
 
                             if (doc.getLong("attendeeSignUpCount") != null) {
-
-
                                 Integer attendeeCheckinLimitIn = doc.getLong("attendeeLimit").intValue();
                                 Integer attendeeSignUpLimitIn = doc.getLong("attendeeSignUpLimit").intValue();
                                 Integer inAttendeeCount = doc.getLong("attendeeCount").intValue();
                                 Integer signUpCount = doc.getLong("attendeeSignUpCount").intValue();
 
-
                                 db.collection("PosterImages").document(posterID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                     @Override
                                     public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-
                                         if (value != null) {
                                             if (endDate != null) {
                                                 // TODO: Finish this/ test
@@ -989,21 +950,15 @@ public class AttendeeMainActivity extends AppCompatActivity {
                                                     String imageUrl = value.getString("image");
                                                     allEventDataList.add(new Event(eventID, eventName, location, startDate, endDate, startTime, endTime, details, inAttendeeCount, signUpCount, attendeeCheckinLimitIn, attendeeSignUpLimitIn, imageUrl));
                                                     attendeeAllEventAdapter.notifyDataSetChanged();
-
                                                 }
-
                                             }
                                         }
                                     }
                                 });
-
                             }
                         }
                     }
-
                 }
-
-
             }
         });
     }
@@ -1047,10 +1002,7 @@ public class AttendeeMainActivity extends AppCompatActivity {
                         .into(profileImage);
             }
         });
-
-
         posterHandler = new Profile(attendee.getDeviceId());
-
 
         profileBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1069,6 +1021,13 @@ public class AttendeeMainActivity extends AppCompatActivity {
                         db.collection("Users").document(attendee.getDeviceId()).update("profileImageURL", "https://ui-avatars.com/api/?rounded=true&name="+ name +"&background=random&size=512");
                     }
                 });
+            }
+        });
+
+        profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showImageSourceDialog();
             }
         });
 
@@ -1105,13 +1064,10 @@ public class AttendeeMainActivity extends AppCompatActivity {
                         imageURL = "https://firebasestorage.googleapis.com/v0/b/fiftysix-a4bcf.appspot.com/o/images%2FDoNotDeleteStockProfilePic%2Fprofile.png?alt=media&token=19c78f81-176c-4d93-817d-4a789d5c8cd2";
                     }
 
-
                     Picasso.get()
                             .load(imageURL)
                             .fit().transform(new CropCircleTransformation())
                             .into(profileImage);
-
-
                 }
             }
         });
@@ -1127,7 +1083,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
                 myEventsView(v);
             }
         });
-
 
         addEventScanCheckinButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1211,7 +1166,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
             }
         });
 
-
         //________________________ Return to MainActivity Buttons ___________________________________
         buttonAttendeeBackAllEvents.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1237,9 +1191,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-
-
     }
 
     /**
@@ -1254,15 +1205,15 @@ public class AttendeeMainActivity extends AppCompatActivity {
         recyclerViewAllEvents = findViewById(R.id.attendeeHomeRecyclerViewAllEvents);
         recyclerViewSignUpEvents = findViewById(R.id.attendeeHomeRecyclerViewSignUp);
 
-        attendeeMyEventAdapter = new AttendeeMyEventAdapter(myEventDataList, getApplicationContext());
-        recyclerViewMyEvents.setAdapter(attendeeMyEventAdapter);
+        attendeeCheckInsEventAdapter = new AttendeeCheckInsEventAdapter(myEventDataList, getApplicationContext());
+        recyclerViewMyEvents.setAdapter(attendeeCheckInsEventAdapter);
         recyclerViewMyEvents.setHasFixedSize(false);
 
         attendeeAllEventAdapter = new AttendeeAllEventAdapter(allEventDataList, getApplicationContext());
         recyclerViewAllEvents.setAdapter(attendeeAllEventAdapter);
         recyclerViewAllEvents.setHasFixedSize(false);
 
-        attendeeSignUpEventAdapter = new AttendeeCheckinEventAdapter(signUpEventDataList, getApplicationContext());
+        attendeeSignUpEventAdapter = new AttendeeSignUpsEventAdapter(signUpEventDataList, getApplicationContext());
         recyclerViewSignUpEvents.setAdapter(attendeeSignUpEventAdapter);
         recyclerViewSignUpEvents.setHasFixedSize(false);
     }
@@ -1278,14 +1229,15 @@ public class AttendeeMainActivity extends AppCompatActivity {
         imageRef = db.collection("Images");
     }
 
-
+    /**
+     * Sets up the four spinners on the four main layouts.
+     */
     private void addSpinners(){
         // Adds Drop down menu to top left
         myEventSpinner = findViewById(R.id.menuButtonMyEvents);
         allEventSpinner = findViewById(R.id.menuButtonAllEvents);
         myEventsSignUpSpinner = findViewById(R.id.menuButtonMyEventsSignUp);
         settingsSpinner = findViewById(R.id.menuButtonSettings);
-
 
         settingsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -1325,7 +1277,6 @@ public class AttendeeMainActivity extends AppCompatActivity {
 
             }
         });
-
 
         myEventsSignUpSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

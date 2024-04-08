@@ -2,13 +2,9 @@ package com.example.fiftysix;
 
 import android.net.Uri;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -19,11 +15,16 @@ import com.google.firebase.storage.StorageReference;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Profile class, profile for attendees, has profile image, name, phone number, email address, and home address.
+ *
+ * @author Rakshit, Arsh, Bruce, Brady.
+ * @version 1
+ * @since SDK34
+ */
 public class Profile {
 
     private static final String TAG = "Profile";
-
-
     private String userID;
     private String name;
     private String email;
@@ -38,10 +39,7 @@ public class Profile {
     private String imageUrl;
     private String checkInTime;
     private String timesCheckedIn;
-
     private Boolean expandable;
-
-
 
 
     public interface ProfileUploadCallback {
@@ -50,13 +48,14 @@ public class Profile {
     }
 
 
-    // TODO: check if profile exists already or if this is a new profile.
-    // TODO: Upload data to firebase.
-    // TODO: Allow changes to image.
-
-    public String getProfileID(){
-        return this.userID;
-    }
+    /**
+     * Creates profile Object, Used to pass profile to OrganizerSignUpAdapter from OrganizerSignUpDataActivity
+     * @param name String of profile name
+     * @param phoneNumber String of phone number
+     * @param checkInTime string of check in time
+     * @param email String of email
+     * @param imageUrl String of url to profile image
+     */
     public Profile(String name, String phoneNumber, String checkInTime, String email, String imageUrl){
         this.name = name;
         this.phoneNumber = phoneNumber;
@@ -67,6 +66,15 @@ public class Profile {
         this.expandable = false;
     }
 
+    /**
+     * Creates profile Object, Used to pass profile to OrganizerCheckInAdapter from OrganizerCheckInDataActivity
+     * @param name String of profile name
+     * @param phoneNumber String of phone number
+     * @param checkInTime string of check in time
+     * @param email String of email
+     * @param imageUrl String of url to profile image
+     * @param timesCheckedIn String of an integer representing the number of times the user has checked into an event
+     */
     public Profile(String name, String phoneNumber, String checkInTime, String email, String imageUrl, String timesCheckedIn){
         this.name = name;
         this.phoneNumber = phoneNumber;
@@ -74,14 +82,14 @@ public class Profile {
         this.email = email;
         this.imageUrl = imageUrl;
         this.timesCheckedIn = timesCheckedIn;
-
         this.expandable = false;
     }
 
 
-
-
-
+    /**
+     * Creates and Adds Profile to database if it is not already added
+     * @param userID String user ID of attendee
+     */
     public Profile(String userID){
         this.userID = userID;
         this.bio = bio;
@@ -90,7 +98,6 @@ public class Profile {
         this.profileRef = db.collection("Profiles");
         this.imageUrl = ("https://ui-avatars.com/api/?rounded=true&name=NA&background=random&size=512");
         this.profileID = profileID;
-
         profileRef.document(userID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -102,7 +109,14 @@ public class Profile {
         });
     }
 
-    // Used for the ADMIN BROWSE PROFILES
+
+    /**
+     * Used for the ADMIN BROWSE PROFILES
+     * @param userID String user ID of attendee
+     * @param name String of profile name
+     * @param email String of email
+     * @param phone String of phone number
+     */
     public Profile(String userID, String name, String email, String phone) {
         this.userID = userID;
         this.name = name;
@@ -110,10 +124,15 @@ public class Profile {
         this.phoneNumber = phone;
     }
 
-    public void deleteProfilePic(String userID){
-        userRef.document(userID).update("profileImageURL", "https://ui-avatars.com/api/?rounded=true&name="+ this.name +"&background=random&size=512");
-    }
 
+    /**
+     * Edits Profile details, updates values in database
+     * @param userID String user ID of attendee
+     * @param name String of profile name
+     * @param email String of email
+     * @param phoneNumber String of phone number
+     * @param bio String of user address
+     */
     public void editProfile(String userID, String name, String email, String phoneNumber, String bio){
         this.userID = userID;
         this.name = name;
@@ -124,13 +143,10 @@ public class Profile {
         userRef.document(userID).update("phone", phoneNumber);
         userRef.document(userID).update("email", email);
         userRef.document(userID).update("bio", bio);
-
-
         profileRef.document(userID).update("name", name);
         profileRef.document(userID).update("phone", phoneNumber);
         profileRef.document(userID).update("email", email);
         profileRef.document(userID).update("bio", bio);
-
         if (this.imageUrl == "https://ui-avatars.com/api/?rounded=true&name=NA&background=random&size=512"){
             this.imageUrl = "https://ui-avatars.com/api/?rounded=true&name="+ name +"&background=random&size=512";
             userRef.document(userID).update("profileImageURL", this.imageUrl);
@@ -138,21 +154,10 @@ public class Profile {
         }
     }
 
-    public void setProfileURL(String imageURL){
-        this.imageUrl = imageURL;
-        userRef.document(userID).update("profileImageURL", this.imageUrl);
-        return;
-    }
 
-
-    public String getProfileURL(){
-        return this.imageUrl;
-    }
-
-
-
-
-
+    /**
+     * Adds profile to database
+     */
     private void addProfileToDatabase(){
         Map<String,Object> profileData = new HashMap<>();
         profileData.put("userID","unknown");
@@ -161,7 +166,6 @@ public class Profile {
         profileData.put("phone","unknown");
         profileData.put("bio","unknown");
         profileData.put("profileImageURL",this.imageUrl);
-
 
         // Adds profile to Profiles collection
         db.collection("Profiles")
@@ -181,26 +185,24 @@ public class Profile {
     }
 
 
-
+    /**
+     *  Uploads profile image and stores reference in database
+     * @param imageUri Uri of the image to upload
+     * @param callback ProfileUploadCallback
+     */
     public void uploadImageAndStoreReference(Uri imageUri, ProfileUploadCallback callback) {
         if (imageUri != null) {
             // Gets new key for image ID & sets the key to current image ID.
             this.imageID = FirebaseDatabase.getInstance().getReference("Images").push().getKey();
             this.currentImageID = "images/profile/" + imageID + ".jpg";
-
             // gets path to where image is stored
             StorageReference fileReference = FirebaseStorage.getInstance().getReference("images/profile/" +imageID + ".jpg");
-
             // Stores Image in firebase
             fileReference.putFile(imageUri)
                     .addOnSuccessListener(taskSnapshot -> taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(downloadUri -> {
                         Log.d(TAG, "Image Upload Successful. Image Uri: " + downloadUri.toString());
-
-
                         storeImageReferenceInIMAGES(downloadUri.toString());
                         callback.onUploadSuccess(downloadUri.toString());
-
-
                     }).addOnFailureListener(e -> {
                         Log.e(TAG, "URL retrieval failed.", e);
                         callback.onUploadFailure(e);
@@ -213,13 +215,14 @@ public class Profile {
             Log.d(TAG, "No Image Selected! Using default poster.");
             storeImageReferenceInIMAGES(imageUrl);
             callback.onUploadSuccess(imageUrl);
-
-
         }
     }
 
 
-    // Method to store the image reference in Firestore
+    /**
+     * Method to store the image reference in Firestore
+     * @param imageUrl String of profile image URL
+     */
     private void storeImageReferenceInIMAGES(String imageUrl) {
 
         this.imageUrl = imageUrl;
@@ -237,7 +240,10 @@ public class Profile {
                 });
     }
 
-    //
+    /**
+     * Stores image refernece in user collection
+     * @param imageUrlin String profile image URL to be stored
+     */
     public void storeImageInUser(String imageUrlin) {
         Map<String, Object> userData = new HashMap<>();
         userData.put("profileImageURL", imageUrlin);
@@ -250,6 +256,9 @@ public class Profile {
                     Log.e(TAG, "Events collection update failure for URL");
                 });
     }
+
+
+    //_____________________________________Basic Getters & Setters______________________________________________
 
     public Boolean getExpandable() {
         return expandable;
@@ -271,10 +280,6 @@ public class Profile {
         return phoneNumber;
     }
 
-    public String getBio() {
-        return bio;
-    }
-
     public String getImageUrl() {
         return imageUrl;
     }
@@ -285,6 +290,13 @@ public class Profile {
 
     public String getTimesCheckedIn(){ return timesCheckedIn; }
 
+    public String getProfileURL(){
+        return this.imageUrl;
+    }
+
+    public String getProfileID(){
+        return this.userID;
+    }
 
 
 }

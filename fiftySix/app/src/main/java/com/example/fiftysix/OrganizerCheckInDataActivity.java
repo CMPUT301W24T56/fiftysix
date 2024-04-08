@@ -21,6 +21,14 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+/**
+ * Displays Attendees Checkin list to Organizer for the selected event.
+ *
+ * @author Brady.
+ * @version 1
+ * @since SDK34
+ */
+
 public class OrganizerCheckInDataActivity extends AppCompatActivity {
 
     private Organizer organizer;
@@ -76,8 +84,9 @@ public class OrganizerCheckInDataActivity extends AppCompatActivity {
     }
 
 
-
-
+    /**
+     * Loads the attendee data for all attendees currently checked in to the selected event.
+     */
     private void loadOrganizerAttendees() {
 
         // Checks for updates in Events collection in firebase

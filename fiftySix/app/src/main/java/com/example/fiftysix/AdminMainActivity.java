@@ -7,6 +7,12 @@ import android.os.Bundle;
 
 import com.google.firebase.FirebaseApp;
 
+/**
+ * Initial activity for admin to select what they'd like to browse, launches respective activity.
+ * @author Rakshit, Bruce.
+ * @version 1
+ * @since SDK34
+ */
 public class AdminMainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {

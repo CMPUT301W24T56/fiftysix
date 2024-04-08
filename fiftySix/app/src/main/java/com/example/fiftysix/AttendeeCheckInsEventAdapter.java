@@ -22,13 +22,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-
-public class AttendeeMyEventAdapter extends RecyclerView.Adapter<AttendeeMyEventAdapter.EventVH> {
+/**
+ * Adapted to display event data in attendee browse checkins page expanding recycler view. Allows attendee to cancel checkin and view event announcements.
+ * @author Rakshit, Brady.
+ * @version 1
+ * @since SDK34
+ */
+public class AttendeeCheckInsEventAdapter extends RecyclerView.Adapter<AttendeeCheckInsEventAdapter.EventVH> {
 
     List<Event> eventList;
     Context mContext;
 
-    public AttendeeMyEventAdapter(ArrayList<Event> eventList, Context mContext) {
+    public AttendeeCheckInsEventAdapter(ArrayList<Event> eventList, Context mContext) {
         this.eventList = eventList;
         this.mContext = mContext;
     }
@@ -61,9 +66,6 @@ public class AttendeeMyEventAdapter extends RecyclerView.Adapter<AttendeeMyEvent
 
         }
 
-
-
-
         if(event.getCheckInLimit() == 2147483647){
             holder.currentAttendees.setText("Check-in Limit: Unlimited");
         }
@@ -93,6 +95,10 @@ public class AttendeeMyEventAdapter extends RecyclerView.Adapter<AttendeeMyEvent
         return eventList.size();
     }
 
+
+    /**
+     *  Event View Holder for Expanding RecyclerView. Allows attendee to cancel checkin or view event announcement and view event details.
+     */
     public class EventVH extends RecyclerView.ViewHolder {
 
         TextView eventName, startDate, endDate, eventLocation, descriptionTxt, attendeeCapacity, currentAttendees;
@@ -163,6 +169,12 @@ public class AttendeeMyEventAdapter extends RecyclerView.Adapter<AttendeeMyEvent
         }
     }
 
+    /**
+     * Fetches event announcements to the attendee.
+     *
+     * @param eventId String of event ID to get announcements for.
+     * @param context application Context
+     */
     private void fetchAndDisplayAnnouncements(String eventId, Context context) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("Events").document(eventId)
@@ -179,6 +191,13 @@ public class AttendeeMyEventAdapter extends RecyclerView.Adapter<AttendeeMyEvent
                 .addOnFailureListener(e -> Toast.makeText(context, "Error fetching announcements.", Toast.LENGTH_SHORT).show());
     }
 
+
+    /**
+     * Displays all event announcements to the attendee.
+     *
+     * @param context application Context
+     * @param announcements List<String> containing all announcements for the event.
+     */
     private void displayAnnouncements(Context context, List<String> announcements) {
         // Create and show the announcements dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(context);

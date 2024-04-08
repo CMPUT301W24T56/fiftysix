@@ -12,36 +12,38 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class AttendeeCheckinEventAdapter extends RecyclerView.Adapter<AttendeeCheckinEventAdapter.EventVH> {
+/**
+ * Adapted to display event data in attendee browse signups page expanding recycler view. Allows attendee to cancel signup and view event announcements.
+ * @author Rakshit, Brady.
+ * @version 1
+ * @since SDK34
+ */
+public class AttendeeSignUpsEventAdapter extends RecyclerView.Adapter<AttendeeSignUpsEventAdapter.EventVH> {
 
     List<Event> eventList;
     Context mContext;
 
-    public AttendeeCheckinEventAdapter(ArrayList<Event> eventList, Context mContext) {
+    public AttendeeSignUpsEventAdapter(ArrayList<Event> eventList, Context mContext) {
         this.eventList = eventList;
         this.mContext = mContext;
     }
 
     @NonNull
     @Override
-    public AttendeeCheckinEventAdapter.EventVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public AttendeeSignUpsEventAdapter.EventVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.attendee_signups_row, parent, false);
-        return new AttendeeCheckinEventAdapter.EventVH(view);
+        return new AttendeeSignUpsEventAdapter.EventVH(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull EventVH holder, int position) {
-
 
         Event event = eventList.get(position);
         holder.eventName.setText(event.getEventName());
@@ -71,8 +73,6 @@ public class AttendeeCheckinEventAdapter extends RecyclerView.Adapter<AttendeeCh
 
         holder.currentAttendees.setText("Check-ins: " + event.getAttendeeCount().toString());
 
-
-
         String imageUrl = event.getPosterURL();
 
         if (imageUrl != null && !imageUrl.isEmpty()) {
@@ -82,13 +82,8 @@ public class AttendeeCheckinEventAdapter extends RecyclerView.Adapter<AttendeeCh
                     .into(holder.eventImage); // Your ImageView
         }
 
-
-
         boolean isExpandable = eventList.get(position).getExpandable();
         holder.expandableLayout.setVisibility(isExpandable ? View.VISIBLE : View.GONE);
-
-
-
     }
 
     @Override
@@ -96,6 +91,9 @@ public class AttendeeCheckinEventAdapter extends RecyclerView.Adapter<AttendeeCh
         return eventList.size();
     }
 
+    /**
+     *  Event View Holder for Expanding RecyclerView. Allows attendee to cancel signup or view event announcement and view event details.
+     */
     public class EventVH extends RecyclerView.ViewHolder {
 
         TextView eventName, endDate, startDate, eventLocation, descriptionTxt, attendeeCapacity, currentAttendees;
@@ -127,12 +125,10 @@ public class AttendeeCheckinEventAdapter extends RecyclerView.Adapter<AttendeeCh
             cancelSignupButton = itemView.findViewById(R.id.cancel_signup);
             viewAnnouncementsButton = itemView.findViewById(R.id.view_announcements);
 
+            // Expands expanding view
             linearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-
-
                     Event event = eventList.get(getAdapterPosition());
 
                     if (event.getEventID() == null){
@@ -146,20 +142,19 @@ public class AttendeeCheckinEventAdapter extends RecyclerView.Adapter<AttendeeCh
                 }
             });
 
+            // Allows attendee to cancel signup
             cancelSignupButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Attendee attendee = new Attendee(mContext);
                     Event event = eventList.get(getAdapterPosition());
                     attendee.leaveSignUp(event.getEventID());
-                    //eventList.clear();
-
                     notifyItemChanged(getAdapterPosition());
                 }
             });
 
 
-
+            // Allows attendee to view event announcements
             viewAnnouncementsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -192,6 +187,12 @@ public class AttendeeCheckinEventAdapter extends RecyclerView.Adapter<AttendeeCh
         }
     }
 
+    /**
+     * Displays all event announcements to the attendee.
+     *
+     * @param context application Context
+     * @param announcements List<String> containing all announcements for the event.
+     */
     private void displayAnnouncements(Context context, @NonNull List<String> announcements) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Announcements");

@@ -1,7 +1,6 @@
 package com.example.fiftysix;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -10,11 +9,17 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
+
+/**
+ * PromoScanActivity, Used to scan a promo QR code and brings up the event details.
+ * @author Brady
+ * @version 1
+ * @since SDK34
+ */
 
 public class PromoScanActivity extends AppCompatActivity {
 
