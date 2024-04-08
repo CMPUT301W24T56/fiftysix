@@ -284,4 +284,7 @@ public class Profile {
     }
 
     public String getTimesCheckedIn(){ return timesCheckedIn; }
+
+
+
 }
