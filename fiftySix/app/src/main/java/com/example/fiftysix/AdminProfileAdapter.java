@@ -16,6 +16,12 @@ public class AdminProfileAdapter extends RecyclerView.Adapter<AdminProfileAdapte
         this.profileList = profileList;
     }
 
+    public interface OnItemClickListener {
+        void onItemClick(Profile profile);
+        void onRemoveProfile(Profile profile);
+    }
+
+
     public static class ProfileViewHolder extends RecyclerView.ViewHolder {
         TextView nameView, emailView, phoneView;
 
@@ -41,6 +47,7 @@ public class AdminProfileAdapter extends RecyclerView.Adapter<AdminProfileAdapte
         holder.nameView.setText(profile.getName());
         holder.emailView.setText(profile.getEmail());
         holder.phoneView.setText(profile.getPhoneNumber());
+        holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(profile));
     }
 
     @Override

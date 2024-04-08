@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,6 +20,13 @@ public class  AdminBrowseProfiles extends AppCompatActivity {
     private AdminProfileAdapter adapter;
     private FirebaseFirestore db;
 
+    private void deleteProfile(Profile profile) {
+        db.collection("Profiles").document(profile.getProfileID())
+                .delete()
+                .addOnSuccessListener(aVoid -> Log.d("DeleteProfile", "Profile successfully deleted!"))
+                .addOnFailureListener(e -> Log.w("DeleteProfile", "Error deleting profile", e));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,9 +34,23 @@ public class  AdminBrowseProfiles extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.profilesRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new AdminProfileAdapter(new ArrayList<>());
-        recyclerView.setAdapter(adapter);
+        adapter = new AdminProfileAdapter(new ArrayList<>(),new AdminProfileAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Profile profile) {
+                ConfirmDeleteDialogFragment dialogFragment = ConfirmDeleteDialogFragment.newInstance(profile);
+                dialogFragment.setConfirmDeleteListener(profileToDelete -> {
+                    // Call method to delete the profile from Firestore
+                    deleteProfile(profileToDelete);
+                });
+                dialogFragment.show(getSupportFragmentManager(), "confirmDelete");
+            }
 
+            @Override
+            public void onRemoveProfile(Profile profile) {
+                // This can be left empty or used for other purposes
+            }
+        });
+        recyclerView.setAdapter(adapter);
         db = FirebaseFirestore.getInstance();
 
         ImageButton backButton = findViewById(R.id.backButton);
@@ -40,6 +62,7 @@ public class  AdminBrowseProfiles extends AppCompatActivity {
         });
 
         fetchProfiles();
+
     }
 
     private void fetchProfiles() {
