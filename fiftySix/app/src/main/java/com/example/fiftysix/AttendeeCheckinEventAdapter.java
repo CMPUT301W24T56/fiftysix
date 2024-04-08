@@ -152,7 +152,9 @@ public class AttendeeCheckinEventAdapter extends RecyclerView.Adapter<AttendeeCh
                     Attendee attendee = new Attendee(mContext);
                     Event event = eventList.get(getAdapterPosition());
                     attendee.leaveSignUp(event.getEventID());
-                    eventList.clear();
+                    //eventList.clear();
+
+                    notifyItemChanged(getAdapterPosition());
                 }
             });
 

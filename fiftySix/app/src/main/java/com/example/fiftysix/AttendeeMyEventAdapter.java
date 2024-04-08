@@ -144,6 +144,7 @@ public class AttendeeMyEventAdapter extends RecyclerView.Adapter<AttendeeMyEvent
                     Attendee attendee = new Attendee(mContext);
                     Event event = eventList.get(getAdapterPosition());
                     attendee.leaveEvent(event.getEventID());
+                    notifyItemChanged(getAdapterPosition());
 
                 }
             });

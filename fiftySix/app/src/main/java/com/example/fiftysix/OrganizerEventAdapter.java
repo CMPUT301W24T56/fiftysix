@@ -98,7 +98,6 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                 pieSignUp = signups;
             }
             else{
-                //TODO
                 pieSignUp = 1;
             }
 
@@ -252,6 +251,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                     Intent intent2 = new Intent(context, EditEventActivity.class);
                     intent2.putExtra("eventID", eventID);
                     context.startActivity(intent2);
+                    notifyItemChanged(getAdapterPosition());
                 }
             });
 
