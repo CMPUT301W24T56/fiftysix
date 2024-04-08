@@ -1,7 +1,6 @@
 package com.example.fiftysix;
 
 import static com.blankj.utilcode.util.ActivityUtils.startActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,7 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ImageView;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -33,13 +31,19 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import org.eazegraph.lib.charts.PieChart;
 import org.eazegraph.lib.models.PieModel;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Adapter to display event data to organizer, Allows organizer to view sign up map, check in and sign up lists, share promo or checkin QR Codes, and edit event details.
+ *
+ * @author Rakshit, Arsh, Brady.
+ * @version 1
+ * @since SDK34
+ */
 
 public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAdapter.EventVH> {
 
@@ -59,15 +63,19 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         return new EventVH(view);
     }
 
+
+    /**
+     * Sets/Displays event data, sets up pie charts for attendance
+     * @param holder The ViewHolder which should be updated to represent the contents of the
+     *        item at the given position in the data set.
+     * @param position The position of the item within the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull EventVH holder, int position) {
-
-
 
         Event event = eventList.get(position);
         holder.codeName.setText(event.getEventName());
         holder.locationOfEvent.setText( event.getLocation());
-
         holder.descriptionTxt.setText( event.getDetails());
 
         Integer checkInLimit = event.getCheckInLimit();
@@ -91,7 +99,6 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         Integer pieCheckIn = 0;
         Integer pieSignUp = 0;
 
-
         if(signUpLimit == 2147483647){
             holder.attendeeSignUpLimit.setText("Max: Unlimited");
             if (checkins != 0){
@@ -100,13 +107,11 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             else{
                 pieSignUp = 1;
             }
-
         }
         else{
             holder.attendeeSignUpLimit.setText("Max: " + event.getSignUpLimit().toString());
             pieSignUp = signUpLimit - signups;
         }
-
 
         if(checkInLimit == 2147483647){
             holder.attendeeCapacity.setText("Max: Unlimited");
@@ -117,13 +122,11 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             else{
                 pieCheckIn = 1;
             }
-
         }
         else{
             holder.attendeeCapacity.setText("Max: " + event.getCheckInLimit().toString());
             pieCheckIn = checkInLimit - checkins;
         }
-
 
         holder.signUpPieChart.addPieSlice(new PieModel(
                 "R",
@@ -134,7 +137,6 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                 signups,
                 Color.parseColor("#aa8565")));
 
-
         holder.checkinPieChart.addPieSlice(new PieModel(
                 "R",
                 pieCheckIn,
@@ -144,16 +146,10 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                 checkins,
                 Color.parseColor("#aa8565")));
 
-
-
         holder.attendeeCount.setText(event.getAttendeeCount().toString());
         holder.currentSignUps.setText(event.getSignUpCount().toString());
 
-
-
         String imageUrl = event.getPosterURL();
-
-
 
         if (imageUrl != null && !imageUrl.isEmpty()) {
             Picasso.get()
@@ -161,10 +157,8 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                     .fit()
                     .into(holder.eventImage); // Your ImageView
         }
-
         boolean isExpandable = eventList.get(position).getExpandable();
         holder.expandableLayout.setVisibility(isExpandable ? View.VISIBLE : View.GONE);
-
     }
 
     @Override
@@ -172,6 +166,11 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         return eventList.size();
     }
 
+
+    /**
+     * Sets on click listers to Allows organizer to view sign up map, check in and sign up lists, share promo or checkin QR Codes, and edit event details.
+     * Finds views/EditTexts ect.
+     */
     public class EventVH extends RecyclerView.ViewHolder {
 
         TextView codeName, startDate, endDate, locationOfEvent, descriptionTxt, attendeeCount, currentSignUps, attendeeCapacity, attendeeSignUpLimit;
@@ -225,8 +224,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                 }
             });
 
-
-
+            // Allows Organizer to send notification to event attendees
             send_notification.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -242,6 +240,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                 }
             });
 
+            // Allows Organizer to edit event details
             edit_event.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -255,6 +254,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                 }
             });
 
+            // Allows Organizer to view check in list
             attendees.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -266,6 +266,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                 }
             });
 
+            // Allows Organizer to view sign up list
             signUps.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -275,9 +276,10 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                     Intent intent3 = new Intent(context, OrganizerSignUpDataActivity.class);
                     intent3.putExtra("eventID", eventID);
                     context.startActivity(intent3);
-
                 }
             });
+
+            // Allows Organizer to view sign up map
             location.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -288,6 +290,8 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                     context.startActivity(intent);
                 }
             });
+
+            // Allows Organizer to Share Check in QRCode
             // converting the string of qrcode to bitmap . so that person can either download or share the qr_code image
             // https://easyonecoder.com/android/basic/GenerateQRCode
             // author- Easy One Coder
@@ -337,7 +341,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                 }
             });
 
-
+            // Allows Organizer to Share Promo QRCode
             sharePromoQrCode.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -422,7 +426,11 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
 
 
 
-        // storing the bitmap image in a file to share it to different apps
+        /**
+         * stores the bitmap image in a file to share it to different apps
+         * @param bitmap Bitmap of QR code
+         * @return File to be shared
+         */
         public File saveBitmapToFile(Bitmap bitmap){
             File filesDir = context.getApplicationContext().getFilesDir();
             File qrCodeFile = new File(filesDir, "qr_code.png");
@@ -434,5 +442,4 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
             return qrCodeFile;
         }
     }
-
 }

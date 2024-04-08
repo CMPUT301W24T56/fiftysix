@@ -1,16 +1,5 @@
 package com.example.fiftysix;
 
-// Has a profile they can view\edit.
-// Can View event details and announcements within the app event.
-// Check into an event by scanning the provided QR code.
-// Recieve push notifications from event organizers.
-// Can log in without username or password (Use device ID). GET DEVICE ID
-
-
-
-// Can enable/disable geolocation tracking. (NOT FOR PART 3)
-
-
 
 import android.content.Context;
 import android.location.Address;
@@ -33,8 +22,16 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.QuerySnapshot;
 import java.util.HashMap;
 import java.util.Map;
-
-
+/**
+ * Attendee class, Has a profile they can view\edit.
+ * Can View event details and announcements within the app event.
+ * Check into an event by scanning the provided QR code.
+ * Recieve push notifications from event organizers.
+ * Can log in without username or password (Use device ID). GET DEVICE ID
+ * @author Arsh, Rakshit, Brady.
+ * @version 1
+ * @since SDK34
+ */
 public class Attendee {
 
     private Context mContext;
@@ -50,6 +47,7 @@ public class Attendee {
 
     /**
      *  Creates attendee object, if the device ID is not currently in the database linked to an attendee it will be added.
+     *
      * @param mContext: Context current app context
      */
     public Attendee(Context mContext) {
@@ -60,6 +58,12 @@ public class Attendee {
         attendeeExists(); // Adds organizer to data base if the organizer doesn't already exist
     }
 
+    /**
+     * Creates attendee object, if the device ID is not currently in the database linked to an attendee it will be added.
+     *
+     * @param mContext Context, application context
+     * @param location Address of the attendees location.
+     */
     public Attendee(Context mContext, Address location) {
         this.mContext = mContext;
         this.attendeeID = getDeviceId();
@@ -70,17 +74,15 @@ public class Attendee {
     }
 
 
-
+    /**
+     * AttendeeCallBack is used as a function pointer to check, check-in success.
+     */
     public interface AttendeeCallBack{
         void checkInSuccess(Boolean checkinSuccess, String eventName);
     }
 
 
-
-
     // ________________________________METHODS_____________________________________
-
-
 
 
     /**
@@ -88,7 +90,9 @@ public class Attendee {
      * It then adds the event ID to a collection inside the user document to keep track of events the user has check into.
      * It also increments the attendee count in the event document in the database and stores the attendees id in a sub-collection inside the event.
      * These are used so the organizer can view attendees and track realtime attendance.
-     * @param qRCodeID: String of the QRcode ID that was scanned.
+     *
+     * @param qRCodeID String of the checkin QR Code ID attempting to check into.
+     * @param attendeeCallBack AttendeeCallBack is used as a function pointer to check, check-in success.
      */
     public void checkInToEvent(String qRCodeID, AttendeeCallBack attendeeCallBack){
 
@@ -122,10 +126,11 @@ public class Attendee {
     }
 
 
-
-
-
-
+    /**
+     * Allows the attendee to leave an event they are checked into. Updates data in data base.
+     *
+     * @param eventID String of the event ID attempting to leave checkin of.
+     */
     public void leaveEvent(String eventID){
         db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("currentlyAtEvent", "no");
         db.collection("Users").document(attendeeID).collection("UpcomingEvents").document(eventID).delete();
@@ -134,6 +139,11 @@ public class Attendee {
 
     }
 
+    /**
+     * Allows the attendee to leave an event they are signed up for. Updates data in data base.
+     *
+     * @param eventID String of the event ID attempting to leave signup of.
+     */
     public void leaveSignUp(String eventID){
 
         db.collection("Events").document(eventID).collection("attendeeSignUps").document(attendeeID).delete();
@@ -142,6 +152,13 @@ public class Attendee {
 
     }
 
+
+    /**
+     * Allows attendee to signup for an event. this is only completed if the number of current signups is less than the total limit and the attendee
+     * is not currently signed up for this event. Updates data in data base.
+     *
+     * @param eventID String of the event ID attempting to signup for.
+     */
     public void signUpForEvent(String eventID){
         db.collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -149,14 +166,9 @@ public class Attendee {
                 if (documentSnapshot != null) {
                     Integer attendeeSignUpCount = documentSnapshot.getLong("attendeeSignUpCount").intValue();
                     Integer attendeeSignUpLimit = documentSnapshot.getLong("attendeeSignUpLimit").intValue();
-                    String eventName = documentSnapshot.getString("eventName");
-
 
                     // Attendee can  sign up, event isn't full
                     if (attendeeSignUpCount < attendeeSignUpLimit) {
-
-
-
 
                         ref.document(attendeeID).collection("SignedUpEvents").document(eventID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
@@ -166,14 +178,11 @@ public class Attendee {
                                     String signUpInTime = Calendar.getInstance().getTime().toString();
 
                                     // Document exists, attendee has previously checked into the event (Checking into an event again)
-                                    if (document.exists()) {
-
-                                    }
+                                    if (document.exists()) {}
                                     // Attendee has never checked into the event before
                                     else {
                                         Map<String, Object> attendeeCheckedInEventsData = new HashMap<>();
                                         attendeeCheckedInEventsData.put("signUpTime", signUpInTime);
-
                                         Map<String, Object> attendeeCheckedInCount = new HashMap<>();
                                         attendeeCheckedInCount.put("signUpTime", signUpInTime);
 
@@ -181,14 +190,8 @@ public class Attendee {
                                             @Override
                                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-
-
-
-
                                                 DocumentSnapshot documentLocation = task.getResult();
-
                                                 String locationAllowed = documentLocation.getString("locationAllowed").trim();
-
 
                                                 if (locationAllowed.equals("yes")){
                                                     String latitude = documentLocation.getString("latitude");
@@ -204,7 +207,6 @@ public class Attendee {
                                                 ref.document(attendeeID).collection("SignedUpEvents").document(eventID).set(attendeeCheckedInEventsData);
                                                 db.collection("Events").document(eventID).collection("attendeeSignUps").document(attendeeID).set(attendeeCheckedInCount);
                                                 db.collection("Events").document(eventID).update("attendeeSignUpCount", FieldValue.increment(1));
-
                                             }
                                         });
                                     }
@@ -220,6 +222,12 @@ public class Attendee {
         });
     }
 
+    /**
+     * Checks if the attendee is already checked into an event. AttendeeCallBack is false if they are currently checked into the event.
+     *
+     * @param eventID String of the event ID being check if the attendee is already checked into,.
+     * @param attendeeCallBack AttendeeCallBack used as a function pointer to retrieve result.
+     */
     public void alreadyCheckedIn(String eventID, AttendeeCallBack attendeeCallBack){
         db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -244,7 +252,12 @@ public class Attendee {
     }
 
 
-
+    /**
+     * Checks if the event signups are below the signup limit. AttendeeCallBack is true if there is space to signup.
+     *
+     * @param eventID String of the event ID being check if there is space available.
+     * @param attendeeCallBack AttendeeCallBack used as a function pointer to retrieve result.
+     */
     public void hasSignUpSpace(String eventID, AttendeeCallBack attendeeCallBack){
         db.collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -269,7 +282,11 @@ public class Attendee {
         });
     }
 
-
+    /**
+     * Checks if the attendee is already signed up for the event. AttendeeCallBack is false if they are currently signed up for the event.
+     * @param eventID String of the event ID being check if the attendee is already signed up to.
+     * @param attendeeCallBack AttendeeCallBack used as a function pointer to retrieve result.
+     */
     public void alreadySignedUp(String eventID, AttendeeCallBack attendeeCallBack){
         db.collection("Events").document(eventID).collection("SignedUpEvents").document(attendeeID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -285,6 +302,13 @@ public class Attendee {
     }
 
 
+    /**
+     * Checks attendee into an event if eligible,to be eligible the attendee cannot be checked into the event and the current amount of checkins must be less than the checkin limit.
+     * Callback is true if the attendee was successfully checked into the event ie was eligible/
+     *
+     * @param eventID String event ID of the event attempting to check into.
+     * @param attendeeCallBack AttendeeCallBack used as a function pointer to check if check-in was successful.
+     */
     public void checkInToEventID(String eventID, AttendeeCallBack attendeeCallBack) {
         db.collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -293,8 +317,6 @@ public class Attendee {
                     Integer attendeeCount = documentSnapshot.getLong("attendeeCount").intValue();
                     Integer attendeeLimit = documentSnapshot.getLong("attendeeLimit").intValue();
                     String eventName = documentSnapshot.getString("eventName");
-
-
 
                     // Attendee can check in, event isn't full
                     if (attendeeCount < attendeeLimit) {
@@ -306,8 +328,6 @@ public class Attendee {
                                     String checkInTime = Calendar.getInstance().getTime().toString();
                                     Map<String, Object> attendeeCheckedInEventsData = new HashMap<>();
                                     attendeeCheckedInEventsData.put("checkInTime", checkInTime);
-
-
 
                                     // Document exists, attendee has previously checked into the event (Checking into an event again)
                                     if (document.exists()) {
@@ -325,13 +345,10 @@ public class Attendee {
                                                 DocumentSnapshot documentLocation = task.getResult();
                                                 String latitude = documentLocation.getString("latitude");
                                                 String longitude = documentLocation.getString("longitude");
-
                                                 db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("latitude", latitude);
                                                 db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("longitude", longitude);
                                             }
                                         });
-
-
                                     }
 
                                     // Attendee has never checked into the event before
@@ -342,7 +359,6 @@ public class Attendee {
                                         attendeeCheckedInCount.put("timesCheckedIn", 1);
                                         attendeeCheckedInCount.put("checkInTime", checkInTime);
                                         attendeeCheckedInCount.put("currentlyAtEvent", "yes");
-
                                         ref.document(attendeeID).collection("UpcomingEvents").document(eventID).set(attendeeCheckedInEventsData);
                                         db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).set(attendeeCheckedInCount);
                                         db.collection("Events").document(eventID).update("attendeeCount", FieldValue.increment(1));
@@ -354,7 +370,6 @@ public class Attendee {
                                                 DocumentSnapshot documentLocation = task.getResult();
                                                 String latitude = documentLocation.getString("latitude");
                                                 String longitude = documentLocation.getString("longitude");
-
                                                 db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("latitude", latitude);
                                                 db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("longitude", longitude);
                                             }
@@ -366,124 +381,31 @@ public class Attendee {
                                 }
                             }
                         });
-
-
                     } else {
-
                         attendeeCallBack.checkInSuccess(false, eventName);
                     }
                 }
             }
         });
-
-
-    }
-
-    // No Callback
-    public void checkInToEventID(String eventID) {
-        db.collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot != null) {
-                    Integer attendeeCount = documentSnapshot.getLong("attendeeCount").intValue();
-                    Integer attendeeLimit = documentSnapshot.getLong("attendeeLimit").intValue();
-                    String eventName = documentSnapshot.getString("eventName");
-
-
-                    // Attendee can check in, event isn't full
-                    if (attendeeCount < attendeeLimit) {
-                        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    DocumentSnapshot document = task.getResult();
-                                    String checkInTime = Calendar.getInstance().getTime().toString();
-                                    Map<String, Object> attendeeCheckedInEventsData = new HashMap<>();
-                                    attendeeCheckedInEventsData.put("checkInTime", checkInTime);
-
-
-
-                                    // Document exists, attendee has previously checked into the event (Checking into an event again)
-                                    if (document.exists()) {
-                                        Log.d("AttendeeCheck", " document exists");
-                                        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("timesCheckedIn", FieldValue.increment(1));
-                                        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("currentlyAtEvent", "yes");
-                                        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("checkInTime", checkInTime);
-                                        db.collection("Events").document(eventID).update("attendeeCount", FieldValue.increment(1));
-                                        ref.document(attendeeID).collection("UpcomingEvents").document(eventID).set(attendeeCheckedInEventsData);
-                                        ref.document(attendeeID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                DocumentSnapshot documentLocation = task.getResult();
-                                                String latitude = documentLocation.getString("latitude");
-                                                String longitude = documentLocation.getString("longitude");
-
-                                                db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("latitude", latitude);
-                                                db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("longitude", longitude);
-                                            }
-                                        });
-                                    }
-
-                                    // Attendee has never checked into the event before
-                                    else {
-                                        Log.d("AttendeeCheck", " document DOES NOT exist");
-
-
-                                        Map<String, Object> attendeeCheckedInCount = new HashMap<>();
-                                        attendeeCheckedInCount.put("timesCheckedIn", 1);
-                                        attendeeCheckedInCount.put("checkInTime", checkInTime);
-                                        attendeeCheckedInCount.put("currentlyAtEvent", "yes");
-
-                                        ref.document(attendeeID).collection("UpcomingEvents").document(eventID).set(attendeeCheckedInEventsData);
-                                        db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).set(attendeeCheckedInCount);
-                                        db.collection("Events").document(eventID).update("attendeeCount", FieldValue.increment(1));
-
-                                        ref.document(attendeeID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                DocumentSnapshot documentLocation = task.getResult();
-                                                String latitude = documentLocation.getString("latitude");
-                                                String longitude = documentLocation.getString("longitude");
-
-                                                db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("latitude", latitude);
-                                                db.collection("Events").document(eventID).collection("attendeesAtEvent").document(attendeeID).update("longitude", longitude);
-                                            }
-                                        });
-                                    }
-                                } else {
-                                    Log.d(TAG, "Failed with: ", task.getException());
-                                }
-                            }
-                        });
-
-
-                    }
-
-                }
-            }
-        });
     }
 
 
-
-
-
-    private void addUpcomingEventToAttendeeDataBase(String eventIDKey){
-        Map<String,Object> attendeeUpcomingEventsData = new HashMap<>();
-        attendeeUpcomingEventsData.put("eventDate","temp");
-        this.ref.document(this.attendeeID).collection("UpcomingEvents").document(eventIDKey).set(attendeeUpcomingEventsData);
-    }
-
-
-    // Gets android ID to be used as attendee ID.
-    // Got from https://stackoverflow.com/questions/60503568/best-possible-way-to-get-device-id-in-android
+    /**
+     * Returns a string representing the attendees device Android ID.
+     * Reference: https://stackoverflow.com/questions/60503568/best-possible-way-to-get-device-id-in-android
+     *
+     * @return String of android device ID
+     */
     public String getDeviceId() {
         String id = Settings.Secure.getString(this.mContext.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
         return id;
     }
 
-    // Adds attendee to database if they are not already in it.
+
+    /**
+     * Adds attendee to database.
+     */
     private void addAttendeeToDatabase(){
         Map<String,Object> attendeeUpcomingEventsData = new HashMap<>();
         attendeeUpcomingEventsData.put("eventDate","temp");
@@ -514,13 +436,15 @@ public class Attendee {
                         Log.d("Firestore", "ERROR: Attendee Data failed to upload.");
                     }
                 });
-
-        //this.ref.document(this.attendeeID).collection("UpcomingEvents").document("temp").set(attendeeUpcomingEventsData);
     }
 
-    // Checks if the organizer is already in the database, If not in the database the organizer is added to it.
-    // WILL NEED TO REWRITE
-    // https://stackoverflow.com/questions/53332471/checking-if-a-document-exists-in-a-firestore-collection
+
+
+    /**
+     * Checks if the attendee has already been added to the database, If not calls addAttendeeToDatabase().
+     * Reference: https://stackoverflow.com/questions/53332471/checking-if-a-document-exists-in-a-firestore-collection
+     */
+
     private void attendeeExists(){
         FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
         DocumentReference docIdRef = rootRef.collection("Users").document(attendeeID);
@@ -554,6 +478,11 @@ public class Attendee {
     }
 
 
+    /**
+     * Sets the attendee longitude and latitude in the database.
+     *
+     * @param location Address representing the location of the attendee
+     */
     public void setLocation(Address location){
 
         this.location = location;
@@ -570,11 +499,16 @@ public class Attendee {
             String lon = String.valueOf(location.getLongitude());
             locationData.put("latitude",lat);
             locationData.put("longitude",lon);
-            //locationData.put("geo",location);
         }
         this.ref.document(this.attendeeID).update(locationData);
-
     }
+
+
+    /**
+     * Gets all the events an attendee is signed up for.
+     * @param attendeeID
+     * @param listener
+     */
     public void getAllSignedUpEventIds(String attendeeID, final OnSignedUpEventsListener listener) {
         CollectionReference signedUpEventsRef = db.collection("Users").document(attendeeID).collection("SignedUpEvents");
 
@@ -598,12 +532,18 @@ public class Attendee {
     }
 
 
-
+    /**
+     * Used in getAllSignedUpEventIds()
+     */
     public interface OnSignedUpEventsListener {
         void onSignedUpEventsRetrieved(List<String> eventIds);
 
         void onError(String errorMessage);
     }
+
+    /**
+     * Used as function pointer for getting events the attendee is signed up for.
+     */
     public interface EventIdsCallback {
         void onCallback(List<String> eventIds);
     }
@@ -621,6 +561,11 @@ public class Attendee {
                     Log.w("Firestore", "Error getting documents: ", e);
                 });
     }
+
+    /**
+     * helps other method
+     * @return List of events the attendee is signed up for
+     */
     public List<String> return_events(){
         List<String> events_list = new ArrayList<>();
         event_ids(attendeeID, new EventIdsCallback() {

@@ -6,7 +6,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import androidx.fragment.app.DialogFragment;
-
+/**
+ * Fragment for deleting a profile as an admin.
+ * @author Arsh.
+ * @version 1
+ * @since SDK34
+ */
 public class ConfirmDeleteDialogFragment extends DialogFragment {
 
     public interface ConfirmDeleteListener {
@@ -16,7 +21,11 @@ public class ConfirmDeleteDialogFragment extends DialogFragment {
     private ConfirmDeleteListener listener;
     private Profile profile;
 
-    // Factory method to create a new instance of the dialog, passing the profile
+    /**
+     * Factory method to create a new instance of the dialog, passing the profile
+     * @param profile Profile to be deleted
+     * @return ConfirmDeleteDialogFragment
+     */
     public static ConfirmDeleteDialogFragment newInstance(Profile profile) {
         ConfirmDeleteDialogFragment fragment = new ConfirmDeleteDialogFragment();
         fragment.profile = profile;

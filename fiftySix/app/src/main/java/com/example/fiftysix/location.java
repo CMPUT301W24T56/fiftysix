@@ -5,27 +5,28 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Displays event signups on map using Google maps.
+ *
+ * @author Arsh, Brady.
+ * @version 1
+ * @since SDK34
+ */
 public class location extends AppCompatActivity {
 
     SupportMapFragment supportMapFragment;
@@ -53,8 +54,6 @@ public class location extends AppCompatActivity {
                 if (value != null){
                     for (QueryDocumentSnapshot attendeeDoc : value){
                         String attendeeID = attendeeDoc.getId();
-
-
                         if (attendeeDoc.getString("latitude") != null){
 
                             String attendeeLat = attendeeDoc.getString("latitude").toString();
@@ -68,12 +67,6 @@ public class location extends AppCompatActivity {
                             }
                         }
                     }
-
-                    // Hardcoded geolocation data for testing
-                    //attendeeLocations.add(new LatLng(40.7128, -74.0060)); // New York City
-                    //attendeeLocations.add(new LatLng(34.0522, -118.2437)); // Los Angeles
-                    //attendeeLocations.add(new LatLng(51.5074, -0.1278)); // London
-                    //attendeeLocations.add(new LatLng(48.8566, 2.3522)); // Paris
 
                     supportMapFragment.getMapAsync(new OnMapReadyCallback() {
                         @Override

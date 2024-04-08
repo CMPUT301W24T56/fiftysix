@@ -29,6 +29,12 @@ import java.util.Map;
 
 import javax.security.auth.callback.Callback;
 
+/**
+ * Organizer class, creates organizer, adds it to database. Allows the organizer to create events.
+ * @author Brady, Rakshit, Arsh.
+ * @version 1
+ * @since SDK34
+ */
 public class Organizer {
     private String organizerID;
     private Context mContext;
@@ -36,7 +42,10 @@ public class Organizer {
     private FirebaseFirestore db;
     private CollectionReference ref;
 
-
+    /**
+     * Ornaginer constuctor, the device id is used as the organizer id. Checks if organizer is in database already, if not it is then added.
+     * @param mContext
+     */
     public Organizer(Context mContext) {
         this.mContext = mContext;
         this.organizerID = getDeviceId();
@@ -68,25 +77,25 @@ public class Organizer {
     }
 
     /**
-     * Creates new Event object and add the event ID to a collection inside the organizers docuement in firebase.
-     * @param details String of the event details
-     * @param location String of the event location
-     *
-     * @param eventName String of the event name
-     * @param startDate String date of the event
-     *
-     *
-     *
-     *
-     *
-     * @return String posterID key
+     * Creates an event, allows optional reuse of a previous QRCode or adding a promotion QRCode.
+     * Creates Event Object and adds it to the database aswell as adds it to the organizers "eventsByOrganizer" collection.
+     * @param details String of event details
+     * @param location String of event location
+     * @param attendeeCheckInLimit Integer of the event check-in limit, is max val int if no limit.
+     * @param attendeeSignUpLimit Integer of the event sign-up limit, is max val int if no limit.
+     * @param eventName String of the event name.
+     * @param startDate String of the event start date format dd/mm/yy
+     * @param endDate String of the event end date format dd/mm/yy
+     * @param startTime String of the event start time format hh:mm, hh = 00-24
+     * @param endTime String of the event end time format hh:mm, hh = 00-24
+     * @param promoQRCode PromoQRCode for the event of null if the use does not want to add one.
+     * @param reuseQRID String ID of old QR code of null depending if the organizer wants to reuse one.
+     * @return String of the posterID corresponding to the created event.
      */
     public String createEventNewQRCode( String details, String location, Integer attendeeCheckInLimit, Integer attendeeSignUpLimit, String eventName, String startDate, String endDate, String startTime, String endTime, PromoQRCode promoQRCode, String reuseQRID){
         Event event = new Event(this.organizerID, details, location, attendeeCheckInLimit, attendeeSignUpLimit, eventName, startDate, endDate, startTime, endTime, mContext);
         addEventToOrganizerDataBase(event.getEventID());
-
         String eventID = event.getEventID();
-
         if (promoQRCode != null){
             promoQRCode.setEvent(eventID);
             event.setPromoQR(promoQRCode.getQRCodeID());
@@ -94,40 +103,9 @@ public class Organizer {
         if (reuseQRID != null){
             event.reuseCheckInQR(reuseQRID);
         }
-
-        return event.getPosterID();
+        String posterID = event.getPosterID();
+        return posterID;
     }
-
-
-    /**
-     * Creates a new event and switches the event that the oldQRID points to, it now points to the new event in the firebase database.
-     * The event is then added to EventsByOrganizer collection inside the organizers document in firebase.
-     * @param details String of the event details
-     * @param location String of the event location
-     *
-     * @param eventName String of the event name
-     * @param oldQRID String of the old QR code id to be reused
-     */
-    /*
-    public String createEventReuseQRCode( String details, String location, Integer attendeeCheckInLimit, Integer attendeeSignUpLimit, String eventName, String startDate, String endDate, String startTime, String endTime, PromoQRCode promoQRCode, String reuseQRID){
-        Event event = new Event(this.organizerID, details, location, attendeeCheckInLimit, attendeeSignUpLimit, eventName, startDate, endDate, startTime, endTime, mContext);
-        addEventToOrganizerDataBase(event.getEventID());
-
-        String eventID = event.getEventID();
-
-        if (promoQRCode != null){
-            promoQRCode.setEvent(eventID);
-            event.setPromoQR(promoQRCode.getQRCodeID());
-        }
-
-        return event.getPosterID();
-    }
-
-     */
-
-
-
-    public void createPromoQRCode(){}
 
 
     /**
@@ -153,11 +131,10 @@ public class Organizer {
     }
 
 
-    // Adds event data to database in firestore, this is nested inside the organizer.
 
     /**
      * Adds the event to a collection "Organizer Events", the is nested in the users docuemnt in fire store. The document ID is an eventID hosted by the organizer.
-     * @param eventIDKey
+     * @param eventIDKey String of
      */
     private void addEventToOrganizerDataBase(String eventIDKey){
         Map<String,Object> orgEventsData = new HashMap<>();

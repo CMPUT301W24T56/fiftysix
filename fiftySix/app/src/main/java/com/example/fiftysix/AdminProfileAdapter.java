@@ -8,7 +8,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
-
+/**
+ * Profile adapter used to display profile data in AdminBrowseProfiles
+ * @author Rakshit, Arsh
+ * @version 1
+ * @since SDK34
+ */
 public class AdminProfileAdapter extends RecyclerView.Adapter<AdminProfileAdapter.ProfileViewHolder> {
     private final List<Profile> profileList;
     private OnItemClickListener onItemClickListener;
@@ -18,6 +23,9 @@ public class AdminProfileAdapter extends RecyclerView.Adapter<AdminProfileAdapte
         this.onItemClickListener = onItemClickListener; // Set the listener
     }
 
+    /**
+     * Used to save the profile clicked on and pass it to AdminBrowseProfiles
+     */
     public interface OnItemClickListener {
         void onItemClick(Profile profile);
     }
@@ -26,6 +34,10 @@ public class AdminProfileAdapter extends RecyclerView.Adapter<AdminProfileAdapte
     public static class ProfileViewHolder extends RecyclerView.ViewHolder {
         TextView nameView, emailView, phoneView;
 
+        /**
+         * Sets text in textview
+         * @param itemView View
+         */
         public ProfileViewHolder(View itemView) {
             super(itemView);
             nameView = itemView.findViewById(R.id.tvProfileName);
@@ -57,7 +69,11 @@ public class AdminProfileAdapter extends RecyclerView.Adapter<AdminProfileAdapte
         return profileList.size();
     }
 
-    // Update method to refresh the list
+
+    /**
+     * Update method to refresh the list
+     * @param profiles List of all profiles in the database
+     */
     public void updateProfiles(List<Profile> profiles) {
         profileList.clear();
         profileList.addAll(profiles);

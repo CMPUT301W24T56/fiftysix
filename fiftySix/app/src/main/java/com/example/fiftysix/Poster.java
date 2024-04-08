@@ -2,13 +2,19 @@ package com.example.fiftysix;
 
 import android.net.Uri;
 import android.util.Log;
-
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
 import java.util.HashMap;
 import java.util.Map;
+
+/**
+ * Poster class, is the event poster to a given event. creates and uploads event poster
+ *
+ * @author Rakshit.
+ * @version 1
+ * @since SDK34
+ */
 
 public class Poster {
     private static final String TAG = "Poster";
@@ -21,7 +27,14 @@ public class Poster {
         void onUploadFailure(Exception e);
     }
 
-    // Method to upload the image to Firebase Storage and store its reference in Firestore
+
+    /**
+     * Method to upload the image to Firebase Storage and store it's reference in Firestore
+     * @param imageUri Uri of poster image for event
+     * @param posterID Sting of poster ID
+     * @param eventType String of event type
+     * @param callback callback
+     */
     public void uploadImageAndStoreReference(Uri imageUri, String posterID, String eventType, PosterUploadCallback callback) {
         if (imageUri != null) {
             StorageReference fileReference = FirebaseStorage.getInstance().getReference("images/Posters/" + posterID + ".jpg");
@@ -45,7 +58,13 @@ public class Poster {
         }
     }
 
-    // Method to store the image reference in Firestore
+
+    /**
+     * Method to store the image reference in Firestore
+     * @param imageUrl image url to be stored
+     * @param posterName String poster id
+     * @param eventType String event type
+     */
     private void storeImageReferenceInIMAGES(String imageUrl, String posterName, String eventType) {
         Map<String, Object> posterData = new HashMap<>();
         posterData.put("image", imageUrl);

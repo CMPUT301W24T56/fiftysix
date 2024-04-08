@@ -46,8 +46,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import java.text.ParseException;
 import java.util.ArrayList;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
@@ -58,9 +56,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import ru.nikartm.support.ImageBadgeView;
-
-
-// Date picker: https://stackoverflow.com/questions/39051210/how-to-give-input-date-field-for-registration-form-in-android
+/**
+ * Creates an Organizer. Completes Organizer tasks such as
+ * 1. Create/ Edit event, Upload poster, Save QR Code.
+ * 2. View event data such as attendance.
+ * 3. Send notification to attendee.
+ * 4. Create Promo/Checkin QR code.
+ *
+ * @author Rakshit, Brady, Arsh.
+ * @version 1
+ * @since SDK34
+ */
 public class OrganizerMainActivity extends AppCompatActivity {
 
     // Firebase
@@ -69,11 +75,9 @@ public class OrganizerMainActivity extends AppCompatActivity {
     private CollectionReference eventRef;
     private CollectionReference imageRef;
 
-
     // Layouts & views
     private ViewFlipper viewFlipper;
     private RecyclerView recyclerView;
-
 
     //Organizer Data
     private Organizer organizer;
@@ -81,11 +85,8 @@ public class OrganizerMainActivity extends AppCompatActivity {
     private String organizerID;
     private OrganizerEventAdapter organizerEventAdapter;
 
-
     private MilestoneAdapter milestoneAdapter;
     private ArrayList<MileStone> mileStoneDataList;
-
-
     private ArrayList<Event> eventDataList;
     private int attendeeLimit = Integer.MAX_VALUE;
     private int attendeeSignUpLimit = Integer.MAX_VALUE;
@@ -96,7 +97,6 @@ public class OrganizerMainActivity extends AppCompatActivity {
     private Uri selectedImageUri = null;
     private static final int REQUEST_CAMERA_PERMISSION = 201;
 
-
     // Buttons on home pages
     private ImageButton addEventButton;
     private ImageButton orgProfileButton;
@@ -105,7 +105,6 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
     private ImageButton backOrgNotif;
     private ImageBadgeView notifBadge;
-
 
     // Buttons on Create event page
     private Button createEvent;
@@ -121,14 +120,11 @@ public class OrganizerMainActivity extends AppCompatActivity {
     private String reuseQRID;
     String scanQRID;
 
-
     // Create event Buttons
     private Button eventDateButton, eventStartTimeButton, eventEndDateButton, eventEndTimeButton;
 
-
     // Buttons on Upload QR page
     private Button uploadQRFromScan;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,7 +155,7 @@ public class OrganizerMainActivity extends AppCompatActivity {
 
         eventDataList = new ArrayList<>();
 
-        // Sets home page recyler view event data
+        // Sets home page recycler view event data
         organizerEventAdapter = new OrganizerEventAdapter(eventDataList, this);
         recyclerView.setAdapter(organizerEventAdapter);
         recyclerView.setHasFixedSize(false);
@@ -167,8 +163,90 @@ public class OrganizerMainActivity extends AppCompatActivity {
         // Creates Poster Object
         posterHandler = new Poster();
 
+        // sets-up milestones
+        setMilestones();
 
-        // Milestone Stuff
+        // Adds events from database to the organizers home screen. Will only show events created by the organizer
+        loadOrganizerEvents();
+
+        // sets gallery and camera launchers
+        setLaunches();
+
+        // Sets up date and time input for create event page
+        initializeDateTime();
+
+        // Sets up create event page
+        initializeCreateEvent();
+
+
+        // Opens organizer milestones page
+        orgNotificationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                notificationView(v);
+            }
+
+        });
+
+        // Opens organizer home page
+        backOrgNotif.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                homeView(v);
+            }
+        });
+
+
+
+        // Sends user to user selection screen
+        buttonOrgHomeBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { finish(); }
+        });
+
+
+        // Opens page to create event
+        addEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedImageUri = null;
+                nextView(v);
+            }
+        });
+    }
+
+
+
+    //________________________________________Methods________________________________________
+
+    /**
+     * Sets up gallery and camera launchers
+     */
+    private void setLaunches(){
+        galleryLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == AppCompatActivity.RESULT_OK && result.getData() != null) {
+                        selectedImageUri = result.getData().getData();
+                    }
+                }
+        );
+        cameraLauncher = registerForActivityResult(
+                new ActivityResultContracts.TakePicture(),
+                result -> {
+                    if (result && cameraImageUri != null) {
+                        selectedImageUri = cameraImageUri;
+                        // Now the selectedImageUri contains the URI of the captured image
+                    }
+                }
+        );
+    }
+
+
+    /**
+     * Setup milestones for signups
+     */
+    private void setMilestones(){
         ListView mileStoneListView = (ListView) findViewById(R.id.milestoneListView);
         mileStoneDataList = new ArrayList<MileStone>();
         milestoneAdapter = new MilestoneAdapter(this, R.layout.organizer_notification_list_item, mileStoneDataList);
@@ -197,71 +275,13 @@ public class OrganizerMainActivity extends AppCompatActivity {
                         .show();
             }
         });
+    }
 
 
-
-        // Adds events from database to the organizers home screen. Will only show events created by the organizer
-        loadOrganizerEvents();
-
-
-        galleryLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == AppCompatActivity.RESULT_OK && result.getData() != null) {
-                        selectedImageUri = result.getData().getData();
-                    }
-                }
-        );
-        cameraLauncher = registerForActivityResult(
-                new ActivityResultContracts.TakePicture(),
-                result -> {
-                    if (result && cameraImageUri != null) {
-                        selectedImageUri = cameraImageUri;
-                        // Now the selectedImageUri contains the URI of the captured image
-                    }
-                }
-        );
-
-
-
-        // Opens page to create event
-        addEventButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectedImageUri = null;
-                nextView(v);
-            }
-        });
-
-
-        initializeCreateEvent();
-
-
-        // Create event pages
-
-        orgNotificationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                notificationView(v);
-            }
-
-        });
-
-        backOrgNotif.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                homeView(v);
-            }
-        });
-
-
-
-
-        buttonOrgHomeBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { finish(); }
-        });
-
+    /**
+     * Sets up date and time selection for event creation
+     */
+    private void initializeDateTime(){
         eventDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -291,7 +311,6 @@ public class OrganizerMainActivity extends AppCompatActivity {
             }
         });
 
-
         eventEndDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -320,7 +339,6 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 mDatePicker.show();
             }
         });
-
 
         eventStartTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -354,7 +372,6 @@ public class OrganizerMainActivity extends AppCompatActivity {
             }
         });
 
-
         eventEndTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -385,11 +402,9 @@ public class OrganizerMainActivity extends AppCompatActivity {
                 mTimePicker.show();
             }
         });
+
     }
 
-
-
-    //________________________________________Methods________________________________________
 
     /**
      * Shows dialog to select either camera role or gallery as a method to upload images.  Used for adding event poster.
@@ -722,67 +737,50 @@ public class OrganizerMainActivity extends AppCompatActivity {
             options.setCaptureActivity(CaptureAct.class);
             barLauncher.launch(options);
         }
-        ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
-
-            if (result.getContents() != null) {
-
-                        scanQRID = result.getContents().toString();
-                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
-                        Date strDate = null;
-
-
-
-
-                        new CheckInQRCode().checkValidReuseQR(scanQRID, new CheckInQRCode.CheckInQRCodeCallback() {
-                            @Override
-                            public void onSuccess(Boolean validQR) {
-                                if (validQR){
-                                    reuseQRID = scanQRID;
-
-
-                                    new AlertDialog.Builder(OrganizerMainActivity.this)
-                                            .setTitle("QR Code Set")
-                                            .setMessage("Your QR code was successfully set.")
-                                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    dialog.dismiss();
-                                                }
-                                            })
-                                            .show();
-
-
-                                }else{
-                                    new AlertDialog.Builder(OrganizerMainActivity.this)
-                                            .setTitle("QR Code Not Eligible")
-                                            .setMessage("A QR code is not eligible if:\n1. Belongs to an active or upcoming event.\n2. Was never used as a CHECK-IN QR code on this app, ALL Promo QR Codes are ineligible.")
-                                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    dialog.dismiss();
-                                                }
-                                            })
-                                            .show();
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Exception e) {
-
-
-
-
-                            }
-                        });
-
-
+    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
+        if (result.getContents() != null) {
+            scanQRID = result.getContents().toString();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+            Date strDate = null;
+            new CheckInQRCode().checkValidReuseQR(scanQRID, new CheckInQRCode.CheckInQRCodeCallback() {
+                @Override
+                public void onSuccess(Boolean validQR) {
+                    if (validQR){
+                        reuseQRID = scanQRID;
+                        new AlertDialog.Builder(OrganizerMainActivity.this)
+                                .setTitle("QR Code Set")
+                                .setMessage("Your QR code was successfully set.")
+                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .show();
+                    }else{
+                        new AlertDialog.Builder(OrganizerMainActivity.this)
+                                .setTitle("QR Code Not Eligible")
+                                .setMessage("A QR code is not eligible if:\n1. Belongs to an active or upcoming event.\n2. Was never used as a CHECK-IN QR code on this app, ALL Promo QR Codes are ineligible.")
+                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .show();
                     }
+                }
+                @Override
+                public void onFailure(Exception e) {
+                }
+            });
+        }
 
 
+    });
 
-        });
-
-
+    /**
+     * Loads organizers events from firebase
+     */
     private void loadOrganizerEvents(){
-
             eventRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -790,15 +788,12 @@ public class OrganizerMainActivity extends AppCompatActivity {
                         Log.e("Firestore", error.toString());
                         return;
                     }
-
                     if (value.isEmpty()){
                         if (eventDataList.isEmpty()){
                             String hardcode = "No Events to Display";
                             eventDataList.add(new Event(hardcode, "Please make your first event!", hardcode, hardcode, hardcode, hardcode, hardcode, hardcode, 0, 0, 0, 0,hardcode));
-
                         }
                     }
-
                     else{
                         eventRef.whereEqualTo("organizer", organizerID).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                             @Override
@@ -807,7 +802,6 @@ public class OrganizerMainActivity extends AppCompatActivity {
                                     eventDataList.clear();
                                     mileStoneDataList.clear();
                                     for (QueryDocumentSnapshot doc : querySnapshot) {
-
                                         String eventID = doc.getId();
                                         String eventName = doc.getString("eventName");
                                         String posterID = doc.getString("posterID");
@@ -821,22 +815,18 @@ public class OrganizerMainActivity extends AppCompatActivity {
                                         String endDate = doc.getString("endDate");
                                         String endTime = doc.getString("endTime");
 
-
                                         String location = doc.getString("location");
                                         String details = doc.getString("details");
                                         addAtttendanceMilestoneUpdates(eventID, eventName, signUpCount, attendeeSignUpLimitIn);
-
                                         db.collection("PosterImages").whereEqualTo("poster", posterID).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                             @Override
                                             public void onSuccess(QuerySnapshot querySnapshotImage) {
                                                 for (QueryDocumentSnapshot doc : querySnapshotImage){
-
                                                     Log.e("Added to list", "onSuccess: Event has been added to eventDataList, OrganizerMain");
                                                     String posterURL = doc.getString("image");
                                                     eventDataList.add(new Event(eventID, eventName, location, startDate, endDate, startTime, endTime, details, inAttendeeCount, signUpCount, attendeeCheckinLimitIn, attendeeSignUpLimitIn, posterURL));
                                                     organizerEventAdapter.notifyDataSetChanged();
                                                 }
-
                                             }
                                         });
                                     }
@@ -846,10 +836,16 @@ public class OrganizerMainActivity extends AppCompatActivity {
                     }
                 }
             });
-
-
         }
 
+    /**
+     * Checks signups ans signup limits to see if they meet criteria for a milestone, if so a Milestone is created, added to database and presented to the organizer.
+     *
+     * @param eventID String of event ID to check milestones
+     * @param eventName String of event name to check milestones
+     * @param checkIns Integer of number of event signups
+     * @param attendeeLimit  Integer of number of event signup limit
+     */
     private void addAtttendanceMilestoneUpdates(String eventID, String eventName, Integer checkIns, Integer attendeeLimit){
             notifBadge.setVisibility(View.VISIBLE);
             String message;
@@ -954,6 +950,9 @@ public class OrganizerMainActivity extends AppCompatActivity {
             }
         }
 
+    /**
+     * Ensure data input and validation for create event, sets up buttons, creates new event. Adds Reuse QR, Upload Poster,
+      */
     private void initializeCreateEvent(){
             createEvent.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1023,7 +1022,6 @@ public class OrganizerMainActivity extends AppCompatActivity {
                             }
                         });
 
-
                         previousView(v);
 
                         // resets text displayed
@@ -1034,13 +1032,8 @@ public class OrganizerMainActivity extends AppCompatActivity {
                         eventEndTimeButton.setText(null);
                         eventAddressEditText.setText(null);
                         eventDetailsEditText.setText(null);
-
-
-
-
                         promoQRCode = null;
                         reuseQRID = null;
-
                     }
                 }
             });

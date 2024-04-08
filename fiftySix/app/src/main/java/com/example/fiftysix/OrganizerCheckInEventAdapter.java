@@ -1,7 +1,5 @@
 package com.example.fiftysix;
 
-import static androidx.databinding.DataBindingUtil.setContentView;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,14 +9,18 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
-
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Adapter to display attendees checked into the organizers event, used in OrganizerCheckInDataActivity
+ *
+ * @author Brady.
+ * @version 1
+ * @since SDK34
+ */
 public class OrganizerCheckInEventAdapter extends RecyclerView.Adapter<OrganizerCheckInEventAdapter.EventVH> {
 
     List<Profile> profileList;
@@ -37,6 +39,12 @@ public class OrganizerCheckInEventAdapter extends RecyclerView.Adapter<Organizer
         return new EventVH(view);
     }
 
+    /**
+     * Sets the attendee info
+     * @param holder The ViewHolder which should be updated to represent the contents of the
+     *        item at the given position in the data set.
+     * @param position The position of the item within the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull EventVH holder, int position) {
 
@@ -61,7 +69,6 @@ public class OrganizerCheckInEventAdapter extends RecyclerView.Adapter<Organizer
 
         boolean isExpandable = profileList.get(position).getExpandable();
         holder.expandableLayout.setVisibility(isExpandable ? View.VISIBLE : View.GONE);
-
     }
 
     @Override
@@ -69,6 +76,9 @@ public class OrganizerCheckInEventAdapter extends RecyclerView.Adapter<Organizer
         return profileList.size();
     }
 
+    /**
+     * gets the attendee info and finds views
+     */
     public class EventVH extends RecyclerView.ViewHolder {
 
         TextView attendeeName, checkinTime, numberCheckins, phoneNumber, email;
@@ -81,18 +91,13 @@ public class OrganizerCheckInEventAdapter extends RecyclerView.Adapter<Organizer
             super(itemView);
 
             attendeeName = itemView.findViewById(R.id.attendee_name);
-
             email = itemView.findViewById(R.id.checkin_time);
             phoneNumber = itemView.findViewById(R.id.number_checkins);
             numberCheckins = itemView.findViewById(R.id.phone_number);
             checkinTime = itemView.findViewById(R.id.email);
-
-
             linearLayout = itemView.findViewById(R.id.linear_layout);
             expandableLayout = itemView.findViewById(R.id.expandable_layout);
-
             attendeeImage = itemView.findViewById(R.id.event_poster_image);
-
 
             linearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -103,11 +108,6 @@ public class OrganizerCheckInEventAdapter extends RecyclerView.Adapter<Organizer
                     notifyItemChanged(getAdapterPosition());
                 }
             });
-
-
-
-
         }
     }
-
 }

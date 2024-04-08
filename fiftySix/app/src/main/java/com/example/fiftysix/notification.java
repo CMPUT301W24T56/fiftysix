@@ -1,38 +1,30 @@
 package com.example.fiftysix;
 
-import static android.content.ContentValues.TAG;
-
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import org.json.JSONArray;
-
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
-
 import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
+/**
+ * Notification Class, used to create and send notifications from organizer to attendee.
+ *
+ * @author Arsh.
+ * @version 1
+ * @since SDK34
+ */
 public class notification {
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
@@ -60,7 +52,6 @@ public class notification {
                                             public void onSuccess(Void aVoid) {
                                                 // Notification added successfully
                                                 Log.d("notification_update", "Updated notifications in the database");
-
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
@@ -122,7 +113,7 @@ public class notification {
 
 
 
-//    //  public void
+
     private void sendNotification(Context context, String eventId, String eventName, String message) {
         createNotificationChannel(context,eventId);
 

@@ -1,54 +1,37 @@
 package com.example.fiftysix;
 
-import static android.content.ContentValues.TAG;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Switch;
 import android.widget.TimePicker;
 import android.widget.Toast;
-import android.widget.ViewFlipper;
-
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-import ru.nikartm.support.ImageBadgeView;
+/**
+ * Activity to allow organizers to edit some event details
+ * @author Brady.
+ * @version 1
+ * @since SDK34
+ */
 
 public class EditEventActivity extends AppCompatActivity {
-
 
     //Organizer Data
     private FirebaseFirestore db;
     private Organizer organizer;
     private String eventID;
-    private String eventTitle,  eventStartDate, eventEndDate, eventStartTime, eventEndTime, eventAddress, eventDetails;
-
-
-
     private int attendeeLimit = Integer.MAX_VALUE;
     private int attendeeSignUpLimit = Integer.MAX_VALUE;
 
@@ -56,20 +39,12 @@ public class EditEventActivity extends AppCompatActivity {
     private Button createEvent;
     private EditText eventTitleEditText;
     private ImageButton eventDetailsBack;
-
-
     private EditText eventAddressEditText;
     private EditText eventDetailsEditText;
-
     private int mYear, mMonth, mDay;
-
 
     // Create event Buttons
     private Button eventDateButton, eventStartTimeButton, eventEndDateButton, eventEndTimeButton;
-
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,9 +52,6 @@ public class EditEventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_event);
 
         db = FirebaseFirestore.getInstance();
-
-
-
 
         eventTitleEditText = (EditText) findViewById(R.id.eventNameEditText);
         eventAddressEditText = (EditText) findViewById(R.id.eventAddressEditText);
@@ -89,24 +61,17 @@ public class EditEventActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         eventID = bundle.getString("eventID");
 
-
-        // Create event page buttons
-
         createEvent = (Button) findViewById(R.id.buttonCreateEvent);
         eventDetailsBack = (ImageButton) findViewById(R.id.buttonBackCreateEvent);
-
 
         eventDateButton = (Button) findViewById(R.id.eventStartDateButton);
         eventStartTimeButton = (Button) findViewById(R.id.eventStartTimeButton);
         eventEndDateButton = (Button) findViewById(R.id.eventEndDateButton);
         eventEndTimeButton = (Button) findViewById(R.id.eventEndTimeButton);
 
-
-
         setValues();
         getInput();
-        //setupAttendeeLimitSwitch();
-        //setupSignUpLimitSwitch();
+
         initializeSaveEvent();
 
         eventDetailsBack.setOnClickListener(new View.OnClickListener() {
@@ -115,13 +80,11 @@ public class EditEventActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-
-
-
-
     }
 
+    /**
+     * Sets event details to the current event details
+     */
     private void setValues(){
 
         db.collection("Events").document(eventID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -135,8 +98,6 @@ public class EditEventActivity extends AppCompatActivity {
                     String endTime = documentSnapshot.getString("endTime");
                     String startDate = documentSnapshot.getString("startDate");
                     String startTime = documentSnapshot.getString("startTime");
-
-
                     eventTitleEditText.setText(title);
                     eventAddressEditText.setText(address);
                     eventDetailsEditText.setText(details);
@@ -144,19 +105,16 @@ public class EditEventActivity extends AppCompatActivity {
                     eventEndDateButton.setText("End Date: " + endDate);
                     eventStartTimeButton.setText("Start Time: " + startTime);
                     eventEndTimeButton.setText("End Time: " + endTime);
-
-
                 }
             }
         });
-
     }
 
 
+    /**
+     * Gets time and date inputs
+     */
     private void getInput(){
-
-
-
         eventDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -184,8 +142,6 @@ public class EditEventActivity extends AppCompatActivity {
                 mDatePicker.show();
             }
         });
-
-
         eventEndDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -194,7 +150,6 @@ public class EditEventActivity extends AppCompatActivity {
                 mYear = mcurrentDate.get(Calendar.YEAR);
                 mMonth = mcurrentDate.get(Calendar.MONTH);
                 mDay = mcurrentDate.get(Calendar.DAY_OF_MONTH);
-
                 DatePickerDialog mDatePicker = new DatePickerDialog(EditEventActivity.this, new DatePickerDialog.OnDateSetListener() {
                     public void onDateSet(DatePicker datepicker, int selectedyear, int selectedmonth, int selectedday) {
                         Calendar myCalendar = Calendar.getInstance();
@@ -214,8 +169,6 @@ public class EditEventActivity extends AppCompatActivity {
                 mDatePicker.show();
             }
         });
-
-
         eventStartTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -245,7 +198,6 @@ public class EditEventActivity extends AppCompatActivity {
 
             }
         });
-
         eventEndTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -276,11 +228,13 @@ public class EditEventActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Ensures all fields have input then updates event data in database with the new details.
+     */
     private void initializeSaveEvent() {
         createEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
 
                 String eventTitle = eventTitleEditText.getText().toString();
                 String eventStartDate = eventDateButton.getText().toString();
@@ -324,7 +278,6 @@ public class EditEventActivity extends AppCompatActivity {
                     eventEndDate = eventEndDate.split(" ")[2];
                     eventStartTime = eventStartTime.split(" ")[2];
                     eventEndTime = eventEndTime.split(" ")[2];
-
 
                     FirebaseFirestore.getInstance().collection("Events").document(eventID).update("details", eventDetails);
                     FirebaseFirestore.getInstance().collection("Events").document(eventID).update("startDate", eventStartDate);

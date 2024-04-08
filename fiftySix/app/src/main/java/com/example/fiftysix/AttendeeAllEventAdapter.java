@@ -10,13 +10,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
-
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * Adapted to display event data in attendee browse all events page expanding recycler view.
+ * @author Brady.
+ * @version 1
+ * @since SDK34
+ */
 
 public class AttendeeAllEventAdapter extends RecyclerView.Adapter<AttendeeAllEventAdapter.EventVH> {
 
@@ -35,6 +39,14 @@ public class AttendeeAllEventAdapter extends RecyclerView.Adapter<AttendeeAllEve
         return new EventVH(view);
     }
 
+    /**
+     * Sets edit text in recycler view using the row attendee_all_events_row
+     * Displays poster photo and other event data
+     *
+     * @param holder The ViewHolder which should be updated to represent the contents of the
+     *        item at the given position in the data set.
+     * @param position The position of the item within the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull EventVH holder, int position) {
 
@@ -43,11 +55,8 @@ public class AttendeeAllEventAdapter extends RecyclerView.Adapter<AttendeeAllEve
         holder.locationOfEvent.setText(event.getLocation());
         holder.descriptionTxt.setText(event.getDetails());
 
-
-
         Integer signUpLimit = event.getSignUpLimit();
         Integer signups = event.getSignUpCount();
-
 
         String endDay = event.getEndDate();
         String endTime = event.getEndTime();
@@ -62,7 +71,6 @@ public class AttendeeAllEventAdapter extends RecyclerView.Adapter<AttendeeAllEve
 
         }
 
-
         if(signUpLimit == 2147483647){
             holder.attendeeLimit.setText("Sign-up Limit: Unlimited");
         }
@@ -70,13 +78,9 @@ public class AttendeeAllEventAdapter extends RecyclerView.Adapter<AttendeeAllEve
             holder.attendeeLimit.setText("Sign-up Limit: " + event.getSignUpLimit().toString());
         }
 
-
-
         holder.attendeeCount.setText("Sign-ups: " + signups.toString());
 
-
         String imageUrl = event.getPosterURL();
-
         if (imageUrl != null && !imageUrl.isEmpty()) {
             Picasso.get()
                     .load(imageUrl)
@@ -86,7 +90,6 @@ public class AttendeeAllEventAdapter extends RecyclerView.Adapter<AttendeeAllEve
 
         boolean isExpandable = eventList.get(position).getExpandable();
         holder.expandableLayout.setVisibility(isExpandable ? View.VISIBLE : View.GONE);
-
     }
 
     @Override
@@ -94,6 +97,10 @@ public class AttendeeAllEventAdapter extends RecyclerView.Adapter<AttendeeAllEve
         return eventList.size();
     }
 
+
+    /**
+     * Event View Holder, allows attendee to signup for the event, expands view on click, gets event data.
+     */
     public class EventVH extends RecyclerView.ViewHolder {
 
         TextView eventName, locationOfEvent, startDate, endDate, descriptionTxt, attendeeLimit, attendeeCount;
@@ -120,7 +127,6 @@ public class AttendeeAllEventAdapter extends RecyclerView.Adapter<AttendeeAllEve
             eventImage = itemView.findViewById(R.id.event_poster_image);
             signupEvents = itemView.findViewById(R.id.SignupEvents);
 
-
             linearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -129,7 +135,6 @@ public class AttendeeAllEventAdapter extends RecyclerView.Adapter<AttendeeAllEve
                     if (event.getEventID() == null){
                         event.setExpandable(false);
                         notifyItemChanged(getAdapterPosition());
-
                     }
                     else{
                         event.setExpandable(!event.getExpandable());
@@ -138,24 +143,15 @@ public class AttendeeAllEventAdapter extends RecyclerView.Adapter<AttendeeAllEve
                 }
             });
 
-
             // Allows attendee to Sign-up for an event from browsing all events
-
             signupEvents.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Attendee attendee = new Attendee(mContext);
                     Event event = eventList.get(getAdapterPosition());
                     attendee.signUpForEvent(event.getEventID());
-
-
                 }
             });
-
-
-
-
         }
     }
-
 }

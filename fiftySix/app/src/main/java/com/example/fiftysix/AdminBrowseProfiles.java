@@ -4,24 +4,32 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+/**
+ * AdminBrowseProfiles class, allows admin to browse all profiles and delete selected profiles
+ * @author Arsh, Rakshit.
+ * @version 1
+ * @since SDK34
+ */
 
 public class  AdminBrowseProfiles extends AppCompatActivity {
     private RecyclerView recyclerView;
     private AdminProfileAdapter adapter;
     private FirebaseFirestore db;
 
+    /**
+     * Deletes profile from AdminProfileAdapter class.
+     *
+     * @param profile Profile selected to be deleted
+     */
     private void deleteProfile(Profile profile) {
         Map<String, Object> updates = new HashMap<>();
         updates.put("bio", "unknown");
@@ -75,9 +83,11 @@ public class  AdminBrowseProfiles extends AppCompatActivity {
         });
 
         fetchProfiles();
-
     }
 
+    /**
+     * Fetches all profile data from database. Creates profile objects from the data and add them to the profiles list.
+     */
     private void fetchProfiles() {
         db.collection("Profiles")
                 .get()
@@ -85,8 +95,6 @@ public class  AdminBrowseProfiles extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         List<Profile> profiles = new ArrayList<>();
                         for (DocumentSnapshot document : task.getResult()) {
-
-
                             Profile profile = new Profile(
                                     document.getId(),
                                     document.getString("name"),

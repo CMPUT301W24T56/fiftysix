@@ -16,7 +16,13 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Adapter to display attendees signed up to the organizers event, used in OrganizerSignUpDataActivity
+ *
+ * @author Brady.
+ * @version 1
+ * @since SDK34
+ */
 public class OrganizerSignUpProfileAdapter extends RecyclerView.Adapter<OrganizerSignUpProfileAdapter.EventVH> {
 
     List<Profile> profileList;
@@ -35,12 +41,16 @@ public class OrganizerSignUpProfileAdapter extends RecyclerView.Adapter<Organize
         return new EventVH(view);
     }
 
+    /**
+     * Sets the attendee info
+     * @param holder The ViewHolder which should be updated to represent the contents of the
+     *        item at the given position in the data set.
+     * @param position The position of the item within the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull EventVH holder, int position) {
 
         Profile profile = profileList.get(position);
-
-
         String imageUrl = profile.getImageUrl();
 
         if (imageUrl != null && !imageUrl.isEmpty()) {
@@ -49,14 +59,9 @@ public class OrganizerSignUpProfileAdapter extends RecyclerView.Adapter<Organize
                     .fit()
                     .into(holder.attendeeImage); // Your ImageView
         }
-
-
         holder.attendeeName.setText(profile.getName());
         holder.phoneNumber.setText(profile.getPhoneNumber());
         holder.email.setText(profile.getEmail());
-
-
-
 
         boolean isExpandable = profileList.get(position).getExpandable();
         holder.expandableLayout.setVisibility(isExpandable ? View.VISIBLE : View.GONE);
@@ -68,6 +73,9 @@ public class OrganizerSignUpProfileAdapter extends RecyclerView.Adapter<Organize
         return profileList.size();
     }
 
+    /**
+     * gets the attendee info and finds views
+     */
     public class EventVH extends RecyclerView.ViewHolder {
 
         TextView attendeeName, checkinTime,  phoneNumber, email;
@@ -83,11 +91,8 @@ public class OrganizerSignUpProfileAdapter extends RecyclerView.Adapter<Organize
             checkinTime = itemView.findViewById(R.id.checkin_time);
             phoneNumber = itemView.findViewById(R.id.phone_number);
             email = itemView.findViewById(R.id.email);
-
-
             linearLayout = itemView.findViewById(R.id.linear_layout);
             expandableLayout = itemView.findViewById(R.id.expandable_layout);
-
             attendeeImage = itemView.findViewById(R.id.event_poster_image);
 
 
@@ -100,8 +105,6 @@ public class OrganizerSignUpProfileAdapter extends RecyclerView.Adapter<Organize
                     notifyItemChanged(getAdapterPosition());
                 }
             });
-
         }
     }
-
 }

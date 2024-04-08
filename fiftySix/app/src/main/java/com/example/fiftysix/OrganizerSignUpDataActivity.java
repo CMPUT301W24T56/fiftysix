@@ -21,6 +21,14 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+/**
+ * Displays Attendees signup list to Organizer for the selected event.
+ *
+ * @author Brady.
+ * @version 1
+ * @since SDK34
+ */
+
 public class OrganizerSignUpDataActivity extends AppCompatActivity {
 
 
@@ -78,8 +86,9 @@ public class OrganizerSignUpDataActivity extends AppCompatActivity {
     }
 
 
-
-
+    /**
+     * Loads the attendee data for all attendees currently signed up to the selected event.
+     */
     private void loadOrganizerAttendees() {
 
         // Checks for updates in Events collection in firebase

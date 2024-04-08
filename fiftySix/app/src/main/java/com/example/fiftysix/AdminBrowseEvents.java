@@ -16,7 +16,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.*;
 
 import java.util.ArrayList;
-
+/**
+ * Allows admin too browse all and remove selected events.
+ * @author Bruce, Rakshit.
+ * @version 1
+ * @since SDK34
+ */
 public class AdminBrowseEvents extends AppCompatActivity {
 
     private EventAdapter adapter;
@@ -39,6 +44,11 @@ public class AdminBrowseEvents extends AppCompatActivity {
         backButton.setOnClickListener(v -> finish());
     }
 
+    /**
+     * Removes selected event from database, prompts user with alert dialog to confirm deletion.
+     *
+     * @param i Integer of position to remove.
+     */
     private void rm(int i) {
         // TODO: mk confirm dialog
         String eventName = eventList.get(i).getEventName();
@@ -50,7 +60,6 @@ public class AdminBrowseEvents extends AppCompatActivity {
                 .setMessage("Are you sure you want to delete " + '"' + eventName + '"' + "?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-
                         eventList.remove(i);
 
                         db.collection("Events").document(eventID).collection("Milestones").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -76,7 +85,6 @@ public class AdminBrowseEvents extends AppCompatActivity {
                             }
                         });
 
-
                         // Deletes Signup collection & removes event from attendees signup collection
                         db.collection("Events").document(eventID).collection("attendeeSignUps").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                             @Override
@@ -90,7 +98,6 @@ public class AdminBrowseEvents extends AppCompatActivity {
                                 }
                             }
                         });
-
 
                         // Deletes CheckIn collection & removes event from attendees CheckIn collection
                         db.collection("Events").document(eventID).collection("attendeesAtEvent").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -117,22 +124,23 @@ public class AdminBrowseEvents extends AppCompatActivity {
                             }
                         });
 
-
                         // Deletes event
                         db.collection("Events").document(eventID).delete();
                         adapter.notifyDataSetChanged();
 
                     }
                 })
-
                 .setNegativeButton(android.R.string.no, null)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
-
-
         adapter.notifyDataSetChanged();
     }
 
+    /**
+     * Converts document snapshot to an event object
+     * @param d DocumentSnapshot
+     * @return Event created with data from documentSnapshot
+     */
     private Event doc2event(DocumentSnapshot d) {
         return new Event(
                 d.getId(),
@@ -150,6 +158,9 @@ public class AdminBrowseEvents extends AppCompatActivity {
                 d.getString("posterURL"));
     }
 
+    /**
+     * Fetches all events from firebase
+     */
     private void fetchEvents() {
         db.collection("Events")
                 .get()

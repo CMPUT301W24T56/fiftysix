@@ -6,7 +6,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-
+/**
+ * Gives the admin the option to browse proster or profile images, launches ImageDisplayActivity with a different putExtra depending if the admin selects poster or profile images.
+ *
+ * @author Rakshit
+ * @version 1
+ * @since SDK34
+ */
 public class AdminBrowseImages extends AppCompatActivity {
 
     @Override
@@ -34,6 +40,12 @@ public class AdminBrowseImages extends AppCompatActivity {
         });
     }
 
+    /**
+     * launches ImageDisplayActivity with a different putExtra depending if the admin selects poster or profile images.
+     * Resulting in either displaying only profile images or poster images.
+     *
+     * @param imageType String, can either be "ProfileImages" or "PosterImages" depending on what you'd like to view in ImageDisplayActivity()
+     */
     private void navigateToImageDisplay(String imageType) {
         Intent intent = new Intent(AdminBrowseImages.this, ImageDisplayActivity.class);
         intent.putExtra("ImageType", imageType);

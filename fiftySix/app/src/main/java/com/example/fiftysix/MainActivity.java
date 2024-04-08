@@ -25,7 +25,18 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
+/**
+ * Displays user selection screen, allows user to select organizer, attendee, or admin.
+ * If user selects admin their device ID must be prior added to the Firebase in the administrators collection.
+ * If the device ID is not in the collection they cannot access Admin.
+ *
+ * Link to add ADMIN device ID
+ * https://console.firebase.google.com/project/fiftysix-a4bcf/firestore/databases/-default-/data/~2FAdministrators~2F185a2e0408f92fd9
+ *
+ * @author Arsh, Rakshit, Brady.
+ * @version 1
+ * @since SDK34
+ */
 public class MainActivity extends AppCompatActivity {
     private Context context;
 
@@ -49,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
            startActivity(new Intent(MainActivity.this, OrganizerMainActivity.class));
         });
 
-
+        // User selects Admin
         adminButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
