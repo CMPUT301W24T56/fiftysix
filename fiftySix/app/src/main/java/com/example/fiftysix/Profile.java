@@ -49,10 +49,14 @@ public class Profile {
         void onUploadFailure(Exception e);
     }
 
+
     // TODO: check if profile exists already or if this is a new profile.
     // TODO: Upload data to firebase.
     // TODO: Allow changes to image.
 
+    public String getProfileID(){
+        return this.userID;
+    }
     public Profile(String name, String phoneNumber, String checkInTime, String email, String imageUrl){
         this.name = name;
         this.phoneNumber = phoneNumber;
