@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class  AdminBrowseProfiles extends AppCompatActivity {
     private RecyclerView recyclerView;
@@ -21,11 +23,21 @@ public class  AdminBrowseProfiles extends AppCompatActivity {
     private FirebaseFirestore db;
 
     private void deleteProfile(Profile profile) {
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("bio", "unknown");
+        updates.put("email", "unknown");
+        updates.put("phone", "unknown");
+        updates.put("profileImageURL", "unknown");
+        updates.put("userID", "unknown");
         db.collection("Profiles").document(profile.getProfileID())
-                .delete()
-                .addOnSuccessListener(aVoid -> Log.d("DeleteProfile", "Profile successfully deleted!"))
-                .addOnFailureListener(e -> Log.w("DeleteProfile", "Error deleting profile", e));
+                .update(updates)
+                .addOnSuccessListener(aVoid -> Log.d("UpdateProfile", "Profile successfully updated!"))
+                .addOnFailureListener(e -> Log.w("UpdateProfile", "Error updating profile", e));
+
+        db.collection("Users").document(profile.getProfileID())
+                .update(updates);
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -55,7 +55,7 @@ public class Profile {
     // TODO: Allow changes to image.
 
     public String getProfileID(){
-        return userID;
+        return this.userID;
     }
     public Profile(String name, String phoneNumber, String checkInTime, String email, String imageUrl){
         this.name = name;
