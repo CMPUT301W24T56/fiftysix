@@ -95,13 +95,13 @@ public class PromoScanActivity extends AppCompatActivity {
                     public void checkInSuccess(Boolean checkinSuccess, String eventName) {
 
                         // Not already Signed Up
-                        if (!checkinSuccess){
+                        if (checkinSuccess){
 
                             attendee.hasSignUpSpace(eventID, new Attendee.AttendeeCallBack() {
                                 @Override
                                 public void checkInSuccess(Boolean checkinSuccess, String eventName) {
 
-                                    if (!checkinSuccess){
+                                    if (checkinSuccess){
                                         attendee.signUpForEvent(eventID);
                                         finish();
                                     }
