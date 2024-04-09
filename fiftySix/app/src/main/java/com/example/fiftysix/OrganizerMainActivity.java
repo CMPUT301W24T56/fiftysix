@@ -825,16 +825,16 @@ public class OrganizerMainActivity extends AppCompatActivity {
                                                     Log.e("Added to list", "onSuccess: Event has been added to eventDataList, OrganizerMain");
                                                     String posterURL = doc.getString("image");
                                                     Boolean isInList = false;
-                                                    for (int i = 0; i< eventDataList.size(); i++){
-                                                        Event e = eventDataList.get(i);
-                                                        if (e.getEventID().equals(eventID)){
-                                                            isInList = true;
-                                                        }
-                                                    }
-                                                    if (!isInList){
+                                                    //for (int i = 0; i< eventDataList.size(); i++){
+                                                        //Event e = eventDataList.get(i);
+                                                        //if (e.getEventID().equals(eventID)){
+                                                          //  isInList = true;
+                                                        //}
+                                                   // }
+                                                   // if (!isInList){
                                                         eventDataList.add(new Event(eventID, eventName, location, startDate, endDate, startTime, endTime, details, inAttendeeCount, signUpCount, attendeeCheckinLimitIn, attendeeSignUpLimitIn, posterURL));
                                                         organizerEventAdapter.notifyDataSetChanged();
-                                                    }
+                                                   // }
                                                 }
                                             }
                                         });
