@@ -288,7 +288,7 @@ public class Attendee {
      * @param attendeeCallBack AttendeeCallBack used as a function pointer to retrieve result.
      */
     public void alreadySignedUp(String eventID, AttendeeCallBack attendeeCallBack){
-        db.collection("Events").document(eventID).collection("SignedUpEvents").document(attendeeID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        db.collection("Events").document(eventID).collection("attendeeSignUps").document(attendeeID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.exists()){
