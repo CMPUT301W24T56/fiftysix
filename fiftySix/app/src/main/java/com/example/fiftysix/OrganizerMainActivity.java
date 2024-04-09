@@ -824,8 +824,17 @@ public class OrganizerMainActivity extends AppCompatActivity {
                                                 for (QueryDocumentSnapshot doc : querySnapshotImage){
                                                     Log.e("Added to list", "onSuccess: Event has been added to eventDataList, OrganizerMain");
                                                     String posterURL = doc.getString("image");
-                                                    eventDataList.add(new Event(eventID, eventName, location, startDate, endDate, startTime, endTime, details, inAttendeeCount, signUpCount, attendeeCheckinLimitIn, attendeeSignUpLimitIn, posterURL));
-                                                    organizerEventAdapter.notifyDataSetChanged();
+                                                    Boolean isInList = false;
+                                                    for (int i = 0; i< eventDataList.size(); i++){
+                                                        Event e = eventDataList.get(i);
+                                                        if (e.getEventID().equals(eventID)){
+                                                            isInList = true;
+                                                        }
+                                                    }
+                                                    if (!isInList){
+                                                        eventDataList.add(new Event(eventID, eventName, location, startDate, endDate, startTime, endTime, details, inAttendeeCount, signUpCount, attendeeCheckinLimitIn, attendeeSignUpLimitIn, posterURL));
+                                                        organizerEventAdapter.notifyDataSetChanged();
+                                                    }
                                                 }
                                             }
                                         });
